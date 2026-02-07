@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reviews</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="header">
+  <h1>Restaurant</h1>
+  <p>⭐ 0 / 5 · Description here</p>
+</header>
+
+<main class="container">
+  <!-- Review Search -->
+  <div class="search-bar">
+    <input type="text" id="reviewSearch" placeholder="Search reviews..." />
+  </div>
+
+  <!-- Reviews Container -->
+  <div id="reviewsContainer"></div>
+</main>
+
+<script>
+  // Hardcoded reviews for each establishment
+  const reviewsData = {
+    "Prelude": [
+      { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
+      { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
+    ],
+    "Barn by Borro": [
+      { title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
+      { title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
+    ],
+    "Asterisko": [
+      { title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
+      { title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
+    ]
+  };
+
+  const ratingMap = {
+    "Prelude": 4.2,
+    "Barn by Borro": 4.7,
+    "Asterisko": 4.5
+  };
+
+  const descriptionMap = {
+    "Prelude": "Cozy café near campus",
+    "Barn by Borro": "LaSallian's favorite!",
+    "Asterisko": "Fun hangout spot"
+  };
+
+  const reviewsContainer = document.getElementById("reviewsContainer");
+
+  // Get establishment name from URL query string
+  const params = new URLSearchParams(window.location.search);
+  const establishment = params.get("establishment") || "Prelude"; // default to Prelude
+
+  // Update header dynamically
+  document.querySelector(".header h1").textContent = establishment;
+  document.querySelector(".header p").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
+
+  // Generate review cards
+  reviewsData[establishment].forEach(r => {
+    const card = document.createElement("div");
+    card.classList.add("review-card");
+    card.innerHTML = `
+      <h3>${r.title}</h3>
+      <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
+      <p class="review-text">${r.text}</p>
+    `;
+    reviewsContainer.appendChild(card);
+  });
+
+  // Search reviews
+  const reviewSearch = document.getElementById("reviewSearch");
+  reviewSearch.addEventListener("input", () => {
+    const searchText = reviewSearch.value.toLowerCase();
+    const reviews = document.querySelectorAll(".review-card");
+    reviews.forEach(review => {
+      const title = review.querySelector("h3").textContent.toLowerCase();
+      const body = review.querySelector(".review-text").textContent.toLowerCase();
+      review.style.display =
+        title.includes(searchText) || body.includes(searchText) ? "block" : "none";
+    });
+  });
+</script>
+</body>
+</html>

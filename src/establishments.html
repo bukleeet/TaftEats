@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Establishments</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Campus Picks</h1>
+    <p>Discover restaurants around Taft</p>
+    <a href="register.html" class="register-btn">Register</a>
+  </header>
+
+  <main class="container">
+
+    <!-- Search & Filter -->
+    <div class="search-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search establishments..."
+      />
+      <select id="ratingFilter">
+        <option value="0">All Ratings</option>
+        <option value="4">4 stars & up</option>
+        <option value="4.5">4.5 stars & up</option>
+      </select>
+    </div>
+
+    <!-- Establishments -->
+    <div class="establishment-card">
+        <img src="images/prelude.jpg" alt="Prelude Café" class="establishment-img" />
+        <div class="establishment-info">
+          <h2>Prelude</h2>
+          <p class="rating">⭐ 4.2 / 5</p>
+          <p class="description">
+            A cozy café perfect for studying, known for its coffee and pastries.
+          </p>
+          <a href="reviews.html?establishment=Prelude" class="view-btn">View Reviews</a>
+        </div>
+      </div>
+      
+
+      <div class="establishment-card" data-rating="4.7">
+        <img src="images/barn.jpeg" alt="Barn by Borro" class="establishment-img" />
+        <div class="establishment-info">
+          <h2>Barn by Borro</h2>
+          <p class="rating">⭐ 4.7 / 5</p>
+          <p class="description">
+            LaSallian's favorite! Offers affordable meals with generous servings.
+          </p>
+          <a href="reviews.html?establishment=Barn%20by%20Borro" class="view-btn">View Reviews</a>
+        </div>
+      </div>
+      
+      <div class="establishment-card" data-rating="4.0">
+        <img src="images/asterisko.png" alt="Asterisko" class="establishment-img" />
+        <div class="establishment-info">
+          <h2>Asterisko</h2>
+          <p class="rating">⭐ 4.5 / 5</p>
+          <p class="description">
+            Good hangout spot with friends. Offers board games and refreshing drinks.
+          </p>
+          <a href="reviews.html?establishment=Asterisko" class="view-btn">View Reviews</a>
+        </div>
+      </div>
+      
+
+  </main>
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const ratingFilter = document.getElementById("ratingFilter");
+    const cards = document.querySelectorAll(".establishment-card");
+
+    function filterEstablishments() {
+      const searchText = searchInput.value.toLowerCase();
+      const minRating = parseFloat(ratingFilter.value);
+
+      cards.forEach(card => {
+        const title = card.querySelector("h2").textContent.toLowerCase();
+        const desc = card.querySelector(".description").textContent.toLowerCase();
+        const rating = parseFloat(card.dataset.rating);
+
+        const matchesSearch =
+          title.includes(searchText) || desc.includes(searchText);
+        const matchesRating = rating >= minRating;
+
+        card.style.display = matchesSearch && matchesRating ? "block" : "none";
+      });
+    }
+
+    searchInput.addEventListener("input", filterEstablishments);
+    ratingFilter.addEventListener("change", filterEstablishments);
+  </script>
+</body>
+</html>
