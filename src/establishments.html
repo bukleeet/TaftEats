@@ -25,71 +25,93 @@
 <!-- Hero Section -->
 <header class="hero">
   <div class="hero-content">
-    <h1>Are you hungry?</h1>
+    <h1 id="hero-text">Are you hungry?</h1>
     <p>Discover restaurants around Taft</p>
     <a href="#restaurants" class="hero-btn">Explore Now</a>
   </div>
 </header>
 
+<script>
+  const heroText = document.getElementById("hero-text");
+
+  // Array of translations
+  const translations = [
+    "Are you hungry?",
+    "Gutom ka na ba?", // Filipino
+    "¿Tienes hambre?", // Spanish
+    "你饿了吗？",       // Chinese
+    "Vous avez faim?", // French
+    "Hast du Hunger?", // German
+    "Hai fame?"        // Italian
+  ];
+
+  let index = 0;
+
+  setInterval(() => {
+    index = (index + 1) % translations.length;
+    heroText.textContent = translations[index];
+  }, 3000); // 3000ms = 3 seconds
+</script>
+
+
 
 <main class="container" id="restaurants">
 
-    <!-- Search & Filter -->
-    <div class="search-bar">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Search establishments..."
-      />
-      <select id="ratingFilter">
-        <option value="0">All Ratings</option>
-        <option value="1">1 star & up</option>
-        <option value="2">2 stars & up</option>
-        <option value="3">3 stars & up</option>
-        <option value="4">4 stars & up</option>
-        <option value="4.5">4.5 stars & up</option>
-      </select>
+  <!-- Search & Filter -->
+  <div class="search-bar">
+    <input
+            type="text"
+            id="searchInput"
+            placeholder="Search establishments..."
+    />
+    <select id="ratingFilter">
+      <option value="0">All Ratings</option>
+      <option value="1">1 star</option>
+      <option value="2">2 stars</option>
+      <option value="3">3 stars</option>
+      <option value="4">4 stars</option>
+      <option value="5">5 stars</option>
+    </select>
+  </div>
+
+  <!-- Establishments -->
+  <div class="establishment-card" data-rating="4.2">
+    <img src="images/prelude.jpg" alt="Prelude Café" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Prelude</h2>
+      <p class="rating">⭐ 3.2 / 5</p>
+      <p class="description">
+        A cozy café perfect for studying, known for its coffee and pastries.
+      </p>
+      <a href="reviews.html?establishment=Prelude" class="view-btn">View Reviews</a>
     </div>
+  </div>
 
-    <!-- Establishments -->
-    <div class="establishment-card">
-        <img src="images/prelude.jpg" alt="Prelude Café" class="establishment-img" />
-        <div class="establishment-info">
-          <h2>Prelude</h2>
-          <p class="rating">⭐ 4.2 / 5</p>
-          <p class="description">
-            A cozy café perfect for studying, known for its coffee and pastries.
-          </p>
-          <a href="reviews.html?establishment=Prelude" class="view-btn">View Reviews</a>
-        </div>
-      </div>
-      
+  <div class="establishment-card" data-rating="4.7">
+    <img src="images/barn.jpeg" alt="Barn by Borro" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Barn by Borro</h2>
+      <p class="rating">⭐ 4.7 / 5</p>
+      <p class="description">
+        LaSallian's favorite! Offers affordable meals with generous servings.
+      </p>
+      <a href="reviews.html?establishment=Barn%20by%20Borro" class="view-btn">View Reviews</a>
+    </div>
+  </div>
 
-      <div class="establishment-card" data-rating="4.7">
-        <img src="images/barn.jpeg" alt="Barn by Borro" class="establishment-img" />
-        <div class="establishment-info">
-          <h2>Barn by Borro</h2>
-          <p class="rating">⭐ 4.7 / 5</p>
-          <p class="description">
-            LaSallian's favorite! Offers affordable meals with generous servings.
-          </p>
-          <a href="reviews.html?establishment=Barn%20by%20Borro" class="view-btn">View Reviews</a>
-        </div>
-      </div>
-      
-      <div class="establishment-card" data-rating="4.0">
-        <img src="images/asterisko.png" alt="Asterisko" class="establishment-img" />
-        <div class="establishment-info">
-          <h2>Asterisko</h2>
-          <p class="rating">⭐ 4.5 / 5</p>
-          <p class="description">
-            Good hangout spot with friends. Offers board games and refreshing drinks.
-          </p>
-          <a href="reviews.html?establishment=Asterisko" class="view-btn">View Reviews</a>
-        </div>
-      </div>
+  <div class="establishment-card" data-rating="4.5">
+    <img src="images/asterisko.png" alt="Asterisko" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Asterisko</h2>
+      <p class="rating">⭐ 4.5 / 5</p>
+      <p class="description">
+        Good hangout spot with friends. Offers board games and refreshing drinks.
+      </p>
+      <a href="reviews.html?establishment=Asterisko" class="view-btn">View Reviews</a>
+    </div>
+  </div>
 
-  <div class="establishment-card" data-rating="4.3">
+  <div class="establishment-card" data-rating="3.8">
     <img src="images/kuhmeal.png" alt="Resto One" class="establishment-img" />
     <div class="establishment-info">
       <h2>KuhMeal</h2>
@@ -97,7 +119,7 @@
       <p class="description">
         Chicken and Fries served with special sauce.
       </p>
-      <a href="reviews.html?establishment=Resto%20One" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=KuhMeal" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -109,7 +131,7 @@
       <p class="description">
         Known for comfort food and affordable meals.
       </p>
-      <a href="reviews.html?establishment=Resto%20Two" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=La Elotes" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -121,7 +143,7 @@
       <p class="description">
         Small but cozy place perfect for quick meals.
       </p>
-      <a href="reviews.html?establishment=Resto%20Three" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=Gang Gang Chicken" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -133,7 +155,7 @@
       <p class="description">
         Trendy hangout spot with aesthetic interiors.
       </p>
-      <a href="reviews.html?establishment=Resto%20Four" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=Calle Cafe" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -145,7 +167,7 @@
       <p class="description">
         Budget-friendly meals for students on the go.
       </p>
-      <a href="reviews.html?establishment=Resto%20Five" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=Illo" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -157,7 +179,7 @@
       <p class="description">
         A Filipino restaurant specializing in elevated, comfort-style adobo and classic dishes.
       </p>
-      <a href="reviews.html?establishment=Resto%20Six" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=Angrydobo" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -169,7 +191,7 @@
       <p class="description">
         Chill café with drinks and light meals.
       </p>
-      <a href="reviews.html?establishment=Resto%20Seven" class="view-btn">View Reviews</a>
+      <a href="reviews.html?establishment=Dapit-Hapon Cafe & Bistro" class="view-btn">View Reviews</a>
     </div>
   </div>
 
@@ -177,28 +199,44 @@
 
   <script>
     const searchInput = document.getElementById("searchInput");
-    const ratingFilter = document.getElementById("ratingFilter");
-    const cards = document.querySelectorAll(".establishment-card");
+const ratingFilter = document.getElementById("ratingFilter");
+const cards = document.querySelectorAll(".establishment-card");
 
-    function filterEstablishments() {
-      const searchText = searchInput.value.toLowerCase();
-      const minRating = parseFloat(ratingFilter.value);
+function filterEstablishments() {
+  const searchText = searchInput.value.toLowerCase();
+  const selectedRating = parseFloat(ratingFilter.value);
 
-      cards.forEach(card => {
-        const title = card.querySelector("h2").textContent.toLowerCase();
-        const desc = card.querySelector(".description").textContent.toLowerCase();
-        const rating = parseFloat(card.dataset.rating);
+  cards.forEach(card => {
+    const title = card.querySelector("h2").textContent.toLowerCase();
+    const desc = card.querySelector(".description").textContent.toLowerCase();
+    const rating = parseFloat(card.dataset.rating) || 0;
 
-        const matchesSearch =
-          title.includes(searchText) || desc.includes(searchText);
-        const matchesRating = rating >= minRating;
+    const matchesSearch = title.includes(searchText) || desc.includes(searchText);
 
-        card.style.display = matchesSearch && matchesRating ? "block" : "none";
-      });
+    // Check exact rating ranges
+    let matchesRating = true; // default if "All Ratings"
+    if (selectedRating === 1) {
+      matchesRating = rating >= 1 && rating < 2;
+    } else if (selectedRating === 2) {
+      matchesRating = rating >= 2 && rating < 3;
+    } else if (selectedRating === 3) {
+      matchesRating = rating >= 3 && rating < 4;
+    } else if (selectedRating === 4) {
+      matchesRating = rating >= 4 && rating < 5;
+    } else if (selectedRating === 5) {
+      matchesRating = rating === 5;
     }
 
-    searchInput.addEventListener("input", filterEstablishments);
-    ratingFilter.addEventListener("change", filterEstablishments);
+    card.style.display = matchesSearch && matchesRating ? "flex" : "none";
+  });
+}
+
+searchInput.addEventListener("input", filterEstablishments);
+ratingFilter.addEventListener("change", filterEstablishments);
+
+
+
+
   </script>
 </body>
 </html>

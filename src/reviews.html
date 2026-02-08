@@ -26,7 +26,7 @@
   <h1>Restaurant</h1>
   <p>⭐ 0 / 5 · Description here</p>
   <div class="header-actions">
-      <button class="register-btn" onclick="openModal('reviewModal')">Write Review</button>
+    <button class="register-btn" onclick="openModal('reviewModal')">Write Review</button>
   </div>
 </header>
 
@@ -39,17 +39,17 @@
 </main>
 
 <div class="modal" id="reviewModal">
-    <div class="modal-card">
-      <h2>Create Review</h2>
-      <div style="font-size:1.5rem; color: #fbbf24; margin-bottom:10px;">⭐⭐⭐⭐⭐</div>
-      <input type="text" placeholder="Title of your review">
-      <textarea rows="5" placeholder="Share your experience..."></textarea>
-  
-      <div class="modal-actions">
-        <button class="primary-btn">Post Review</button>
-        <button class="secondary-btn" onclick="closeModal('reviewModal')">Cancel</button>
-      </div>
+  <div class="modal-card">
+    <h2>Create Review</h2>
+    <div style="font-size:1.5rem; color: #fbbf24; margin-bottom:10px;">⭐⭐⭐⭐⭐</div>
+    <input type="text" placeholder="Title of your review">
+    <textarea rows="5" placeholder="Share your experience..."></textarea>
+
+    <div class="modal-actions">
+      <button class="primary-btn">Post Review</button>
+      <button class="secondary-btn" onclick="closeModal('reviewModal')">Cancel</button>
     </div>
+  </div>
 </div>
 
 <script>
@@ -62,98 +62,146 @@
       document.getElementById(id).classList.remove("active");
   }
 
-  // Hardcoded reviews
-  const reviewsData = {
-    "Prelude": [
-      { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
-      { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
-    ],
-    "Barn by Borro": [
-      { title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
-      { title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
-    ],
-    "Asterisko": [
-      { title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
-      { title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
-    ]
-  };
+  // Hardcoded reviews for all establishments
+const reviewsData = {
+  "Prelude": [
+    { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
+    { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
+  ],
+  "Barn by Borro": [
+    { title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
+    { title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
+  ],
+  "Asterisko": [
+    { title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
+    { title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
+  ],
+  "KuhMeal": [
+    { title: "Tasty chicken", user: "@daniella", stars: 4, text: "Chicken and fries are yummy, perfect for a quick snack!" },
+    { title: "Fast service", user: "@miggy", stars: 5, text: "Service is quick and friendly, definitely coming back." }
+  ],
+  "La Elotes": [
+    { title: "Comfort food heaven", user: "@ella_s", stars: 5, text: "Affordable and really tasty meals. Perfect for students." },
+    { title: "Loved the place", user: "@jane_d", stars: 4, text: "Cozy vibe and great food, though it gets crowded sometimes." }
+  ],
+  "Gang Gang Chicken": [
+    { title: "Good quick meals", user: "@kiks_m", stars: 4, text: "Perfect for a quick bite, loved the chicken." },
+    { title: "Nice spot", user: "@sophia", stars: 4, text: "Small but cozy. Staff are friendly too!" }
+  ],
+  "Calle Cafe": [
+    { title: "Aesthetic spot", user: "@daniella", stars: 5, text: "Great interiors, perfect for photos. Drinks are amazing." },
+    { title: "Trendy but pricey", user: "@miggy", stars: 4, text: "Love the vibe, but meals are a bit expensive for students." }
+  ],
+  "Illo": [
+    { title: "Budget-friendly", user: "@ella_s", stars: 4, text: "Good food at a reasonable price. Quick service too." },
+    { title: "Great for students", user: "@jane_d", stars: 4, text: "Easy to grab meals before class. Tasty sandwiches!" }
+  ],
+  "Angrydobo": [
+    { title: "Delicious adobo", user: "@kiks_m", stars: 5, text: "Classic Filipino dishes done right. Highly recommended!" },
+    { title: "Cozy vibes", user: "@sophia", stars: 4, text: "Loved the adobo, place is small but comfy." }
+  ],
+  "Dapit-Hapon Cafe & Bistro": [
+    { title: "Chill café", user: "@daniella", stars: 4, text: "Perfect place to relax with friends. Drinks are great." },
+    { title: "Nice menu", user: "@miggy", stars: 5, text: "Lots of options and very tasty meals." }
+  ]
+};
 
-  const ratingMap = {
-    "Prelude": 4.2,
-    "Barn by Borro": 4.7,
-    "Asterisko": 4.5
-  };
+// Ratings for header
+const ratingMap = {
+  "Prelude": 4.2,
+  "Barn by Borro": 4.7,
+  "Asterisko": 4.5,
+  "KuhMeal": 3.8,
+  "La Elotes": 4.6,
+  "Gang Gang Chicken": 4.1,
+  "Calle Cafe": 4.8,
+  "Illo": 4.0,
+  "Angrydobo": 4.4,
+  "Dapit-Hapon Cafe & Bistro": 4.2
+};
 
-  const descriptionMap = {
-    "Prelude": "Cozy café near campus",
-    "Barn by Borro": "LaSallian's favorite!",
-    "Asterisko": "Fun hangout spot"
-  };
+// Description for header
+const descriptionMap = {
+  "Prelude": "Cozy café near campus",
+  "Barn by Borro": "LaSallian's favorite!",
+  "Asterisko": "Fun hangout spot",
+  "KuhMeal": "Quick bites and tasty meals",
+  "La Elotes": "Comfort food for everyone",
+  "Gang Gang Chicken": "Small but cozy spot",
+  "Calle Cafe": "Trendy café with aesthetic interiors",
+  "Illo": "Budget-friendly meals",
+  "Angrydobo": "Filipino comfort food",
+  "Dapit-Hapon Cafe & Bistro": "Chill café with light meals"
+};
 
-  const reviewsContainer = document.getElementById("reviewsContainer");
-  const params = new URLSearchParams(window.location.search);
-  const establishment = params.get("establishment");
+const reviewsContainer = document.getElementById("reviewsContainer");
+const params = new URLSearchParams(window.location.search);
+const establishment = params.get("establishment");
 
-  // Helper function to create the card with New UI features
-  function addReviewCard(r) {
-    const card = document.createElement("div");
-    card.classList.add("review-card");
-    
-    card.innerHTML = `
-      <h3>${r.title}</h3>
-      <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
-      <p class="review-text">${r.text}</p>
+// Helper function to create the card with New UI features
+// Added optional 'restoName' parameter for showing restaurant name
+function addReviewCard(r, restoName = "") {
+  const card = document.createElement("div");
+  card.classList.add("review-card");
 
-      <div style="display:flex; gap:10px; margin-top:15px;">
-        <button class="primary-btn" style="padding: 6px 14px; font-size:0.8rem;">👍 Helpful</button>
-        <button class="secondary-btn" style="padding: 6px 14px; font-size:0.8rem;">👎 Unhelpful</button>
-      </div>
+  card.innerHTML = `
+    ${restoName ? `<p class="review-resto" style="font-weight:bold; margin-bottom:5px;">${restoName}</p>` : ""}
+    <h3>${r.title}</h3>
+    <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
+    <p class="review-text">${r.text}</p>
 
-      <div style="
-        background:#ecfdf5;
-        border-radius:16px;
-        padding:12px;
-        margin-top:15px;
-        font-size:.9rem;
-        color: #065f46;
-      ">
-        <b>Owner Response</b><br>
-        Thanks for visiting! We hope to see you again soon.
-      </div>
-    `;
-    reviewsContainer.appendChild(card);
-  }
+    <div style="display:flex; gap:10px; margin-top:15px;">
+      <button class="primary-btn" style="padding: 6px 14px; font-size:0.8rem;">👍 Helpful</button>
+      <button class="secondary-btn" style="padding: 6px 14px; font-size:0.8rem;">👎 Unhelpful</button>
+    </div>
 
-  // LOGIC: Check if we are viewing a specific restaurant or ALL reviews
-  if (establishment && reviewsData[establishment]) {
-    // Show specific restaurant details
-    document.querySelector(".header h1").textContent = establishment;
-    document.querySelector(".header p").textContent =
-      `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
+    <div style="
+      background:#ecfdf5;
+      border-radius:16px;
+      padding:12px;
+      margin-top:15px;
+      font-size:.9rem;
+      color: #065f46;
+    ">
+      <b>Owner Response</b><br>
+      Thanks for visiting! We hope to see you again soon.
+    </div>
+  `;
+  reviewsContainer.appendChild(card);
+}
 
-    reviewsData[establishment].forEach(r => addReviewCard(r));
-  } else {
-    // Show ALL reviews (General view)
-    document.querySelector(".header h1").textContent = "All Reviews";
-    document.querySelector(".header p").textContent =
-      "See what students are saying around Taft";
+// LOGIC: Check if we are viewing a specific restaurant or ALL reviews
+if (establishment && reviewsData[establishment]) {
+  // Show specific restaurant details
+  document.querySelector(".header h1").textContent = establishment;
+  document.querySelector(".header p").textContent =
+    `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
 
-    // Flatten all reviews into one list and display them
-    Object.values(reviewsData).flat().forEach(r => addReviewCard(r));
-  }
+  reviewsData[establishment].forEach(r => addReviewCard(r));
+} else {
+  // Show ALL reviews (General view)
+  document.querySelector(".header h1").textContent = "All Reviews";
+  document.querySelector(".header p").textContent =
+    "See what students are saying around Taft";
 
-  // Search reviews logic
-  const reviewSearch = document.getElementById("reviewSearch");
-  reviewSearch.addEventListener("input", () => {
-    const searchText = reviewSearch.value.toLowerCase();
-    const reviews = document.querySelectorAll(".review-card");
-    reviews.forEach(review => {
-      const title = review.querySelector("h3").textContent.toLowerCase();
-      const body = review.querySelector(".review-text").textContent.toLowerCase();
-      review.style.display =
-        title.includes(searchText) || body.includes(searchText) ? "block" : "none";
-    });
+  // Flatten all reviews into one list and display them with restaurant name
+  Object.entries(reviewsData).forEach(([restoName, reviews]) => {
+    reviews.forEach(r => addReviewCard(r, restoName));
   });
+}
+
+// Search reviews logic
+const reviewSearch = document.getElementById("reviewSearch");
+reviewSearch.addEventListener("input", () => {
+  const searchText = reviewSearch.value.toLowerCase();
+  const reviews = document.querySelectorAll(".review-card");
+  reviews.forEach(review => {
+    const title = review.querySelector("h3").textContent.toLowerCase();
+    const body = review.querySelector(".review-text").textContent.toLowerCase();
+    review.style.display =
+      title.includes(searchText) || body.includes(searchText) ? "block" : "none";
+  });
+});
 </script>
 </body>
 </html>
