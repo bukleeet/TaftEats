@@ -6,13 +6,33 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="header">
-    <h1>Campus Picks</h1>
-    <p>Discover restaurants around Taft</p>
-    <a href="register.html" class="register-btn">Register</a>
-  </header>
 
-  <main class="container">
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-left">
+    <h2 class="logo">TaftEats</h2>
+  </div>
+  <div class="nav-right">
+    <a href="establishments.html" class="nav-link">Home</a>
+    <a href="about.html" class="nav-link">About</a>
+    <a href="reviews.html" class="nav-link">Reviews</a>
+    <a href="profile.html" class="nav-link">Profile</a>
+    <a href="login.html" class="nav-btn login">Login</a>
+    <a href="register.html" class="nav-btn register">Register</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="hero">
+  <div class="hero-content">
+    <h1>Are you hungry?</h1>
+    <p>Discover restaurants around Taft</p>
+    <a href="#restaurants" class="hero-btn">Explore Now</a>
+  </div>
+</header>
+
+
+<main class="container" id="restaurants">
 
     <!-- Search & Filter -->
     <div class="search-bar">
@@ -65,9 +85,92 @@
           <a href="reviews.html?establishment=Asterisko" class="view-btn">View Reviews</a>
         </div>
       </div>
-      
 
-  </main>
+  <div class="establishment-card" data-rating="4.3">
+    <img src="images/kuhmeal.png" alt="Resto One" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>KuhMeal</h2>
+      <p class="rating">⭐ 3.8 / 5</p>
+      <p class="description">
+        Chicken and Fries served with special sauce.
+      </p>
+      <a href="reviews.html?establishment=Resto%20One" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.6">
+    <img src="images/laelotes.png" alt="Resto Two" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>La Elotes</h2>
+      <p class="rating">⭐ 4.6 / 5</p>
+      <p class="description">
+        Known for comfort food and affordable meals.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Two" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.1">
+    <img src="images/ganggangchicken.png" alt="Resto Three" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Gang Gang Chicken</h2>
+      <p class="rating">⭐ 4.1 / 5</p>
+      <p class="description">
+        Small but cozy place perfect for quick meals.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Three" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.8">
+    <img src="images/callecafe.png" alt="Resto Four" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Calle Cafe</h2>
+      <p class="rating">⭐ 4.8 / 5</p>
+      <p class="description">
+        Trendy hangout spot with aesthetic interiors.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Four" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.0">
+    <img src="images/illo.jpeg" alt="Resto Five" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Illo</h2>
+      <p class="rating">⭐ 4.0 / 5</p>
+      <p class="description">
+        Budget-friendly meals for students on the go.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Five" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.4">
+    <img src="images/angrydobo.jpeg" alt="Resto Six" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Angrydobo</h2>
+      <p class="rating">⭐ 4.4 / 5</p>
+      <p class="description">
+        A Filipino restaurant specializing in elevated, comfort-style adobo and classic dishes.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Six" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+  <div class="establishment-card" data-rating="4.2">
+    <img src="images/dapithapon.jpeg" alt="Resto Seven" class="establishment-img" />
+    <div class="establishment-info">
+      <h2>Dapit-Hapon Cafe & Bistro</h2>
+      <p class="rating">⭐ 4.2 / 5</p>
+      <p class="description">
+        Chill café with drinks and light meals.
+      </p>
+      <a href="reviews.html?establishment=Resto%20Seven" class="view-btn">View Reviews</a>
+    </div>
+  </div>
+
+</main>
 
   <script>
     const searchInput = document.getElementById("searchInput");

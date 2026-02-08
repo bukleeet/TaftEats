@@ -6,6 +6,22 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-left">
+    <h2 class="logo">TaftEats</h2>
+  </div>
+  <div class="nav-right">
+    <a href="establishments.html" class="nav-link">Home</a>
+    <a href="about.html" class="nav-link">About</a>
+    <a href="reviews.html" class="nav-link">Reviews</a>
+    <a href="profile.html" class="nav-link">Profile</a>
+    <a href="login.html" class="nav-btn login">Login</a>
+    <a href="register.html" class="nav-btn register">Register</a>
+  </div>
+</nav>
+
 <header class="header">
   <h1>Restaurant</h1>
   <p>⭐ 0 / 5 · Description here</p>
@@ -52,16 +68,12 @@
 
   const reviewsContainer = document.getElementById("reviewsContainer");
 
-  // Get establishment name from URL query string
+  // Get establishment name from URL (NO DEFAULT)
   const params = new URLSearchParams(window.location.search);
-  const establishment = params.get("establishment") || "Prelude"; // default to Prelude
+  const establishment = params.get("establishment");
 
-  // Update header dynamically
-  document.querySelector(".header h1").textContent = establishment;
-  document.querySelector(".header p").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
-
-  // Generate review cards
-  reviewsData[establishment].forEach(r => {
+  // Helper function (NEW)
+  function addReviewCard(r) {
     const card = document.createElement("div");
     card.classList.add("review-card");
     card.innerHTML = `
@@ -70,9 +82,26 @@
       <p class="review-text">${r.text}</p>
     `;
     reviewsContainer.appendChild(card);
-  });
+  }
 
-  // Search reviews
+  // UPDATED LOGIC
+  if (establishment && reviewsData[establishment]) {
+    // Show specific restaurant
+    document.querySelector(".header h1").textContent = establishment;
+    document.querySelector(".header p").textContent =
+      `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
+
+    reviewsData[establishment].forEach(r => addReviewCard(r));
+  } else {
+    // Show ALL reviews
+    document.querySelector(".header h1").textContent = "All Reviews";
+    document.querySelector(".header p").textContent =
+      "See what students are saying around Taft";
+
+    Object.values(reviewsData).flat().forEach(r => addReviewCard(r));
+  }
+
+  // Search reviews (UNCHANGED)
   const reviewSearch = document.getElementById("reviewSearch");
   reviewSearch.addEventListener("input", () => {
     const searchText = reviewSearch.value.toLowerCase();
