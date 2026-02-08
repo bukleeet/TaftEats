@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reviews</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -9,20 +10,44 @@
 <header class="header">
   <h1>Restaurant</h1>
   <p>⭐ 0 / 5 · Description here</p>
+  <div class="header-actions">
+      <button class="register-btn" onclick="openModal('reviewModal')">Write Review</button>
+  </div>
 </header>
 
 <main class="container">
-  <!-- Review Search -->
   <div class="search-bar">
     <input type="text" id="reviewSearch" placeholder="Search reviews..." />
   </div>
 
-  <!-- Reviews Container -->
   <div id="reviewsContainer"></div>
 </main>
 
+<div class="modal" id="reviewModal">
+    <div class="modal-card">
+      <h2>Create Review</h2>
+      <div style="font-size:1.5rem; color: #fbbf24; margin-bottom:10px;">⭐⭐⭐⭐⭐</div>
+      <input type="text" placeholder="Title of your review">
+      <textarea rows="5" placeholder="Share your experience..."></textarea>
+  
+      <div class="modal-actions">
+        <button class="primary-btn">Post Review</button>
+        <button class="secondary-btn" onclick="closeModal('reviewModal')">Cancel</button>
+      </div>
+    </div>
+</div>
+
 <script>
-  // Hardcoded reviews for each establishment
+  /* MODAL LOGIC */
+  function openModal(id){
+      document.getElementById(id).classList.add("active");
+  }
+
+  function closeModal(id){
+      document.getElementById(id).classList.remove("active");
+  }
+
+  // Hardcoded reviews
   const reviewsData = {
     "Prelude": [
       { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
@@ -54,23 +79,44 @@
 
   // Get establishment name from URL query string
   const params = new URLSearchParams(window.location.search);
-  const establishment = params.get("establishment") || "Prelude"; // default to Prelude
+  const establishment = params.get("establishment") || "Prelude"; 
 
   // Update header dynamically
   document.querySelector(".header h1").textContent = establishment;
   document.querySelector(".header p").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
 
-  // Generate review cards
-  reviewsData[establishment].forEach(r => {
-    const card = document.createElement("div");
-    card.classList.add("review-card");
-    card.innerHTML = `
-      <h3>${r.title}</h3>
-      <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
-      <p class="review-text">${r.text}</p>
-    `;
-    reviewsContainer.appendChild(card);
-  });
+  // Generate review cards with NEW UI components
+  if(reviewsData[establishment]) {
+      reviewsData[establishment].forEach(r => {
+        const card = document.createElement("div");
+        card.classList.add("review-card");
+        
+        // Updated innerHTML with Helpful buttons and Owner Response
+        card.innerHTML = `
+          <h3>${r.title}</h3>
+          <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
+          <p class="review-text">${r.text}</p>
+
+          <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="primary-btn" style="padding: 6px 14px; font-size:0.8rem;">👍 Helpful</button>
+            <button class="secondary-btn" style="padding: 6px 14px; font-size:0.8rem;">👎 Unhelpful</button>
+          </div>
+
+          <div style="
+            background:#ecfdf5;
+            border-radius:16px;
+            padding:12px;
+            margin-top:15px;
+            font-size:.9rem;
+            color: #065f46;
+          ">
+            <b>Owner Response</b><br>
+            Thanks for visiting! We hope to see you again soon.
+          </div>
+        `;
+        reviewsContainer.appendChild(card);
+      });
+  }
 
   // Search reviews
   const reviewSearch = document.getElementById("reviewSearch");

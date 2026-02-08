@@ -1,54 +1,104 @@
-/* Currently a Placeholder Document */
+/* --- Global Styles & Variables --- */
+:root {
+    --primary: #065f46;
+    --accent: #16a34a;
+    --bg: #f7fdf7;
+    --card: #ffffff;
+    --border: #d1fae5;
+}
 
-/* --- Global Styles --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
-    background-color: #f7fdf7;
-    color: #1f2933;
+    background: linear-gradient(180deg, #f7fdf7, #ecfdf5);
+    color: #374151;
+    min-height: 100vh;
 }
 
-/* --- Header --- */
+/* --- Header (FIXED: Uses Flexbox to prevent overlap) --- */
 .header {
-    text-align: center;
-    padding: 2rem 1rem;
+    background: white;
+    padding: 1.5rem 2rem;
     border-bottom: 2px solid #d1fae5;
-    position: relative;
+    display: flex;
+    flex-direction: column; /* Stack vertically by default */
+    align-items: center;
+    gap: 1rem;
+}
+
+/* On larger screens, spread them out */
+@media (min-width: 768px) {
+    .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .header-content {
+        text-align: left;
+    }
 }
 
 .header h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #065f46;
-    margin-bottom: 0.3rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.2rem;
 }
 
 .header p {
-    color: #16a34a;
+    color: var(--accent);
     font-weight: 500;
+    font-size: 0.95rem;
 }
 
-/* --- Register Button (Establishments only) --- */
-.register-btn {
-    position: absolute;
-    right: 1rem;
-    top: 2rem;
-    padding: 0.5rem 1.2rem;
+/* --- Header Actions (Buttons) --- */
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- Buttons --- */
+.register-btn, .view-btn, .primary-btn, .secondary-btn {
     border-radius: 999px;
-    background-color: #16a34a;
-    color: white;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.register-btn {
+    padding: 0.6rem 1.2rem;
+    background-color: var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    border: none;
 }
 
 .register-btn:hover {
-    background-color: #065f46;
+    background-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background-color: white;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.2rem;
+}
+
+.secondary-btn:hover {
+    background-color: #f0fdf4;
 }
 
 /* --- Search Bar --- */
@@ -60,22 +110,21 @@ body {
 
 .search-bar input,
 .search-bar select {
-    padding: 0.7rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #d1fae5;
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
     font-size: 0.95rem;
     width: 100%;
+    outline: none;
+}
+
+.search-bar input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
 .search-bar select {
-    max-width: 180px;
-}
-
-.search-bar input:focus,
-.search-bar select:focus {
-    outline: 2px solid #16a34a;
-    border-color: #16a34a;
-    box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
+    max-width: 160px;
 }
 
 /* --- Main Container --- */
@@ -85,30 +134,34 @@ body {
     padding: 0 1rem 3rem;
 }
 
-/* --- Establishment Cards (Box Layout) --- */
-.establishment-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 2px solid #d1fae5;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
+/* --- Cards --- */
+.establishment-card, .review-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.establishment-card:hover {
-    border-color: #16a34a;
-    box-shadow: 0 10px 20px rgba(22, 163, 74, 0.15);
+.establishment-card {
+    display: flex;
+    align-items: flex-start; /* Changed from center to handle long text better */
+    gap: 1.5rem;
+}
+
+.establishment-card:hover, .review-card:hover {
     transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(22,163,74,0.1);
+    border-color: var(--accent);
 }
 
 .establishment-img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 16px;
     flex-shrink: 0;
 }
 
@@ -118,93 +171,111 @@ body {
     flex-direction: column;
 }
 
-.establishment-info h2 {
-    font-size: 1.4rem;
-    color: #065f46;
-    margin-bottom: 0.3rem;
+.establishment-info h2, .review-card h3 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 0.4rem;
 }
 
 .establishment-info .description {
-    color: #374151;
-    margin-bottom: 0.8rem;
-}
-
-.establishment-info .view-btn {
-    align-self: flex-start;
-}
-
-/* --- Review Cards (keep same as before) --- */
-.review-card {
-    border: 2px solid #d1fae5;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.review-card:hover {
-    border-color: #16a34a;
-    box-shadow: 0 10px 20px rgba(22, 163, 74, 0.15);
-    transform: translateY(-4px);
-}
-
-.review-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.3rem;
-    color: #065f46;
-}
-
-.review-meta {
-    color: #16a34a;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.review-text {
-    color: #374151;
+    color: #4b5563;
     margin-bottom: 1rem;
+    font-size: 0.95rem;
     line-height: 1.5;
 }
 
-/* --- Ratings (for establishments) --- */
 .rating {
-    color: #16a34a;
-    font-weight: 500;
+    color: var(--accent);
+    font-weight: 600;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
 }
 
-/* --- Buttons --- */
+/* --- View Button --- */
 .view-btn {
-    text-decoration: none;
     padding: 0.5rem 1.2rem;
-    border-radius: 999px;
-    background-color: #065f46;
+    background-color: var(--primary);
     color: white;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
+    align-self: flex-start;
 }
 
 .view-btn:hover {
-    background-color: #16a34a;
+    background-color: var(--accent);
 }
 
-/* --- Responsive --- */
-@media (max-width: 600px) {
-    .search-bar {
-        flex-direction: column;
-    }
+/* --- Modals (FIXED Z-Index) --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5); /* Darker for better contrast */
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Increased Z-Index to be safe */
+}
 
+.modal.active {
+    display: flex;
+}
+
+.modal-card {
+    background: white;
+    padding: 2rem;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-card h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.modal-card input, .modal-card textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    margin-top: 15px;
+    font-family: inherit;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    flex: 1;
+    border: none;
+}
+
+/* --- Responsive Mobile --- */
+@media (max-width: 600px) {
+    .search-bar { flex-direction: column; gap: 0.8rem; }
+    .search-bar select { max-width: 100%; }
+    
     .establishment-card {
         flex-direction: column;
+        align-items: center;
         text-align: center;
     }
-
     .establishment-img {
         width: 100%;
-        height: 180px;
+        height: 160px;
     }
-
     .establishment-info .view-btn {
         align-self: center;
     }

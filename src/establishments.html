@@ -2,19 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Establishments</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  
   <header class="header">
-    <h1>Campus Picks</h1>
-    <p>Discover restaurants around Taft</p>
-    <a href="register.html" class="register-btn">Register</a>
+    <div class="header-content">
+      <h1>Campus Picks</h1>
+      <p>Discover restaurants around Taft</p>
+    </div>
+    <div class="header-actions">
+      <button onclick="openModal('loginModal')" class="secondary-btn">Log In</button>
+      <a href="register.html" class="register-btn">Register</a>
+    </div>
   </header>
 
   <main class="container">
 
-    <!-- Search & Filter -->
     <div class="search-bar">
       <input
         type="text"
@@ -28,8 +34,7 @@
       </select>
     </div>
 
-    <!-- Establishments -->
-    <div class="establishment-card">
+    <div class="establishment-card" data-rating="4.2">
         <img src="images/prelude.jpg" alt="Prelude Café" class="establishment-img" />
         <div class="establishment-info">
           <h2>Prelude</h2>
@@ -40,7 +45,6 @@
           <a href="reviews.html?establishment=Prelude" class="view-btn">View Reviews</a>
         </div>
       </div>
-      
 
       <div class="establishment-card" data-rating="4.7">
         <img src="images/barn.jpeg" alt="Barn by Borro" class="establishment-img" />
@@ -54,7 +58,7 @@
         </div>
       </div>
       
-      <div class="establishment-card" data-rating="4.0">
+      <div class="establishment-card" data-rating="4.5">
         <img src="images/asterisko.png" alt="Asterisko" class="establishment-img" />
         <div class="establishment-info">
           <h2>Asterisko</h2>
@@ -65,11 +69,34 @@
           <a href="reviews.html?establishment=Asterisko" class="view-btn">View Reviews</a>
         </div>
       </div>
-      
-
   </main>
 
+  <div class="modal" id="loginModal">
+    <div class="modal-card">
+      <h2>Welcome back</h2>
+      <p style="color:#6b7280; margin-bottom:10px;">Please enter your details.</p>
+      <input type="text" placeholder="Username or Email">
+      <input type="password" placeholder="Password">
+      <div class="modal-actions">
+        <button class="primary-btn">Log In</button>
+        <button class="secondary-btn" onclick="closeModal('loginModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    /* MODAL LOGIC */
+    function openModal(id){
+      const modal = document.getElementById(id);
+      if(modal) modal.classList.add("active");
+    }
+
+    function closeModal(id){
+      const modal = document.getElementById(id);
+      if(modal) modal.classList.remove("active");
+    }
+
+    /* SEARCH LOGIC */
     const searchInput = document.getElementById("searchInput");
     const ratingFilter = document.getElementById("ratingFilter");
     const cards = document.querySelectorAll(".establishment-card");
@@ -87,12 +114,14 @@
           title.includes(searchText) || desc.includes(searchText);
         const matchesRating = rating >= minRating;
 
-        card.style.display = matchesSearch && matchesRating ? "block" : "none";
+        card.style.display = matchesSearch && matchesRating ? "flex" : "none"; // Note: Changed to 'flex' to maintain layout
       });
     }
 
-    searchInput.addEventListener("input", filterEstablishments);
-    ratingFilter.addEventListener("change", filterEstablishments);
+    if(searchInput && ratingFilter) {
+      searchInput.addEventListener("input", filterEstablishments);
+      ratingFilter.addEventListener("change", filterEstablishments);
+    }
   </script>
 </body>
 </html>
