@@ -8,7 +8,6 @@
 </head>
 <body>
 
-<!-- Navigation -->
 <nav class="navbar">
   <div class="nav-left">
     <h2 class="logo">TaftEats</h2>
@@ -92,81 +91,58 @@
   };
 
   const reviewsContainer = document.getElementById("reviewsContainer");
-
-  // Get establishment name from URL (NO DEFAULT)
   const params = new URLSearchParams(window.location.search);
-<<<<<<< HEAD
   const establishment = params.get("establishment");
 
-  // Helper function (NEW)
+  // Helper function to create the card with New UI features
   function addReviewCard(r) {
     const card = document.createElement("div");
     card.classList.add("review-card");
+    
     card.innerHTML = `
       <h3>${r.title}</h3>
       <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
       <p class="review-text">${r.text}</p>
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="primary-btn" style="padding: 6px 14px; font-size:0.8rem;">👍 Helpful</button>
+        <button class="secondary-btn" style="padding: 6px 14px; font-size:0.8rem;">👎 Unhelpful</button>
+      </div>
+
+      <div style="
+        background:#ecfdf5;
+        border-radius:16px;
+        padding:12px;
+        margin-top:15px;
+        font-size:.9rem;
+        color: #065f46;
+      ">
+        <b>Owner Response</b><br>
+        Thanks for visiting! We hope to see you again soon.
+      </div>
     `;
     reviewsContainer.appendChild(card);
-=======
-  const establishment = params.get("establishment") || "Prelude"; 
-
-  // Update header dynamically
-  document.querySelector(".header h1").textContent = establishment;
-  document.querySelector(".header p").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
-
-  // Generate review cards with NEW UI components
-  if(reviewsData[establishment]) {
-      reviewsData[establishment].forEach(r => {
-        const card = document.createElement("div");
-        card.classList.add("review-card");
-        
-        // Updated innerHTML with Helpful buttons and Owner Response
-        card.innerHTML = `
-          <h3>${r.title}</h3>
-          <p class="review-meta">by ${r.user} · ${'⭐'.repeat(r.stars)}</p>
-          <p class="review-text">${r.text}</p>
-
-          <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="primary-btn" style="padding: 6px 14px; font-size:0.8rem;">👍 Helpful</button>
-            <button class="secondary-btn" style="padding: 6px 14px; font-size:0.8rem;">👎 Unhelpful</button>
-          </div>
-
-          <div style="
-            background:#ecfdf5;
-            border-radius:16px;
-            padding:12px;
-            margin-top:15px;
-            font-size:.9rem;
-            color: #065f46;
-          ">
-            <b>Owner Response</b><br>
-            Thanks for visiting! We hope to see you again soon.
-          </div>
-        `;
-        reviewsContainer.appendChild(card);
-      });
->>>>>>> d0cb2a4c6fe4da65450e853ef79377decc4148ff
   }
 
-  // UPDATED LOGIC
+  // LOGIC: Check if we are viewing a specific restaurant or ALL reviews
   if (establishment && reviewsData[establishment]) {
-    // Show specific restaurant
+    // Show specific restaurant details
     document.querySelector(".header h1").textContent = establishment;
     document.querySelector(".header p").textContent =
       `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
 
     reviewsData[establishment].forEach(r => addReviewCard(r));
   } else {
-    // Show ALL reviews
+    // Show ALL reviews (General view)
     document.querySelector(".header h1").textContent = "All Reviews";
     document.querySelector(".header p").textContent =
       "See what students are saying around Taft";
 
+    // Flatten all reviews into one list and display them
     Object.values(reviewsData).flat().forEach(r => addReviewCard(r));
   }
 
-  // Search reviews (UNCHANGED)
+  // Search reviews logic
   const reviewSearch = document.getElementById("reviewSearch");
   reviewSearch.addEventListener("input", () => {
     const searchText = reviewSearch.value.toLowerCase();
