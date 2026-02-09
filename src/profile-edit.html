@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Edit PRofile -->
+    <div class="edit-profile-container">
+
+        <!-- Edit Profile Form -->
+        <div class="edit-form">
+            <h1>Edit Profile</h1>
+
+            <!-- Main Form Contents -->
+            <div class="edit-inputs">
+                <!-- Image Preview -->
+                <div class="edit-profile-avatar">
+                    <img src="images/sample pfp.png" alt="current profile avatar" />
+                    <div class="upload-overlay">
+                        <span class="upload-icon">Upload</span>
+                    </div>
+                </div>
+                <input type="file" id="profile-pic" name="profile-pic" accept="image/*" style="display: none;">
+
+                <!-- Profile Info -->
+                <div class="edit-info">
+                    <!-- Edit Username -->
+                    <div class="input-box">
+                        <label class="edit-label">Username</label>
+                        <input type="text" rows="4" name="" placeholder="Enter your username" class="edit-input" required>
+                    </div>
+
+                    <!-- Edit Description -->
+                    <div class="input-box">
+                        <label class="edit-label">Description</label>
+                        <textarea type="text" name="" placeholder="Enter description" class="edit-input"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="edit-form-buttons">
+                <!-- Submit Button -->
+                <button type="submit" class="register-button">Save Changes</button>
+                <a href="view-profile.html" class="discard-btn">Discard Changes</a>
+            </div>
+        </div>
+    </div>
+     
+</body>
+</html>
