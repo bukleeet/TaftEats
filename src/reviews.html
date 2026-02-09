@@ -42,7 +42,7 @@
 <div class="modal" id="reviewModal">
   <div class="modal-card">
     <h2>Create Review</h2>
-    
+
     <div class="star-rating-container" id="starContainer">
       <span class="star" data-value="1">★</span>
       <span class="star" data-value="2">★</span>
@@ -54,7 +54,7 @@
     <input type="hidden" id="selectedRating" value="0">
 
     <input type="text" id="reviewTitle" placeholder="Title of your review" class="modal-input">
-    
+
     <div class="rich-editor-container">
       <div class="editor-toolbar">
         <button onclick="formatDoc('bold')" title="Bold"><i class="fas fa-bold"></i></button>
@@ -138,7 +138,7 @@
   });
 
   starContainer.addEventListener('click', (e) => {
-    // Logic to lock in the rating is handled by the mousemove finding the value, 
+    // Logic to lock in the rating is handled by the mousemove finding the value,
     // we just need to grab the current visual value.
     // Simplified: Use the text content logic from highlight
     const val = parseFloat(ratingDisplay.textContent);
@@ -151,13 +151,13 @@
       const starValue = index + 1;
       star.style.color = '#ccc'; // Default gray
       star.className = 'star'; // Reset classes
-      
+
       if (value >= starValue) {
         star.style.color = '#fbbf24'; // Full Gold
       } else if (value >= starValue - 0.5) {
         star.style.color = '#fbbf24'; // Gold
         star.classList.add('half'); // CSS will clip this if needed, or we rely on visual approximation
-        // For simple CSS text stars, true half star is hard without SVG. 
+        // For simple CSS text stars, true half star is hard without SVG.
         // Let's use a linear gradient trick in CSS for the 'half' class.
       }
     });
@@ -222,12 +222,47 @@
 
   /* --- DATA & RENDERING (Existing Logic) --- */
   const reviewsData = {
-    "Prelude": [
-      { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
-      { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
-    ],
-    // ... (Keep your existing data map here) ...
-  };
+  "Prelude": [
+    { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
+    { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
+  ],
+  "Barn by Borro": [
+    { title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
+    { title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
+  ],
+  "Asterisko": [
+    { title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
+    { title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
+  ],
+  "KuhMeal": [
+    { title: "Tasty chicken", user: "@daniella", stars: 4, text: "Chicken and fries are yummy, perfect for a quick snack!" },
+    { title: "Fast service", user: "@miggy", stars: 5, text: "Service is quick and friendly, definitely coming back." }
+  ],
+  "La Elotes": [
+    { title: "Comfort food heaven", user: "@ella_s", stars: 5, text: "Affordable and really tasty meals. Perfect for students." },
+    { title: "Loved the place", user: "@jane_d", stars: 4, text: "Cozy vibe and great food, though it gets crowded sometimes." }
+  ],
+  "Gang Gang Chicken": [
+    { title: "Good quick meals", user: "@kiks_m", stars: 4, text: "Perfect for a quick bite, loved the chicken." },
+    { title: "Nice spot", user: "@sophia", stars: 4, text: "Small but cozy. Staff are friendly too!" }
+  ],
+  "Calle Cafe": [
+    { title: "Aesthetic spot", user: "@daniella", stars: 5, text: "Great interiors, perfect for photos. Drinks are amazing." },
+    { title: "Trendy but pricey", user: "@miggy", stars: 4, text: "Love the vibe, but meals are a bit expensive for students." }
+  ],
+  "Illo": [
+    { title: "Budget-friendly", user: "@ella_s", stars: 4, text: "Good food at a reasonable price. Quick service too." },
+    { title: "Great for students", user: "@jane_d", stars: 4, text: "Easy to grab meals before class. Tasty sandwiches!" }
+  ],
+  "Angrydobo": [
+    { title: "Delicious adobo", user: "@kiks_m", stars: 5, text: "Classic Filipino dishes done right. Highly recommended!" },
+    { title: "Cozy vibes", user: "@sophia", stars: 4, text: "Loved the adobo, place is small but comfy." }
+  ],
+  "Dapit-Hapon Cafe & Bistro": [
+    { title: "Chill café", user: "@daniella", stars: 4, text: "Perfect place to relax with friends. Drinks are great." },
+    { title: "Nice menu", user: "@miggy", stars: 5, text: "Lots of options and very tasty meals." }
+  ]
+};
 
   const ratingMap = { "Prelude": 4.2, "Barn by Borro": 4.7, "Asterisko": 4.5, "KuhMeal": 3.8, "La Elotes": 4.6, "Gang Gang Chicken": 4.1, "Calle Cafe": 4.8, "Illo": 4.0, "Angrydobo": 4.4, "Dapit-Hapon Cafe & Bistro": 4.2 };
   const descriptionMap = { "Prelude": "Cozy café near campus", "Barn by Borro": "LaSallian's favorite!", "Asterisko": "Fun hangout spot", "KuhMeal": "Quick bites and tasty meals", "La Elotes": "Comfort food for everyone", "Gang Gang Chicken": "Small but cozy spot", "Calle Cafe": "Trendy café with aesthetic interiors", "Illo": "Budget-friendly meals", "Angrydobo": "Filipino comfort food", "Dapit-Hapon Cafe & Bistro": "Chill café with light meals" };
@@ -253,9 +288,9 @@
       ${restoName ? `<p class="review-resto" style="font-weight:bold; margin-bottom:5px; color:#065f46;">${restoName}</p>` : ""}
       <h3>${r.title}</h3>
       <p class="review-meta">by ${r.user} · <span style="color:#fbbf24; letter-spacing:2px;">${starsHtml}</span></p>
-      
+
       <div class="review-text" style="margin-bottom:10px;">${r.text}</div>
-      
+
       ${r.image ? `<img src="${r.image}" style="max-width:100%; max-height:300px; border-radius:12px; margin-bottom:15px; border:1px solid #eee;">` : ""}
 
       <div style="display:flex; gap:10px; margin-top:5px;">
@@ -266,6 +301,30 @@
     // Prepend (add to top) instead of append for new reviews
     reviewsContainer.insertBefore(card, reviewsContainer.firstChild);
   }
+
+  /* --- SEARCH REVIEWS LOGIC --- */
+const reviewSearch = document.getElementById("reviewSearch");
+
+reviewSearch.addEventListener("input", () => {
+  const searchText = reviewSearch.value.toLowerCase();
+  const reviews = document.querySelectorAll(".review-card");
+
+  reviews.forEach(review => {
+    const title = review.querySelector("h3")?.textContent.toLowerCase() || "";
+    const body = review.querySelector(".review-text")?.textContent.toLowerCase() || "";
+    const resto = review.querySelector(".review-resto")?.textContent.toLowerCase() || "";
+
+    if (
+      title.includes(searchText) ||
+      body.includes(searchText) ||
+      resto.includes(searchText)
+    ) {
+      review.style.display = "block";
+    } else {
+      review.style.display = "none";
+    }
+  });
+});
 
   // Initial Load Logic
   if (establishment && reviewsData[establishment]) {
