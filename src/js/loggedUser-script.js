@@ -21,10 +21,9 @@ function updateNavbarAuth() {
 
 function handleLogout() {
     if (confirm("Are you sure you want to log out?")) {
-        // 1. Clear session data
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('currentUser');
-        window.location.href = 'establishments.html'; 
+        window.location.href = 'establishments.html';
     }
 }
 
