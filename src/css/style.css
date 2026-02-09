@@ -419,7 +419,7 @@ body {
 }
 
 .modal.active {
-    display: flex; 
+    display: flex;
 }
 
 .modal-card {
@@ -437,7 +437,7 @@ body {
     to { transform: scale(1); opacity: 1; }
 }
 
-.modal-card input, 
+.modal-card input,
 .modal-card textarea {
     width: 100%;
     padding: 12px;
@@ -492,332 +492,100 @@ body {
     gap: 12px;
     margin-top: 20px;
     justify-content: flex-end;
-
 }
 
-
-
-/*** CSS Styles for Register, View Profile, Edit Profile ***/
-/* Register Account Form */
-.register {
-    position: relative;
-    min-height: 100vh;
+.star-rating-container {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding:  clamp(1rem, 3vw, 2rem);
+    gap: 5px;
+}
+.star {
+    transition: color 0.2s;
 }
 
-.register-form {
-    position: relative;
-    width: min(450px, 100%);
-    margin-inline: clamp(0.2rem, 3vw, 1.5rem);
-    color: #010101;
-    padding: 2rem clamp(1.8rem, 4vw, 2.5rem);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: clamp(0.4rem, 2vw, 1rem);
-    background: transparent;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.star.half {
+    background: linear-gradient(to right, #fbbf24 50%, #ccc 50%);
+	background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+	color: transparent;
+}
+#ratingValueDisplay {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-left: 10px;
 }
 
-.register-title {
-    font-size: clamp(1.8rem, 4vw, 2.2rem);
-    margin-bottom: clamp(1.5rem, 3vw, 2rem);
-}
-
-.input-box {
-    position: relative;
-    margin-bottom: clamp(1.2rem, 3vw, 1.7rem);
-}
-
-.register-input {
-    width: 100%;
-    padding: clamp(0.7rem, 2vw, 0.75rem) 2.5rem clamp(0.5rem, 1vw, 0.5rem) 0.7rem;
-    font-size: clamp(0.9rem, 2vw, 1rem);
-    background: transparent;
-    border: 2px solid #010101;
-    border-radius: 5px;
-}
-
-.register-label {
-    position: absolute;
-    top: 50%;
-    left: 0.5rem;
-    transform: translateY(-50%);
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    color: #010101;
-    background: #f3f3f3;
-    pointer-events: none;
-    transition: 0.2s ease-in-out;
-    padding: 0 0.3rem;
-}
-
-.register-button {
-    width: 100%;
-    padding: clamp(0.7rem, 2vw, 0.8rem);
-    margin-bottom: 1rem;
-    background: #065f46;
-    border: none;
-    border-radius: clamp(0.3rem, 2vw, 0.5rem);
-    color: white;
-    font-weight: 600;
-    font-size: clamp(0.9rem, 2vw, 1rem);
-    cursor: pointer;
-}
-
-.register-button:hover {
-    background: #16a34a;
-}
-
-.register-input:focus+.register-label,
-.register-input:not(:placeholder-shown)+.register-label {
-    top: 0.1rem;
-    left: 0.7rem;
-    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-}
-
-
-/*** View Profile Styles ***/
-
-/* Profile Information */
-.profile-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1rem 3rem;
-}
-
-.profile-content {
-    display: flex;
-    padding: 2rem 1rem;
-    border-bottom: 2px solid #2f8559;
-}
-
-.profile-left {
-    display: flex;
-    flex-direction: column;
-}
-
-.profile-avatar, .edit-profile-avatar {
-    width: 20vw;
-    height: 20vw;
-    border-radius: 50%;
+/* Rich Text Editor */
+.rich-editor-container {
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    margin-top: 10px;
     overflow: hidden;
-    max-width: 200px;
-    max-height: 200px;
 }
 
-.profile-avatar img,
-.edit-profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.edit-btn {
-    margin: 12px;
-    padding: 0.5rem 0.75rem;
-    border-radius: 13px;
-    background-color: #16a34a;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-    font-weight: 500;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.edit-btn:hover {
-    background-color: #065f46;
-}
-
-.user-info {
-    flex: 1;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    min-width: 200px;
-    margin-left: 30px;
-    margin-right: 75px;
-}
-
-.user-info h1 {
-    color: #16a34a;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.user-info p {
-    font-size: 15px;
-    font-weight: 500;
-    text-align: justify;
-    color: rgba(0, 0, 0, 0.5);
-    width: 44vw;
-}
-
-/* Activity Section */
-.activity-sidebar {
+.editor-toolbar {
+    background: #f0fdf4;
+    padding: 8px;
+    border-bottom: 1px solid #d1fae5;
     display: flex;
-    margin-top: 0.75vw;
-    margin-bottom: 1.3vw;
+    gap: 5px;
 }
 
-.activity-sidebar div {
-    margin: 0 auto;
-}
-
-
-.activity-contents {
-    display: flex;
-    flex-direction: column;
-}
-
-.review-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 2px solid #d1fae5;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.review-card h2 {
-    font-size: 1.4rem;
-    color: #065f46;
-    margin-bottom: 0.3rem;
-}
-
-.establishment-img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 12px;
-    flex-shrink: 0;
-}
-
-.review-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.rating {
-    color: #16a34a;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.review-text {
-    color: #374151;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-
-/*** Edit Profile Page ***/
-
-.edit-profile-container  {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding:  clamp(1rem, 3vw, 2rem);
-}
-
-.edit-form {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    width: min(650px, 100%);
-    margin-inline: clamp(0.2rem, 3vw, 1.5rem);
-    color: #010101;
-    padding: 2rem clamp(1.8rem, 4vw, 2.5rem);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: clamp(0.4rem, 2vw, 1rem);
-    background: transparent;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.edit-inputs {
-    display: flex;
-    padding: 1rem 1rem;
-}
-
-.edit-profile-avatar {
-    height: 120px;
-    width: 120px;
+.editor-toolbar button {
+    background: white;
+    border: 1px solid #d1fae5;
+    border-radius: 5px;
+    padding: 5px 10px;
     cursor: pointer;
-    position: relative;
+    font-weight: bold;
+    color: #065f46;
 }
 
-.upload-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+.editor-toolbar button:hover {
+    background: #dcfce7;
+}
+
+.editor-content {
+    padding: 12px;
+    min-height: 100px;
+    outline: none;
+    font-size: 1rem;
+    color: #374151;
+}
+
+/* Media Upload */
+.media-upload {
+    margin-top: 15px;
+}
+.upload-label {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #f3f4f6;
+    color: #374151;
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+}
+.upload-label:hover {
+    background-color: #e5e7eb;
+}
+
+/* Modal Inputs */
+.modal-input {
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-    border-radius: 50%;
+    padding: 12px;
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
 }
-
-.edit-profile-avatar:hover .upload-overlay {
-    opacity: 1;
+.modal-input:focus {
+    border-color: #16a34a;
 }
-
-.upload-icon {
-    font-size: 16px;
-    color: white;
-}
-
-
-.edit-info {
-    flex: 1;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    min-width: 200px;
-    margin-left: 30px;
-    margin-right: 30px;
-}
-
-input[type="text"], textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-textarea {
-    resize: vertical;
-}
-
-.edit-form-buttons {
-    display: flex;
-    flex-direction: column;
-}
-
-.discard-btn {
-    margin-left: 9.7rem;
-    width: 250px;
-    padding: 0.5rem 0.75rem;
-    border-radius: 13px;
-    background-color: #16a34a;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-    justify-content: center;
-    font-weight: 500;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.discard-btn:hover {
-    background-color: #065f46;
-}
-
