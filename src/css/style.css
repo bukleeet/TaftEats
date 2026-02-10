@@ -947,6 +947,11 @@ body.dark-mode .owner-response {
     border: 1px solid #334155;
 }
 
+body.dark-mode .establishment-info .description {
+    color: #FFFFFF;
+    margin-bottom: 0.8rem;
+}
+
 
 
 /* Modal Inputs */
