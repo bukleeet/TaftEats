@@ -383,6 +383,58 @@ body {
     font-weight: 500;
 }
 
+/* --- Developers Section --- */
+.dev-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.dev-card img {
+    width: 130px;
+    height: 135px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #16a34a;
+    box-shadow: 0 8px 16px rgba(6, 95, 70, 0.25);
+    margin-bottom: 0.8rem;
+}
+
+.dev-card h3 {
+    font-size: 1.05rem;
+    color: #065f46;
+    margin-bottom: 0.2rem;
+}
+
+.dev-role {
+    font-size: 0.9rem;
+    color: #374151;
+    font-style: italic;
+}
+
+/* --- Dev text + FB Link --- */
+.dev-details p {
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.dev-icon {
+    color: #065f46;
+}
+
+.dev-details a {
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.dev-details a:hover {
+    color: #16a34a;
+}
+
+
 /* --- Responsive --- */
 @media (max-width: 600px) {
     .search-bar {
@@ -576,6 +628,116 @@ body {
 .upload-label:hover {
     background-color: #e5e7eb;
 }
+
+/* TEST */
+/* --- Theme Toggle Button --- */
+.theme-btn {
+    background: #ecfdf5;
+    border: 1px solid #d1fae5;
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.theme-btn:hover {
+    background-color: #dcfce7;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+body.dark-mode {
+    background-color: #0f172a; /* deep navy instead of black for less strain */
+    color: #e5e7eb; /* light text */
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+    background-color: #1e293b; /* slightly lighter than background */
+    border-bottom-color: #134e4a;
+}
+
+body.dark-mode .nav-link,
+body.dark-mode .logo {
+    color: #a7f3d0; /* minty green for visibility */
+}
+
+body.dark-mode .nav-btn.login {
+    color: #a7f3d0;
+    border-color: #16a34a;
+}
+
+body.dark-mode .nav-btn.register {
+    background-color: #16a34a;
+    color: #0f172a;
+}
+
+/* Buttons */
+body.dark-mode .view-btn,
+body.dark-mode .primary-btn {
+    background-color: #16a34a;
+    color: #0f172a;
+}
+
+body.dark-mode .secondary-btn {
+    background-color: #1e293b;
+    color: #d1d5db;
+    border-color: #134e4a;
+}
+
+body.dark-mode .theme-btn {
+    background-color: #1e293b;
+    color: #a7f3d0;
+    border: 1px solid #16a34a;
+}
+
+/* Cards */
+body.dark-mode .about-card,
+body.dark-mode .establishment-card,
+body.dark-mode .review-card {
+    background-color: #1e293b; /* dark navy card */
+    border-color: #134e4a;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+    color: #a7f3d0; /* minty green headings */
+}
+
+/* Text */
+body.dark-mode p,
+body.dark-mode li,
+body.dark-mode .dev-details p,
+body.dark-mode .contact-info {
+    color: #d1d5db;
+}
+
+/* Dev links */
+body.dark-mode .dev-details a {
+    color: #d1d5db;
+}
+body.dark-mode .dev-details a:hover {
+    color: #16a34a;
+}
+
+/* Modal Inputs */
+body.dark-mode .modal-card,
+body.dark-mode .modal-input {
+    background-color: #1e293b;
+    color: #d1d5db;
+    border-color: #134e4a;
+}
+
+/* Star Rating */
+body.dark-mode .star-rating-container {
+    color: #ccc;
+}
+
 
 /* Modal Inputs */
 .modal-input {
