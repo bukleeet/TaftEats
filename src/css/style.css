@@ -140,6 +140,19 @@ body {
     background-color: #065f46;
 }
 
+.review-btn {
+    position: absolute;
+    right: 1rem;
+    top: 2rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    background-color: #16a34a;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
 /* --- Search Bar --- */
 .search-bar {
     display: flex;
@@ -222,7 +235,7 @@ body {
     align-self: flex-start;
 }
 
-/* --- Review Cards (keep same as before) --- */
+/* --- Review Cards --- */
 .review-card {
     border: 2px solid #d1fae5;
     border-radius: 12px;
@@ -649,94 +662,291 @@ body {
    DARK MODE
 ========================= */
 body.dark-mode {
-    background-color: #0f172a; /* deep navy instead of black for less strain */
-    color: #e5e7eb; /* light text */
+    background-color: #121212;
+    color: #e0e0e0;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* Navbar */
 body.dark-mode .navbar {
-    background-color: #1e293b; /* slightly lighter than background */
-    border-bottom-color: #134e4a;
+    background-color: #1f1f1f;
+    border-bottom: 1px solid #2c2c2c;
 }
 
-body.dark-mode .nav-link,
-body.dark-mode .logo {
-    color: #a7f3d0; /* minty green for visibility */
+body.dark-mode .logo,
+body.dark-mode .nav-link {
+    color: #f5f5f5;
+    transition: color 0.3s;
+}
+
+body.dark-mode .nav-link:hover {
+    color: #ffa500;
 }
 
 body.dark-mode .nav-btn.login {
-    color: #a7f3d0;
-    border-color: #16a34a;
+    color: #f5f5f5;
+    border: 1px solid #bbbbbb;
+    background-color: transparent;
+}
+
+body.dark-mode .nav-btn.login:hover {
+    background-color: #333;
 }
 
 body.dark-mode .nav-btn.register {
-    background-color: #16a34a;
-    color: #0f172a;
+    background-color: #ff9800;
+    color: #1f1f1f;
 }
 
-/* Buttons */
-body.dark-mode .view-btn,
-body.dark-mode .primary-btn {
-    background-color: #16a34a;
-    color: #0f172a;
+/* Hero Section */
+body.dark-mode .hero {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("../images/header.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
-body.dark-mode .secondary-btn {
-    background-color: #1e293b;
-    color: #d1d5db;
-    border-color: #134e4a;
+body.dark-mode .hero h1,
+body.dark-mode .hero p {
+    color: #ffffff;
 }
 
-body.dark-mode .theme-btn {
-    background-color: #1e293b;
-    color: #a7f3d0;
-    border: 1px solid #16a34a;
+body.dark-mode .hero-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+/* Header */
+body.dark-mode .header h1 {
+    color: #ffb74d;
+}
+
+body.dark-mode .header p {
+    color: #ffa500;
+}
+
+body.dark-mode .header {
+    border-bottom: 1px solid #2c2c2c;
+}
+
+/* Search Bar */
+body.dark-mode .search-bar input,
+body.dark-mode .search-bar select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .search-bar input:focus,
+body.dark-mode .search-bar select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
 }
 
 /* Cards */
 body.dark-mode .about-card,
 body.dark-mode .establishment-card,
 body.dark-mode .review-card {
-    background-color: #1e293b; /* dark navy card */
-    border-color: #134e4a;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    background-color: #1f1f1f;
+    border: 1px solid #2c2c2c;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .about-card::before {
+    background-color: #ff9800; /* accent strip */
 }
 
 /* Headings */
 body.dark-mode h1,
 body.dark-mode h2,
 body.dark-mode h3 {
-    color: #a7f3d0; /* minty green headings */
+    color: #ffb74d;
 }
 
-/* Text */
+/* Long Text */
 body.dark-mode p,
 body.dark-mode li,
 body.dark-mode .dev-details p,
 body.dark-mode .contact-info {
-    color: #d1d5db;
+    color: #000000;
 }
 
-/* Dev links */
+/* Bullets */
+body.dark-mode .about-list li::marker {
+    color: #ff9800;
+}
+
+/* Contact Info */
+body.dark-mode .contact-info {
+    background-color: #e0e0e0;
+    border: 1px dashed #ff9800;
+}
+
+/* Buttons */
+body.dark-mode .view-btn,
+body.dark-mode .primary-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .view-btn:hover,
+body.dark-mode .primary-btn:hover {
+    background-color: #e68a00;
+}
+
+body.dark-mode .secondary-btn {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .theme-btn {
+    background-color: #2a2a2a;
+    color: #ff9800;
+    border: 1px solid #ff9800;
+}
+
+/* Review & Ratings */
+body.dark-mode .review-meta,
+body.dark-mode .rating {
+    color: #ff9800;
+}
+
+body.dark-mode .review-text {
+    color: #e0e0e0;
+}
+
+body.dark-mode .star-rating-container {
+    color: #ffc107;
+}
+
+body.dark-mode .star.half {
+    background: linear-gradient(to right, #ff9800 50%, #444 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.review-resto {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #065f46;
+}
+
+.owner-response {
+    background: #ecfdf5;
+    border-radius: 16px;
+    padding: 12px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #065f46;
+}
+
+
+/* About / Dev Section */
+body.dark-mode .about-header h2,
+body.dark-mode .dev-card h3 {
+    color: #ffb74d;
+}
+
+body.dark-mode .about-icon,
+body.dark-mode .dev-card img {
+    border-color: #ff9800;
+}
+
 body.dark-mode .dev-details a {
-    color: #d1d5db;
+    color: #ffb74d;
 }
+
 body.dark-mode .dev-details a:hover {
-    color: #16a34a;
+    color: #ffa500;
 }
+
+body.dark-mode .review-btn {
+    position: absolute;
+    right: 1rem;
+    top: 2rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    background-color: #ffb74d;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* Modal & Inputs */
+body.dark-mode .modal-card,
+body.dark-mode .modal-input {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .modal-input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+}
+
+/* Rich Editor / Toolbar */
+body.dark-mode .editor-toolbar {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .editor-toolbar button {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .editor-toolbar button:hover {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .editor-content {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+/* Media Upload */
+body.dark-mode .upload-label {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .upload-label:hover {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
 
 /* Modal Inputs */
 body.dark-mode .modal-card,
 body.dark-mode .modal-input {
-    background-color: #1e293b;
-    color: #d1d5db;
-    border-color: #134e4a;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
 }
 
 /* Star Rating */
 body.dark-mode .star-rating-container {
-    color: #ccc;
+    color: #ffc107; /* warm gold for stars, easy on the eyes */
 }
+
+body.dark-mode .review-resto {
+    color: #ffb74d;
+}
+
+body.dark-mode .owner-response {
+    background: #1f2933;
+    color: #e5e7eb;
+    border: 1px solid #334155;
+}
+
 
 
 /* Modal Inputs */

@@ -20,6 +20,7 @@
     <a href="profile-view.html" class="nav-link">Profile</a>
     <a href="login.html" class="nav-btn login" id="navLoginBtn">Login</a>
     <a href="register.html" class="nav-btn register">Register</a>
+    <button id="themeToggle" class="theme-btn">🌙</button>
   </div>
 </nav>
 
@@ -27,7 +28,7 @@
   <h1 id="establishmentName">Restaurant</h1>
   <p id="establishmentDesc">⭐ 0 / 5 · Description here</p>
   <div class="header-actions">
-    <button class="register-btn" id="writeReviewBtn" onclick="openModal('reviewModal')" style="display:none;">Write Review</button>
+    <button class="review-btn" id="writeReviewBtn" onclick="openModal('reviewModal')" style="display:none;">Write Review</button>
   </div>
 </header>
 
@@ -281,7 +282,7 @@
     }
 
     card.innerHTML = `
-      ${restoName ? `<p class="review-resto" style="font-weight:bold; margin-bottom:5px; color:#065f46;">${restoName}</p>` : ""}
+      ${restoName ? `<p class="review-resto">${restoName}</p>` : ""}
       <h3>
         <span class="actual-title">${r.title}</span>
         <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal; display:${r.edited ? 'inline' : 'none'};"> (edited)</span>
@@ -301,7 +302,7 @@
         ` : ""}
       </div>
 
-      <div style="background:#ecfdf5; border-radius:16px; padding:12px; margin-top:15px; font-size:.9rem; color: #065f46;">
+      <div class="owner-response">
         <b>Owner Response</b><br>
         Thanks for visiting! We hope to see you again soon.
       </div>
@@ -483,6 +484,7 @@
 </script>
 
 <script src="js/loggedUser-script.js"></script>
+<script src="js/theme-toggle.js"></script>
 
 </body>
 </html>

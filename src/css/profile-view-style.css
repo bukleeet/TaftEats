@@ -176,3 +176,87 @@
     .profile-avatar { margin-right: 0; margin-bottom: 10px; } 
     .tabs { flex-direction: column; } 
 }
+
+/* =========================
+   DARK MODE - Profile Page
+========================= */
+body.dark-mode .profile-container {
+    background-color: #121212;
+}
+
+body.dark-mode .profile-content {
+    border-bottom: 1px solid #2c2c2c;
+}
+
+body.dark-mode .profile-left {
+    color: #e0e0e0;
+}
+
+body.dark-mode .profile-avatar {
+    border: 2px solid #444;
+}
+
+body.dark-mode .edit-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .edit-btn:hover {
+    background-color: #e68a00;
+}
+
+body.dark-mode .user-info h1 {
+    color: #ffb74d;
+}
+
+body.dark-mode .user-info p {
+    color: #e0e0e0;
+}
+
+/* --- Activity Tabs --- */
+body.dark-mode .tabs input[type="radio"]:checked + .tab-label {
+    background-color: #ff9800;
+    color: #121212;
+}
+
+body.dark-mode .tab-label {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .tab-label:hover {
+    background-color: #e68a00;
+    color: #121212;
+}
+
+/* Activity Content */
+body.dark-mode .tab-content {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+/* --- Review/Posts Cards --- */
+body.dark-mode .review-card {
+    background-color: #1f1f1f;
+    border: 1px solid #2c2c2c;
+    color: #e0e0e0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .review-card h2 {
+    color: #ffb74d;
+}
+
+body.dark-mode .rating {
+    color: #ff9800;
+}
+
+body.dark-mode .review-text {
+    color: #e0e0e0;
+}
+
+/* --- Images --- */
+body.dark-mode .establishment-img {
+    border: 1px solid #444;
+}
+
