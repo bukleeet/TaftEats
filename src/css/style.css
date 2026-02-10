@@ -952,6 +952,166 @@ body.dark-mode .establishment-info .description {
     margin-bottom: 0.8rem;
 }
 
+/* =========================
+   LOGIN PAGE – LIGHT MODE
+========================= */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 1rem;
+}
+
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  border-radius: 20px;
+  border: 1.5px solid #d1fae5;
+  box-shadow: 0 12px 30px rgba(6, 95, 70, 0.08);
+  text-align: center;
+}
+
+.login-header h2 {
+  color: #065f46;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  color: #065f46;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #d1fae5;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #065f46;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.login-submit-btn:hover {
+  background-color: #16a34a;
+}
+
+.register-link {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.register-link a {
+  color: #16a34a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* =========================
+   LOGIN PAGE – DARK MODE
+========================= */
+
+body.dark-mode .login-container {
+    background-color: #121212;
+}
+
+body.dark-mode .login-card {
+    background-color: #1f1f1f;
+    border: 1.5px solid #2c2c2c;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .login-header h2 {
+    color: #ffb74d;
+}
+
+body.dark-mode .login-header p {
+    color: #e0e0e0;
+}
+
+/* Labels */
+body.dark-mode .form-group label {
+    color: #ffb74d;
+}
+
+/* Inputs */
+body.dark-mode .form-input {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .form-input::placeholder {
+    color: #9ca3af;
+}
+
+body.dark-mode .form-input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+}
+
+/* Login Button */
+body.dark-mode .login-submit-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .login-submit-btn:hover {
+    background-color: #e68a00;
+}
+
+/* Register Text */
+body.dark-mode .register-link {
+    color: #e0e0e0;
+}
+
+body.dark-mode .register-link a {
+    color: #ffa500;
+}
+
+body.dark-mode .register-link a:hover {
+    color: #ffb74d;
+}
+
+
+
 
 
 /* Modal Inputs */
