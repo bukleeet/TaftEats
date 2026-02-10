@@ -220,7 +220,7 @@
     closeModal('reviewModal');
   }
 
-    /* --- REVIEW DELETION --- */
+  /* --- REVIEW DELETION --- */
   function deleteReview(button) {
     if (confirm("Are you sure you want to delete this review?")) {
         const card = button.closest('.review-card');
@@ -235,7 +235,7 @@
     activeEditCard = button.closest('.review-card');
     
     // Extract existing data from the card
-    const currentTitle = activeEditCard.querySelector('h3').innerText;
+    const currentTitle = activeEditCard.querySelector('.actual-title').innerText;
     const currentText = activeEditCard.querySelector('.review-text').innerHTML;
     const currentRating = activeEditCard.getAttribute('data-rating');
     
@@ -262,7 +262,9 @@
 
     if (activeEditCard) {
         // Populate the modal fields with the original review
-        activeEditCard.querySelector('h3').innerText = newTitle;
+        // activeEditCard.querySelector('h3').innerText = newTitle;
+        activeEditCard.querySelector('.actual-title').innerText = newTitle;
+        activeEditCard.querySelector('.edited-mark').style.display = 'inline';
         activeEditCard.querySelector('.review-text').innerHTML = newBody;
         activeEditCard.setAttribute('data-rating', newRating);
         
@@ -355,7 +357,10 @@
 
     card.innerHTML = `
       ${restoName ? `<p class="review-resto" style="font-weight:bold; margin-bottom:5px; color:#065f46;">${restoName}</p>` : ""}
-      <h3>${r.title}</h3>
+      <h3>
+        <span class="actual-title">${r.title}</span>
+        <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal; display:none;"> (edited)</span>
+      </h3>
       <p class="review-meta">by ${r.user} · <span style="color:#fbbf24; letter-spacing:2px;">${starsHtml}</span></p>
 
       <div class="review-text" style="margin-bottom:10px;">${r.text}</div>
