@@ -81,16 +81,15 @@
 </div>
 
 <script>
-  /* --- AUTHENTICATION CHECK --- */
+  const currentUser = localStorage.getItem('currentUser');
+  
   window.addEventListener('load', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const writeBtn = document.getElementById('writeReviewBtn');
     const loginBtn = document.getElementById('navLoginBtn');
 
     if (isLoggedIn === 'true') {
-      // Show Write Review Button
       writeBtn.style.display = 'inline-block';
-      // Change Login to Logout
       loginBtn.textContent = 'Logout';
       loginBtn.href = '#';
       loginBtn.onclick = () => {
@@ -103,27 +102,88 @@
     }
   });
 
-  /* --- MODAL LOGIC --- */
+  const defaultReviews = {
+    "Prelude": [
+      { id: 1, title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
+      { id: 2, title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
+    ],
+    "Barn by Borro": [
+      { id: 3, title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
+      { id: 4, title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
+    ],
+    "Asterisko": [
+      { id: 5, title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
+      { id: 6, title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
+    ],
+    "KuhMeal": [
+        { id: 7, title: "Tasty chicken", user: "@daniella", stars: 4, text: "Chicken and fries are yummy, perfect for a quick snack!" },
+        { id: 8, title: "Fast service", user: "@miggy", stars: 5, text: "Service is quick and friendly, definitely coming back." }
+    ],
+    "La Elotes": [
+        { id: 9, title: "Comfort food heaven", user: "@ella_s", stars: 5, text: "Affordable and really tasty meals. Perfect for students." },
+        { id: 10, title: "Loved the place", user: "@jane_d", stars: 4, text: "Cozy vibe and great food, though it gets crowded sometimes." }
+    ],
+    "Gang Gang Chicken": [
+        { id: 11, title: "Good quick meals", user: "@kiks_m", stars: 4, text: "Perfect for a quick bite, loved the chicken." },
+        { id: 12, title: "Nice spot", user: "@sophia", stars: 4, text: "Small but cozy. Staff are friendly too!" }
+    ],
+    "Calle Cafe": [
+        { id: 13, title: "Aesthetic spot", user: "@daniella", stars: 5, text: "Great interiors, perfect for photos. Drinks are amazing." },
+        { id: 14, title: "Trendy but pricey", user: "@miggy", stars: 4, text: "Love the vibe, but meals are a bit expensive for students." }
+    ],
+    "Illo": [
+        { id: 15, title: "Budget-friendly", user: "@ella_s", stars: 4, text: "Good food at a reasonable price. Quick service too." },
+        { id: 16, title: "Great for students", user: "@jane_d", stars: 4, text: "Easy to grab meals before class. Tasty sandwiches!" }
+    ],
+    "Angrydobo": [
+        { id: 17, title: "Delicious adobo", user: "@kiks_m", stars: 5, text: "Classic Filipino dishes done right. Highly recommended!" },
+        { id: 18, title: "Cozy vibes", user: "@sophia", stars: 4, text: "Loved the adobo, place is small but comfy." }
+    ],
+    "Dapit-Hapon Cafe & Bistro": [
+        { id: 19, title: "Chill café", user: "@daniella", stars: 4, text: "Perfect place to relax with friends. Drinks are great." },
+        { id: 20, title: "Nice menu", user: "@miggy", stars: 5, text: "Lots of options and very tasty meals." }
+    ]
+  };
+
+  let reviewsData;
+  const stored = localStorage.getItem('taftEatsReviews');
+
+  if (stored) {
+    reviewsData = JSON.parse(stored);
+    if (!reviewsData["Prelude"] || Object.keys(reviewsData).length === 0) {
+        reviewsData = defaultReviews;
+        localStorage.setItem('taftEatsReviews', JSON.stringify(reviewsData));
+    }
+  } else {
+    reviewsData = defaultReviews;
+    localStorage.setItem('taftEatsReviews', JSON.stringify(reviewsData));
+  }
+
+  function saveReviewsToStorage(data) {
+    localStorage.setItem('taftEatsReviews', JSON.stringify(data));
+  }
+
   function openModal(id){
       document.getElementById(id).classList.add("active");
   }
 
   function closeModal(id){
       document.getElementById(id).classList.remove("active");
-      // Reset form
       document.getElementById('reviewTitle').value = '';
       document.getElementById('reviewBody').innerHTML = '';
       resetStars();
       removeImage();
+      activeEditCard = null; 
+      const submitBtn = document.querySelector('#reviewModal .primary-btn');
+      submitBtn.innerText = "Post Review";
+      submitBtn.onclick = submitReview;
   }
 
-  /* --- STAR RATING LOGIC (0.5 Increments) --- */
   const starContainer = document.getElementById('starContainer');
   const stars = starContainer.querySelectorAll('.star');
   const ratingInput = document.getElementById('selectedRating');
   const ratingDisplay = document.getElementById('ratingValueDisplay');
 
-  // Mouse move logic for half stars
   stars.forEach((star, index) => {
     star.addEventListener('mousemove', (e) => {
       const rect = star.getBoundingClientRect();
@@ -134,13 +194,10 @@
   });
 
   starContainer.addEventListener('mouseleave', () => {
-    highlightStars(ratingInput.value); // Reset to selected
+    highlightStars(ratingInput.value); 
   });
 
   starContainer.addEventListener('click', (e) => {
-    // Logic to lock in the rating is handled by the mousemove finding the value,
-    // we just need to grab the current visual value.
-    // Simplified: Use the text content logic from highlight
     const val = parseFloat(ratingDisplay.textContent);
     ratingInput.value = val;
   });
@@ -149,16 +206,14 @@
     ratingDisplay.textContent = value + "/5";
     stars.forEach((star, index) => {
       const starValue = index + 1;
-      star.style.color = '#ccc'; // Default gray
-      star.className = 'star'; // Reset classes
+      star.style.color = '#ccc'; 
+      star.className = 'star'; 
 
       if (value >= starValue) {
-        star.style.color = '#fbbf24'; // Full Gold
+        star.style.color = '#fbbf24'; 
       } else if (value >= starValue - 0.5) {
-        star.style.color = '#fbbf24'; // Gold
-        star.classList.add('half'); // CSS will clip this if needed, or we rely on visual approximation
-        // For simple CSS text stars, true half star is hard without SVG.
-        // Let's use a linear gradient trick in CSS for the 'half' class.
+        star.style.color = '#fbbf24'; 
+        star.classList.add('half'); 
       }
     });
   }
@@ -168,12 +223,10 @@
     highlightStars(0);
   }
 
-  /* --- RICH TEXT LOGIC --- */
   function formatDoc(cmd, value=null) {
     document.execCommand(cmd, false, value);
   }
 
-  /* --- IMAGE PREVIEW --- */
   let currentImageSrc = null;
 
   function previewImage(input) {
@@ -194,145 +247,6 @@
     currentImageSrc = null;
   }
 
-  /* --- REVIEW SUBMISSION --- */
-  function submitReview() {
-    const title = document.getElementById('reviewTitle').value;
-    const body = document.getElementById('reviewBody').innerHTML; // Get HTML
-    const rating = document.getElementById('selectedRating').value;
-    const user = localStorage.getItem('currentUser') || "Guest";
-
-    if(!title || !body || rating == 0) {
-      alert("Please fill in title, review text, and a rating.");
-      return;
-    }
-
-    // Create review object
-    const newReview = {
-      title: title,
-      user: "@" + user,
-      stars: parseFloat(rating),
-      text: body,
-      image: currentImageSrc
-    };
-
-    // Add to DOM
-    addReviewCard(newReview, document.getElementById('establishmentName').textContent);
-    closeModal('reviewModal');
-  }
-
-  /* --- REVIEW DELETION --- */
-  function deleteReview(button) {
-    if (confirm("Are you sure you want to delete this review?")) {
-        const card = button.closest('.review-card');
-        card.remove();
-    }
-  }
-
-  /* --- REVIEW EDITING --- */
-  let activeEditCard = null; // Variable to track which card is being edited
-
-  function prepareEdit(button) {
-    activeEditCard = button.closest('.review-card');
-    
-    // Extract existing data from the card
-    const currentTitle = activeEditCard.querySelector('.actual-title').innerText;
-    const currentText = activeEditCard.querySelector('.review-text').innerHTML;
-    const currentRating = activeEditCard.getAttribute('data-rating');
-    
-    // Populate the modal fields with the original review
-    document.getElementById('reviewTitle').value = currentTitle;
-    document.getElementById('reviewBody').innerHTML = currentText;
-    document.getElementById('selectedRating').value = currentRating;
-    highlightStars(currentRating);
-    
-    // Temporarily change the text of the "Post Review" button to "Save Changes"
-    const submitBtn = document.querySelector('#reviewModal .primary-btn');
-    submitBtn.innerText = "Save Changes";
-    submitBtn.onclick = finalizeEdit; 
-    
-    openModal('reviewModal');
-  }
-
-  /* --- FINALIZE EDIT --- */
-  function finalizeEdit() {
-    // Extract data from modal
-    const newTitle = document.getElementById('reviewTitle').value;
-    const newBody = document.getElementById('reviewBody').innerHTML;
-    const newRating = document.getElementById('selectedRating').value;
-
-    if (activeEditCard) {
-        // Populate the modal fields with the original review
-        // activeEditCard.querySelector('h3').innerText = newTitle;
-        activeEditCard.querySelector('.actual-title').innerText = newTitle;
-        activeEditCard.querySelector('.edited-mark').style.display = 'inline';
-        activeEditCard.querySelector('.review-text').innerHTML = newBody;
-        activeEditCard.setAttribute('data-rating', newRating);
-        
-        // Logic to display stars of original review
-        let starsHtml = '';
-        for(let i=1; i<=5; i++) {
-            if(newRating >= i) starsHtml += '★';
-            else if(newRating >= i - 0.5) starsHtml += '<span style="position:relative; display:inline-block; width:0.5em; overflow:hidden; color:#fbbf24;">★</span><span style="opacity:0">.</span>';
-            else starsHtml += '<span style="color:#ddd">★</span>';
-        }
-        activeEditCard.querySelector('.review-meta span').innerHTML = starsHtml;
-    }
-
-    // Reset the modal button for future "New Reviews"
-    const submitBtn = document.querySelector('#reviewModal .primary-btn');
-    submitBtn.innerText = "Post Review";
-    submitBtn.onclick = submitReview;
-    activeEditCard = null;
-    closeModal('reviewModal');
-  }
-
-  /* --- DATA & RENDERING (Existing Logic) --- */
-  const reviewsData = {
-  "Prelude": [
-    { title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!" },
-    { title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons." }
-  ],
-  "Barn by Borro": [
-    { title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!" },
-    { title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours." }
-  ],
-  "Asterisko": [
-    { title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends." },
-    { title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited." }
-  ],
-  "KuhMeal": [
-    { title: "Tasty chicken", user: "@daniella", stars: 4, text: "Chicken and fries are yummy, perfect for a quick snack!" },
-    { title: "Fast service", user: "@miggy", stars: 5, text: "Service is quick and friendly, definitely coming back." }
-  ],
-  "La Elotes": [
-    { title: "Comfort food heaven", user: "@ella_s", stars: 5, text: "Affordable and really tasty meals. Perfect for students." },
-    { title: "Loved the place", user: "@jane_d", stars: 4, text: "Cozy vibe and great food, though it gets crowded sometimes." }
-  ],
-  "Gang Gang Chicken": [
-    { title: "Good quick meals", user: "@kiks_m", stars: 4, text: "Perfect for a quick bite, loved the chicken." },
-    { title: "Nice spot", user: "@sophia", stars: 4, text: "Small but cozy. Staff are friendly too!" }
-  ],
-  "Calle Cafe": [
-    { title: "Aesthetic spot", user: "@daniella", stars: 5, text: "Great interiors, perfect for photos. Drinks are amazing." },
-    { title: "Trendy but pricey", user: "@miggy", stars: 4, text: "Love the vibe, but meals are a bit expensive for students." }
-  ],
-  "Illo": [
-    { title: "Budget-friendly", user: "@ella_s", stars: 4, text: "Good food at a reasonable price. Quick service too." },
-    { title: "Great for students", user: "@jane_d", stars: 4, text: "Easy to grab meals before class. Tasty sandwiches!" }
-  ],
-  "Angrydobo": [
-    { title: "Delicious adobo", user: "@kiks_m", stars: 5, text: "Classic Filipino dishes done right. Highly recommended!" },
-    { title: "Cozy vibes", user: "@sophia", stars: 4, text: "Loved the adobo, place is small but comfy." }
-  ],
-  "Dapit-Hapon Cafe & Bistro": [
-    { title: "Chill café", user: "@daniella", stars: 4, text: "Perfect place to relax with friends. Drinks are great." },
-    { title: "Nice menu", user: "@miggy", stars: 5, text: "Lots of options and very tasty meals." }
-  ]
-};
-
-  const ratingMap = { "Prelude": 4.2, "Barn by Borro": 4.7, "Asterisko": 4.5, "KuhMeal": 3.8, "La Elotes": 4.6, "Gang Gang Chicken": 4.1, "Calle Cafe": 4.8, "Illo": 4.0, "Angrydobo": 4.4, "Dapit-Hapon Cafe & Bistro": 4.2 };
-  const descriptionMap = { "Prelude": "Cozy café near campus", "Barn by Borro": "LaSallian's favorite!", "Asterisko": "Fun hangout spot", "KuhMeal": "Quick bites and tasty meals", "La Elotes": "Comfort food for everyone", "Gang Gang Chicken": "Small but cozy spot", "Calle Cafe": "Trendy café with aesthetic interiors", "Illo": "Budget-friendly meals", "Angrydobo": "Filipino comfort food", "Dapit-Hapon Cafe & Bistro": "Chill café with light meals" };
-
   const reviewsContainer = document.getElementById("reviewsContainer");
   const params = new URLSearchParams(window.location.search);
   const establishment = params.get("establishment");
@@ -341,30 +255,41 @@
   function addReviewCard(r, restoName = "") {
     const card = document.createElement("div");
     card.classList.add("review-card");
-
-    // Gets the current user and marks their review along with their star rating
-    const currentUser = localStorage.getItem('currentUser');
-    const isOwner = currentUser && r.user === "@" + currentUser;
+    
+    // Store ID for editing/deleting
+    if(r.id) card.setAttribute('data-id', r.id);
     card.setAttribute('data-rating', r.stars);
+    card.setAttribute('data-establishment', restoName || establishment);
 
-    // Logic to display stars
+    const isOwner = currentUser && r.user === "@" + currentUser;
+
+    //  FIXED STAR GENERATION (Aligned properly)
     let starsHtml = '';
     for(let i=1; i<=5; i++) {
-        if(r.stars >= i) starsHtml += '★';
-        else if(r.stars >= i - 0.5) starsHtml += '<span style="position:relative; display:inline-block; width:0.5em; overflow:hidden; color:#fbbf24;">★</span><span style="opacity:0">.</span>'; // Simple half star hack
-        else starsHtml += '<span style="color:#ddd">★</span>';
+        if(r.stars >= i) {
+            // Full Star (Gold)
+            starsHtml += '<span style="color:#fbbf24;">★</span>';
+        } 
+        else if(r.stars >= i - 0.5) {
+            // Half Star (Gradient Text - Fixes "raised" issue)
+            starsHtml += '<span style="background: linear-gradient(to right, #fbbf24 50%, #d1d5db 50%); -webkit-background-clip: text; color: transparent;">★</span>';
+        } 
+        else {
+            // Empty Star (Grey)
+            starsHtml += '<span style="color:#d1d5db;">★</span>';
+        }
     }
 
     card.innerHTML = `
       ${restoName ? `<p class="review-resto" style="font-weight:bold; margin-bottom:5px; color:#065f46;">${restoName}</p>` : ""}
       <h3>
         <span class="actual-title">${r.title}</span>
-        <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal; display:none;"> (edited)</span>
+        <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal; display:${r.edited ? 'inline' : 'none'};"> (edited)</span>
       </h3>
-      <p class="review-meta">by ${r.user} · <span style="color:#fbbf24; letter-spacing:2px;">${starsHtml}</span></p>
-
+      <p class="review-meta">by ${r.user} · <span style="letter-spacing:2px; font-size:1.1rem;">${starsHtml}</span></p>
+      
       <div class="review-text" style="margin-bottom:10px;">${r.text}</div>
-
+      
       ${r.image ? `<img src="${r.image}" style="max-width:100%; max-height:300px; border-radius:12px; margin-bottom:15px; border:1px solid #eee;">` : ""}
 
       <div style="display:flex; gap:10px; margin-top:5px;">
@@ -375,47 +300,184 @@
           <button class="secondary-btn" onclick="deleteReview(this)" style="padding: 6px 14px; font-size:0.8rem; border-color: #dc2626; color: #dc2626;">Delete</button>
         ` : ""}
       </div>
+
+      <div style="background:#ecfdf5; border-radius:16px; padding:12px; margin-top:15px; font-size:.9rem; color: #065f46;">
+        <b>Owner Response</b><br>
+        Thanks for visiting! We hope to see you again soon.
+      </div>
     `;
-    // isOwner to verify if the current user is the owner of the review
     
-    // Prepend (add to top) instead of append for new reviews
+    // Add to top of list
     reviewsContainer.insertBefore(card, reviewsContainer.firstChild);
   }
 
-  /* --- SEARCH REVIEWS LOGIC --- */
-const reviewSearch = document.getElementById("reviewSearch");
+  function submitReview() {
+    const title = document.getElementById('reviewTitle').value;
+    const body = document.getElementById('reviewBody').innerHTML;
+    const rating = document.getElementById('selectedRating').value;
+    const user = localStorage.getItem('currentUser') || "Guest";
 
-reviewSearch.addEventListener("input", () => {
-  const searchText = reviewSearch.value.toLowerCase();
-  const reviews = document.querySelectorAll(".review-card");
-
-  reviews.forEach(review => {
-    const title = review.querySelector("h3")?.textContent.toLowerCase() || "";
-    const body = review.querySelector(".review-text")?.textContent.toLowerCase() || "";
-    const resto = review.querySelector(".review-resto")?.textContent.toLowerCase() || "";
-
-    if (
-      title.includes(searchText) ||
-      body.includes(searchText) ||
-      resto.includes(searchText)
-    ) {
-      review.style.display = "block";
-    } else {
-      review.style.display = "none";
+    if(!title || !body || rating == 0) {
+      alert("Please fill in title, review text, and a rating.");
+      return;
     }
-  });
-});
 
-  // Initial Load Logic
+    const currentEst = establishment || "General"; 
+
+    const newReview = {
+      id: Date.now(),
+      title: title,
+      user: "@" + user,
+      stars: parseFloat(rating),
+      text: body,
+      image: currentImageSrc,
+      edited: false
+    };
+
+    if (!reviewsData[currentEst]) reviewsData[currentEst] = [];
+    reviewsData[currentEst].push(newReview);
+    saveReviewsToStorage(reviewsData);
+    addReviewCard(newReview, currentEst !== establishment ? currentEst : "");
+    closeModal('reviewModal');
+  }
+
+  function deleteReview(button) {
+    if (confirm("Are you sure you want to delete this review?")) {
+        const card = button.closest('.review-card');
+        const id = parseInt(card.getAttribute('data-id'));
+        const estName = card.getAttribute('data-establishment');
+
+        card.remove();
+
+        if (reviewsData[estName]) {
+            reviewsData[estName] = reviewsData[estName].filter(r => r.id !== id);
+            saveReviewsToStorage(reviewsData);
+        }
+    }
+  }
+
+  let activeEditCard = null;
+
+  function prepareEdit(button) {
+    activeEditCard = button.closest('.review-card');
+    
+    const currentTitle = activeEditCard.querySelector('.actual-title').innerText;
+    const currentText = activeEditCard.querySelector('.review-text').innerHTML;
+    const currentRating = activeEditCard.getAttribute('data-rating');
+    
+    // Handle Image Loadin
+    const imgTag = activeEditCard.querySelector('img');
+    currentImageSrc = imgTag ? imgTag.src : null; // Load existing image or null
+    
+    // Show preview if image exists
+    if (currentImageSrc) {
+        document.getElementById('imagePreview').src = currentImageSrc;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+    } else {
+        document.getElementById('imagePreviewContainer').style.display = 'none';
+    }
+
+    document.getElementById('reviewTitle').value = currentTitle;
+    document.getElementById('reviewBody').innerHTML = currentText;
+    document.getElementById('selectedRating').value = currentRating;
+    highlightStars(currentRating);
+    
+    const submitBtn = document.querySelector('#reviewModal .primary-btn');
+    submitBtn.innerText = "Save Changes";
+    submitBtn.onclick = finalizeEdit; 
+    
+    openModal('reviewModal');
+  }
+
+  function finalizeEdit() {
+    const newTitle = document.getElementById('reviewTitle').value;
+    const newBody = document.getElementById('reviewBody').innerHTML;
+    const newRating = document.getElementById('selectedRating').value;
+
+    if (activeEditCard) {
+        activeEditCard.querySelector('.actual-title').innerText = newTitle;
+        activeEditCard.querySelector('.edited-mark').style.display = 'inline';
+        activeEditCard.querySelector('.review-text').innerHTML = newBody;
+        activeEditCard.setAttribute('data-rating', newRating);
+        
+        // Update Stars
+        let starsHtml = '';
+        for(let i=1; i<=5; i++) {
+            if(newRating >= i) starsHtml += '<span style="color:#fbbf24;">★</span>';
+            else if(newRating >= i - 0.5) starsHtml += '<span style="background: linear-gradient(to right, #fbbf24 50%, #d1d5db 50%); -webkit-background-clip: text; color: transparent;">★</span>';
+            else starsHtml += '<span style="color:#d1d5db;">★</span>';
+        }
+        activeEditCard.querySelector('.review-meta span').innerHTML = starsHtml;
+
+        let imgTag = activeEditCard.querySelector('img');
+        if (currentImageSrc) {
+            // If user has an image (new or old)
+            if (imgTag) {
+                imgTag.src = currentImageSrc; // Update existing
+            } else {
+                // Create new image if it didn't exist before
+                imgTag = document.createElement('img');
+                imgTag.src = currentImageSrc;
+                imgTag.style.cssText = "max-width:100%; max-height:300px; border-radius:12px; margin-bottom:15px; border:1px solid #eee;";
+                // Insert it before the buttons div
+                const buttonsDiv = activeEditCard.querySelector('div[style*="display:flex"]');
+                activeEditCard.insertBefore(imgTag, buttonsDiv);
+            }
+        } else {
+            // If user removed the image
+            if (imgTag) imgTag.remove();
+        }
+
+        // Update Data & Save
+        const id = parseInt(activeEditCard.getAttribute('data-id'));
+        const estName = activeEditCard.getAttribute('data-establishment');
+
+        if (reviewsData[estName]) {
+            const reviewIndex = reviewsData[estName].findIndex(r => r.id === id);
+            if(reviewIndex > -1) {
+                reviewsData[estName][reviewIndex].title = newTitle;
+                reviewsData[estName][reviewIndex].text = newBody;
+                reviewsData[estName][reviewIndex].stars = parseFloat(newRating);
+                reviewsData[estName][reviewIndex].image = currentImageSrc; // Save new image state
+                reviewsData[estName][reviewIndex].edited = true;
+                saveReviewsToStorage(reviewsData);
+            }
+        }
+    }
+    closeModal('reviewModal');
+  }
+
+  const reviewSearch = document.getElementById("reviewSearch");
+  reviewSearch.addEventListener("input", () => {
+    const searchText = reviewSearch.value.toLowerCase();
+    const reviews = document.querySelectorAll(".review-card");
+
+    reviews.forEach(review => {
+      const title = review.querySelector("h3")?.textContent.toLowerCase() || "";
+      const body = review.querySelector(".review-text")?.textContent.toLowerCase() || "";
+      const resto = review.querySelector(".review-resto")?.textContent.toLowerCase() || "";
+
+      if (title.includes(searchText) || body.includes(searchText) || resto.includes(searchText)) {
+        review.style.display = "block";
+      } else {
+        review.style.display = "none";
+      }
+    });
+  });
+
+  const ratingMap = { "Prelude": 4.2, "Barn by Borro": 4.7, "Asterisko": 4.5, "KuhMeal": 3.8, "La Elotes": 4.6, "Gang Gang Chicken": 4.1, "Calle Cafe": 4.8, "Illo": 4.0, "Angrydobo": 4.4, "Dapit-Hapon Cafe & Bistro": 4.2 };
+  const descriptionMap = { "Prelude": "Cozy café near campus", "Barn by Borro": "LaSallian's favorite!", "Asterisko": "Fun hangout spot", "KuhMeal": "Quick bites and tasty meals", "La Elotes": "Comfort food for everyone", "Gang Gang Chicken": "Small but cozy spot", "Calle Cafe": "Trendy café with aesthetic interiors", "Illo": "Budget-friendly meals", "Angrydobo": "Filipino comfort food", "Dapit-Hapon Cafe & Bistro": "Chill café with light meals" };
+
   if (establishment && reviewsData[establishment]) {
     document.getElementById("establishmentName").textContent = establishment;
     document.getElementById("establishmentDesc").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
-    reviewsData[establishment].forEach(r => addReviewCard(r)); // Load existing backwards or change to append
+    [...reviewsData[establishment]].reverse().forEach(r => addReviewCard(r, "")); 
   } else {
     document.getElementById("establishmentName").textContent = "All Reviews";
     document.getElementById("establishmentDesc").textContent = "See what students are saying around Taft";
+    
     Object.entries(reviewsData).forEach(([restoName, reviews]) => {
-      reviews.forEach(r => addReviewCard(r, restoName));
+      [...reviews].reverse().forEach(r => addReviewCard(r, restoName));
     });
   }
 </script>
