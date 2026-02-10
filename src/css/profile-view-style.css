@@ -1,8 +1,7 @@
-
 /* --- View Profile Styles --- */
 
-/* Profile Information */
-.profile-page {
+/* --- Profile Information --- */
+.profile-container {
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 1rem 3rem;
@@ -73,23 +72,60 @@
     width: 44vw;
 }
 
-/* Activity Section */
+
+/* --- Activity Section --- */
 .activity-sidebar {
     display: flex;
     margin-top: 0.75vw;
     margin-bottom: 1.3vw;
 }
 
-.activity-sidebar div {
-    margin: 0 auto;
+.tabs { 
+    display: flex;
+}
+
+.tabs input[type="radio"] { 
+    display: none; 
+}
+
+.tabs input[type="radio"]:checked + .tab-label { 
+    background: #065f46; color: white; 
+}
+
+.tab-label { 
+    flex: 1; 
+    padding: 15px; 
+    border-radius: 10px;
+    cursor: pointer; 
+    font-size: 16px; 
+    font-weight: bold;
+    transition: background-color 0.3s; 
+    text-align: center; 
+}
+
+.tab-label:hover {
+    color: white;
+    background-color: #16a34a;
 }
 
 
+/* Activity Content */
 .activity-contents {
     display: flex;
     flex-direction: column;
 }
 
+.tab-content { 
+    display: none; 
+    padding: 20px; 
+}
+
+.tab-content.active { 
+    display: block;
+}
+
+
+/* Review/Posts Cards */
 .review-card {
     display: flex;
     align-items: center;
@@ -132,4 +168,11 @@
     color: #374151;
     margin-bottom: 1rem;
     line-height: 1.5;
+}
+
+
+@media (max-width: 600px) { 
+    .profile-content { flex-direction: column; text-align: center; } 
+    .profile-avatar { margin-right: 0; margin-bottom: 10px; } 
+    .tabs { flex-direction: column; } 
 }
