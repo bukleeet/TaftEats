@@ -49,6 +49,12 @@ function openModal(id) {
         return;
     }
 
+    const emailRegEx = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegEx.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+
     document.getElementById(id).classList.add("active");
 }
 
