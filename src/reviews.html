@@ -297,7 +297,7 @@
         <span class="actual-title">${r.title}</span>
         <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal; display:${r.edited ? 'inline' : 'none'};"> (edited)</span>
       </h3>
-      <p class="review-meta">by ${r.user} · <span style="letter-spacing:2px; font-size:1.1rem;">${starsHtml}</span></p>
+      <p class="review-meta">by <a href="profile-view.html" style="color:#16a34a; text-decoration:none">${r.user}</a> · <span style="letter-spacing:2px; font-size:1.1rem;">${starsHtml}</span></p>
 
       <div class="review-text" style="margin-bottom:10px;">${r.text}</div>
 
@@ -525,6 +525,7 @@
 
 <script src="js/loggedUser-script.js"></script>
 <script src="js/theme-toggle.js"></script>
+<script src="js/user-direct.js"></script>  <!-- Script for user profile accessing -->
 
 </body>
 </html>
