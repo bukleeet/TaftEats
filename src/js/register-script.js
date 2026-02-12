@@ -6,7 +6,7 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
     const email = document.getElementById('userEmail').value;
     const pass  = document.getElementById('userPassword').value;
     const desc = document.getElementById('userDesc').value;
-    const pfp  = document.getElementById('profileImage').value;
+    const pfp  = document.getElementById('profileImage');
 
     // Checks if Description & Profile Image is added
     if (!pfp) {
@@ -22,8 +22,16 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
     localStorage.setItem('userEmail', email);
     localStorage.setItem('userPassword', pass);
     localStorage.setItem('userDesc', desc);
-    localStorage.setItem('userProfile', pfp);
     localStorage.setItem('isLoggedIn', 'true');
+
+    // Store Image as Base64 string
+    if (pfp.files && pfp.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            localStorage.setItem('userProfile', e.target.result);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
 
     alert('Account Created Successfully!');
     document.getElementById('profileModal').classList.remove("active");
