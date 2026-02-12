@@ -8,7 +8,7 @@ function updateNavbarAuth() {
         // Change "Login" button to "Logout"
         if (loginBtn) {
             loginBtn.textContent = 'Logout';
-            loginBtn.href = '#';
+            loginBtn.href = '#'; 
             loginBtn.onclick = handleLogout;
         }
 
@@ -29,3 +29,16 @@ function handleLogout() {
 
 // Automatically check auth status whenever any page finishes loading
 window.addEventListener('load', updateNavbarAuth);
+
+function updateProfileLink() {
+    // Ensures Profile Opens Logged User Profile
+    const profileLink = document.querySelector('a.nav-link[href="profile-view.html"]');
+
+    // Gets current username from localStorage & includes it as parameter in href
+    if (profileLink) {
+        const username = localStorage.getItem('currentUser');
+        profileLink.href = `profile-view.html?username=${encodeURIComponent(username)}`;
+    }
+}
+
+updateProfileLink();
