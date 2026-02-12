@@ -1,7 +1,6 @@
 
 document.getElementById('profileForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    console.log("EEEEE");
     
     const user  = document.getElementById('username').value;
     const email = document.getElementById('userEmail').value;
@@ -69,7 +68,7 @@ function previewImage(input) {
         }
         reader.readAsDataURL(input.files[0]);
     }
-  }
+}
 
 function removeImage() {
     document.getElementById('profileImage').value = "";
