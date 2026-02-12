@@ -8,7 +8,7 @@ function updateNavbarAuth() {
         // Change "Login" button to "Logout"
         if (loginBtn) {
             loginBtn.textContent = 'Logout';
-            loginBtn.href = '#'; 
+            loginBtn.href = '#';
             loginBtn.onclick = handleLogout;
         }
 

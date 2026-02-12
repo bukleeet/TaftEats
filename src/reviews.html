@@ -83,25 +83,34 @@
 
 <script>
   const currentUser = localStorage.getItem('currentUser');
-  
-  window.addEventListener('load', () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const writeBtn = document.getElementById('writeReviewBtn');
-    const loginBtn = document.getElementById('navLoginBtn');
 
-    if (isLoggedIn === 'true') {
-      writeBtn.style.display = 'inline-block';
-      loginBtn.textContent = 'Logout';
-      loginBtn.href = '#';
-      loginBtn.onclick = () => {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('currentUser');
-        window.location.reload();
-      };
-    } else {
-      writeBtn.style.display = 'none';
-    }
-  });
+  window.addEventListener('load', () => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const writeBtn = document.getElementById('writeReviewBtn');
+  const loginBtn = document.getElementById('navLoginBtn');
+  const registerBtn = document.querySelector('.nav-btn.register');
+
+  if (isLoggedIn === 'true') {
+    writeBtn.style.display = 'inline-block';
+
+    loginBtn.textContent = 'Logout';
+    loginBtn.href = '#';
+
+    // Hide Register when logged in
+    if (registerBtn) registerBtn.style.display = 'none';
+
+    loginBtn.onclick = () => {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('currentUser');
+      window.location.reload();
+    };
+  } else {
+    writeBtn.style.display = 'none';
+
+    if (registerBtn) registerBtn.style.display = 'inline-block';
+  }
+});
+
 
   const defaultReviews = {
     "Prelude": [
@@ -339,11 +348,11 @@
   if (establishment && reviewsData[establishment]) {
     document.getElementById("establishmentName").textContent = establishment;
     document.getElementById("establishmentDesc").textContent = `⭐ ${ratingMap[establishment]} / 5 · ${descriptionMap[establishment]}`;
-    [...reviewsData[establishment]].reverse().forEach(r => addReviewCard(r, "")); 
+    [...reviewsData[establishment]].reverse().forEach(r => addReviewCard(r, ""));
   } else {
     document.getElementById("establishmentName").textContent = "All Reviews";
     document.getElementById("establishmentDesc").textContent = "See what students are saying around Taft";
-    
+
     Object.entries(reviewsData).forEach(([restoName, reviews]) => {
       [...reviews].reverse().forEach(r => addReviewCard(r, restoName));
     });

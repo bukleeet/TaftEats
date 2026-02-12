@@ -31,7 +31,7 @@
       <p>Please enter your details to sign in.</p>
     </div>
 
-    <form id="loginForm"> 
+    <form id="loginForm">
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
@@ -64,7 +64,16 @@
     const pass = document.getElementById('password').value;
     const remember = document.getElementById('rememberMe').checked;
 
+    // Login Verification Logic
     if(user === 'tafteats' && pass === 'admin') {
+
+    // Store login state in localStorage
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUser', user);
+      localStorage.setItem('userEmail', 'tafteats2026@email.com');
+      localStorage.setItem('userProfile', 'images/tafteats.png');
+      localStorage.setItem('userDesc', 'We are TaftEats. The Admin Account of this Website!');
+
       // Use local or session storage based on checkbox
       const storage = remember ? localStorage : sessionStorage;
 
@@ -79,6 +88,7 @@
   });
 </script>
 
+<script src="js/loggedUser-script.js"></script>
 <script src="js/theme-toggle.js"></script>
 </body>
 </html>
