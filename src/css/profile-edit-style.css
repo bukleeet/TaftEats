@@ -78,6 +78,25 @@
     margin-right: 30px;
 }
 
+.input-box textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.edit-label {
+    display: block;
+    color: #065f46;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 0.9rem, 1rem);
+    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+}
+
 input[type="text"], textarea {
     width: 100%;
     padding: 10px;
@@ -88,7 +107,7 @@ input[type="text"], textarea {
 }
 
 textarea {
-    resize: vertical;
+    resize: none;
 }
 
 .edit-form-buttons {
@@ -166,6 +185,10 @@ body.dark-mode .edit-info {
     color: #e0e0e0 !important;
 }
 
+body.dark-mode .edit-label {
+    color: #e0e0e0;
+}
+
 /* Input fields */
 body.dark-mode .edit-form input[type="text"],
 body.dark-mode .edit-form textarea {
@@ -175,7 +198,7 @@ body.dark-mode .edit-form textarea {
 }
 
 body.dark-mode .edit-form textarea {
-    resize: vertical;
+    resize: none;
 }
 
 /* Buttons */
