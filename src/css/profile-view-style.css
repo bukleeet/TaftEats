@@ -158,7 +158,7 @@
     flex-direction: column;
 }
 
-.rating {
+.review-meta {
     color: #16a34a;
     font-weight: 500;
     margin-bottom: 0.5rem;
@@ -247,7 +247,7 @@ body.dark-mode .review-card h2 {
     color: #ffb74d;
 }
 
-body.dark-mode .rating {
+body.dark-mode .review-meta {
     color: #ff9800;
 }
 
