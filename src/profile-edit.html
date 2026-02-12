@@ -8,48 +8,63 @@
     <link rel="stylesheet" href="css/profile-edit-style.css">
 </head>
 <body>
-    <!-- Edit PRofile -->
-    <div class="edit-profile-container">
 
-        <!-- Edit Profile Form -->
-        <div class="edit-form">
-            <h1>Edit Profile</h1>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="nav-left">
+        <h2 class="logo">TaftEats</h2>
+    </div>
+    <div class="nav-right">
+        <button id="themeToggle" class="theme-btn">🌙</button>
+    </div>
+</nav>
 
-            <!-- Main Form Contents -->
-            <div class="edit-inputs">
-                <!-- Image Preview -->
-                <div class="edit-profile-avatar">
-                    <img src="images/sample pfp.png" alt="current profile avatar" />
-                    <div class="upload-overlay">
-                        <span class="upload-icon">Upload</span>
-                    </div>
-                </div>
-                <input type="file" id="profile-pic" name="profile-pic" accept="image/*" style="display: none;">
+<!-- Edit Profile -->
+<div class="edit-profile-container">
 
-                <!-- Profile Info -->
-                <div class="edit-info">
-                    <!-- Edit Username -->
-                    <div class="input-box">
-                        <label class="edit-label">Username</label>
-                        <input type="text" name="" placeholder="Enter your username" class="edit-input" required>
-                    </div>
+    <!-- Edit Profile Form -->
+    <div class="edit-form">
+        <h1>Edit Profile</h1>
 
-                    <!-- Edit Description -->
-                    <div class="input-box">
-                        <label class="edit-label">Description</label>
-                        <textarea type="text" rows="4" name="" placeholder="Enter description" class="edit-input"></textarea>
-                    </div>
+        <!-- Main Form Contents -->
+        <div class="edit-inputs">
+            <!-- Image Preview -->
+            <div class="edit-profile-avatar">
+                <img src="images/defaultprofile.png" alt="current profile" />
+                <div class="upload-overlay">
+                    <span class="upload-icon">Upload</span>
                 </div>
             </div>
+            <input type="file" id="profileImage" accept="image/*" style="display:none;">
 
-            <!-- Form Buttons -->
-            <div class="edit-form-buttons">
-                <!-- Submit Button -->
-                <button type="submit" class="save-btn">Save Changes</button>
-                <a href="profile-view.html" class="discard-btn">Discard Changes</a>
+            <!-- Profile Info -->
+            <div class="edit-info">
+                <!-- Edit Username -->
+                <div class="input-box">
+                    <label for="username-txt" class="edit-label">Username</label>
+                    <textarea type="text" id="username-txt" rows="1" placeholder="Enter your username" class="edit-input" required></textarea>
+                </div>
+
+                <!-- Edit Description -->
+                <div class="input-box">
+                    <label for="desc-txt" class="edit-label">Description</label>
+                    <textarea type="text" id="desc-txt" rows="4" name="" placeholder="Enter description" class="edit-input"></textarea>
+                </div>
             </div>
         </div>
+
+        <!-- Form Buttons -->
+        <div class="edit-form-buttons">
+            <!-- Submit Button -->
+            <button type="submit" class="save-btn" onclick="saveEdits()">Save Changes</button>
+            <a href="profile-view.html" class="discard-btn">Discard Changes</a>
+        </div>
     </div>
-     
+</div>
+
+<!-- Script for Profile Editing -->
+<script src="js/profileEdit-script.js"></script>
+<script src="js/theme-toggle.js"></script>
+
 </body>
 </html>
