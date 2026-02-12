@@ -113,16 +113,57 @@
 
 
   const defaultReviews = {
-    "Prelude": [
-      { id: 1, title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!", helpful:0, unhelpful:0 },
-      { id: 2, title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons.", helpful:0, unhelpful:0 }
-    ],
-    "Barn by Borro": [
-      { id: 3, title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!", helpful:0, unhelpful:0 },
-      { id: 4, title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours.", helpful:0, unhelpful:0 }
-    ]
-    // ... rest of reviews (also add helpful:0, unhelpful:0)
-  };
+  "Prelude": [
+    { id: 1, title: "Perfect study spot", user: "@jane_d", stars: 5, text: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!", helpful: 0, unhelpful: 0 },
+    { id: 2, title: "Good but crowded", user: "@marky", stars: 4, text: "Love the drinks, but it gets really full during afternoons.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Barn by Borro": [
+    { id: 3, title: "Affordable and tasty", user: "@ella_s", stars: 5, text: "Generous servings and super affordable. Perfect for lunch!", helpful: 0, unhelpful: 0 },
+    { id: 4, title: "Noisy at peak hours", user: "@miggy", stars: 4, text: "Food is great but the place can be really noisy at peak hours.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Asterisko": [
+    { id: 5, title: "Fun hangout spot", user: "@kiks_m", stars: 5, text: "Board games and drinks are amazing! Great place to chill with friends.", helpful: 0, unhelpful: 0 },
+    { id: 6, title: "Good drinks but limited seating", user: "@sophia", stars: 4, text: "The drinks are refreshing but seating is a bit limited.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "KuhMeal": [
+    { id: 7, title: "Tasty chicken", user: "@daniella", stars: 4, text: "Chicken and fries are yummy, perfect for a quick snack!", helpful: 0, unhelpful: 0 },
+    { id: 8, title: "Fast service", user: "@miggy", stars: 5, text: "Service is quick and friendly, definitely coming back.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "La Elotes": [
+    { id: 9, title: "Comfort food heaven", user: "@ella_s", stars: 5, text: "Affordable and really tasty meals. Perfect for students.", helpful: 0, unhelpful: 0 },
+    { id: 10, title: "Loved the place", user: "@jane_d", stars: 4, text: "Cozy vibe and great food, though it gets crowded sometimes.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Gang Gang Chicken": [
+    { id: 11, title: "Good quick meals", user: "@kiks_m", stars: 4, text: "Perfect for a quick bite, loved the chicken.", helpful: 0, unhelpful: 0 },
+    { id: 12, title: "Nice spot", user: "@sophia", stars: 4, text: "Small but cozy. Staff are friendly too!", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Calle Cafe": [
+    { id: 13, title: "Aesthetic spot", user: "@daniella", stars: 5, text: "Great interiors, perfect for photos. Drinks are amazing.", helpful: 0, unhelpful: 0 },
+    { id: 14, title: "Trendy but pricey", user: "@miggy", stars: 4, text: "Love the vibe, but meals are a bit expensive for students.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Illo": [
+    { id: 15, title: "Budget-friendly", user: "@ella_s", stars: 4, text: "Good food at a reasonable price. Quick service too.", helpful: 0, unhelpful: 0 },
+    { id: 16, title: "Great for students", user: "@jane_d", stars: 4, text: "Easy to grab meals before class. Tasty sandwiches!", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Angrydobo": [
+    { id: 17, title: "Delicious adobo", user: "@kiks_m", stars: 5, text: "Classic Filipino dishes done right. Highly recommended!", helpful: 0, unhelpful: 0 },
+    { id: 18, title: "Cozy vibes", user: "@sophia", stars: 4, text: "Loved the adobo, place is small but comfy.", helpful: 0, unhelpful: 0 }
+  ],
+
+  "Dapit-Hapon Cafe & Bistro": [
+    { id: 19, title: "Chill café", user: "@daniella", stars: 4, text: "Perfect place to relax with friends. Drinks are great.", helpful: 0, unhelpful: 0 },
+    { id: 20, title: "Nice menu", user: "@miggy", stars: 5, text: "Lots of options and very tasty meals.", helpful: 0, unhelpful: 0 }
+  ]
+};
+
 
   let reviewsData;
   const stored = localStorage.getItem('taftEatsReviews');
@@ -446,8 +487,26 @@
     closeModal('reviewModal');
   }
 
-  const ratingMap = { "Prelude": 3.5, "Barn by Borro": 4.7 };
-  const descriptionMap = { "Prelude": "Cozy café near campus", "Barn by Borro": "LaSallian's favorite!" };
+  const reviewSearch = document.getElementById("reviewSearch");
+  reviewSearch.addEventListener("input", () => {
+    const searchText = reviewSearch.value.toLowerCase();
+    const reviews = document.querySelectorAll(".review-card");
+
+    reviews.forEach(review => {
+      const title = review.querySelector("h3")?.textContent.toLowerCase() || "";
+      const body = review.querySelector(".review-text")?.textContent.toLowerCase() || "";
+      const resto = review.querySelector(".review-resto")?.textContent.toLowerCase() || "";
+
+      if (title.includes(searchText) || body.includes(searchText) || resto.includes(searchText)) {
+        review.style.display = "block";
+      } else {
+        review.style.display = "none";
+      }
+    });
+  });
+
+   const ratingMap = { "Prelude": 3.5, "Barn by Borro": 4.7, "Asterisko": 3.9, "KuhMeal": 3.8, "La Elotes": 4.6, "Gang Gang Chicken": 4.1, "Calle Cafe": 4.8, "Illo": 4.0, "Angrydobo": 4.4, "Dapit-Hapon Cafe & Bistro": 4.2 };
+  const descriptionMap = { "Prelude": "Cozy café near campus", "Barn by Borro": "LaSallian's favorite!", "Asterisko": "Fun hangout spot", "KuhMeal": "Quick bites and tasty meals", "La Elotes": "Comfort food for everyone", "Gang Gang Chicken": "Small but cozy spot", "Calle Cafe": "Trendy café with aesthetic interiors", "Illo": "Budget-friendly meals", "Angrydobo": "Filipino comfort food", "Dapit-Hapon Cafe & Bistro": "Chill café with light meals" };
 
   if (establishment && reviewsData[establishment]) {
     document.getElementById("establishmentName").textContent = establishment;
@@ -461,6 +520,7 @@
       [...reviews].reverse().forEach(r => addReviewCard(r, restoName));
     });
   }
+
 </script>
 
 <script src="js/loggedUser-script.js"></script>
