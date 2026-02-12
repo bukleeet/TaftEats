@@ -42,6 +42,11 @@
         <input type="password" id="password" class="form-input" placeholder="••••••••" required>
       </div>
 
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Remember me for 3 weeks</label>
+      </div>
+
       <button type="submit" class="login-submit-btn">Sign In</button>
     </form>
 
@@ -54,18 +59,20 @@
 <script>
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const user = document.getElementById('username').value;
     const pass = document.getElementById('password').value;
+    const remember = document.getElementById('rememberMe').checked;
 
-    // Login Verification Logic
     if(user === 'tafteats' && pass === 'admin') {
-      // Store login state in localStorage
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('currentUser', user);
-      
+      // Use local or session storage based on checkbox
+      const storage = remember ? localStorage : sessionStorage;
+
+      storage.setItem('isLoggedIn', 'true');
+      storage.setItem('currentUser', user);
+
       alert('Login Successful!');
-      window.location.href = 'reviews.html'; // Redirect to reviews
+      window.location.href = 'reviews.html';
     } else {
       alert('Invalid username or password.');
     }

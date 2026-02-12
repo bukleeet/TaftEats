@@ -1044,6 +1044,28 @@ body.dark-mode .establishment-info .description {
   font-weight: 600;
 }
 
+.remember-me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.remember-me input {
+  width: 16px;
+  height: 16px;
+  accent-color: #065f46;
+  cursor: pointer;
+}
+
+.remember-me label {
+  cursor: pointer;
+}
+
+
 /* =========================
    LOGIN PAGE – DARK MODE
 ========================= */
@@ -1093,8 +1115,25 @@ body.dark-mode .login-submit-btn {
     color: #1f1f1f;
 }
 
-body.dark-mode .login-submit-btn:hover {
-    background-color: #e68a00;
+body.dark-mode .remember-me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+body.dark-mode .remember-me input {
+  width: 16px;
+  height: 16px;
+  accent-color: #065f46;
+  cursor: pointer;
+}
+
+body.dark-mode .remember-me label {
+  cursor: pointer;
 }
 
 /* Register Text */
