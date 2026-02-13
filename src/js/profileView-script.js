@@ -1,13 +1,13 @@
 
 // Hardcoded User Profiles (name, desc, pfp)
 const userProfiles = {
-    "jane_d": ["jane_d", "I am a student who likes trying out food.", "images/jane_d-Avatar.jpg"],
+    "jane_d": ["jane_d", "I am a student who likes trying out new food.", "images/jane_d-Avatar.jpg"],
     "marky": ["marky", "I am a food entusiast.", "images/marky-Avatar.jpg"],
-    "ella_s": ["ella_s", "I am a food entusiast.", "images/ella_s-Avatar.jpg"],
-    "miggy": ["miggy", "I am a food entusiast.", "images/miggy-Avatar.png"],
-    "kiks_m": ["kiks_m", "I am a food entusiast.", "images/kiks_m-Avatar.jpg"],
-    "sophia": ["sophia", "I am a food entusiast.", "images/sophia-Avatar.png"],
-    "daniella": ["daniella", "I am a food entusiast.", "images/daniella-Avatar.jpg"]
+    "ella_s": ["ella_s", "I like trying out new food.", "images/ella_s-Avatar.jpg"],
+    "miggy": ["miggy", "I'm trying to find good places with affordable meals.", "images/miggy-Avatar.png"],
+    "kiks_m": ["kiks_m", "I eat foods.", "images/kiks_m-Avatar.jpg"],
+    "sophia": ["sophia", "I like cozy places to drink coffee in.", "images/sophia-Avatar.png"],
+    "daniella": ["daniella", "I like going to cafe's.", "images/daniella-Avatar.jpg"]
 }
 
 // Hardcoded User Activity (Reviews, Posts, Comments)
@@ -106,3 +106,4 @@ loadProfile();
 function loadActivity() {
 
 }
+
