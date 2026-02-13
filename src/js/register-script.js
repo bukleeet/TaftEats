@@ -30,7 +30,7 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
         reader.onload = function (e) {
             localStorage.setItem('userProfile', e.target.result);
         };
-        reader.readAsDataURL(fileInput.files[0]);
+        reader.readAsDataURL(pfp.files[0]);
     }
 
     alert('Account Created Successfully!');
