@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Profile</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/profile-view-style.css">
+    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="stylesheet" href="public/css/profile-view-style.css">
 </head>
 <body>
 
@@ -15,9 +15,9 @@
         <h2 class="logo">TaftEats</h2>
     </div>
     <div class="nav-right">
-        <a href="establishments.html" class="nav-link">Home</a>
+        <a href="views/establishments.ejs" class="nav-link">Home</a>
         <a href="about.html" class="nav-link">About</a>
-        <a href="reviews.html" class="nav-link">Reviews</a>
+        <a href="views/reviews.ejs" class="nav-link">Reviews</a>
         <a href="profile-view.html" class="nav-link">Profile</a>
         <a href="login.html" class="nav-btn login" id="navLoginBtn">Login</a>
         <a href="register.html" class="nav-btn register">Register</a>
@@ -73,8 +73,8 @@
             <!-- Recent Activity Tab -->
             <div id="recent-activity" class="tab-content active">
                 <div class="review-card">
-                    <a href="reviews.html">
-                        <img src="images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    <a href="views/reviews.ejs">
+                        <img src="public/images/header.jpg" alt="establishment image" class="establishment-img"/>
                     </a>
 
                     <!-- Review Contents -->
@@ -91,8 +91,8 @@
             <!-- All Posts Tab -->
             <div id="all-posts" class="tab-content">
                 <div class="review-card">
-                    <a href="reviews.html">
-                        <img src="images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    <a href="views/reviews.ejs">
+                        <img src="public/images/header.jpg" alt="establishment image" class="establishment-img"/>
                     </a>
 
                     <!-- Review Contents -->
@@ -109,8 +109,8 @@
             <!-- All Comments Tab -->
             <div id="all-comments" class="tab-content">
                 <div class="review-card">
-                    <a href="reviews.html?establishment=Prelude">
-                        <img src="images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    <a href="views/reviews.ejs?establishment=Prelude">
+                        <img src="public/images/header.jpg" alt="establishment image" class="establishment-img"/>
                     </a>
 
                     <!-- Review Contents -->
@@ -129,10 +129,10 @@
 </div>
   
 <!-- Script for Tab Navigation & Loading User Info -->
-<script src="js/profileView-script.js"></script>
+<script src="public/js/profileView-script.js"></script>
 
-<script src="js/loggedUser-script.js"></script>
-<script src="js/theme-toggle.js"></script>
+<script src="public/js/loggedUser-script.js"></script>
+<script src="public/js/theme-toggle.js"></script>
 
 </body>
 </html>

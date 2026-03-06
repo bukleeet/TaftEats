@@ -1,0 +1,153 @@
+/* --- Register Account Styles --- */
+
+/* Register Container */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 1rem;
+}
+
+.register-card {
+    background: white;
+    width: min(400px, 100%);
+    padding: 2.5rem clamp(1.8rem, 4vw, 2.5rem);
+    border: 1.5px solid #d1fae5;
+    border-radius: clamp(0.4rem, 2vw, 1rem);
+    box-shadow: 0 12px 30px rgba(6, 95, 70, 0.08);
+    text-align: center;
+    margin-inline: clamp(0.2rem, 3vw, 1.5rem);
+}
+
+/* Register Header */
+.register-header h2 {
+    color: #065f46;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.register-header p {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+/* Register Form Inputs */
+.input-box {
+    margin-bottom: clamp(0.7rem, 3vw, 1.2rem);
+    text-align: left;
+}
+
+.register-label {
+    display: block;
+    color: #065f46;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 0.9rem, 1rem);
+    margin-bottom: 0.5rem;
+}
+
+.register-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.register-input:focus {
+    outline: none;
+    border-color: #16a34a; 
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+/* Sign Up Button */
+.sign-up-btn {
+    width: 100%;
+    padding: clamp(0.7rem, 2vw, 0.8rem);
+    background-color: #065f46;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+}
+
+.sign-up-btn:hover {
+    background: #16a34a;
+}
+
+/* Login Link */
+.login-link {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.login-link a {
+    color: #16a34a; 
+    text-decoration: none; 
+    font-weight: 600;
+}
+
+/* =========================
+   DARK MODE - Register Page
+========================= */
+body.dark-mode .register-container {
+    background-color: #121212; /* page background */
+}
+
+body.dark-mode .register-card {
+    background-color: #1f1f1f; /* dark card */
+    border: 1px solid #2c2c2c;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    color: #e0e0e0;
+}
+
+body.dark-mode .register-header h2 {
+    color: #ffb74d; /* golden accent */
+}
+
+body.dark-mode .register-header p {
+    color: #e0e0e0; /* soft off-white */
+}
+
+body.dark-mode .register-label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .register-input {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .register-input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+}
+
+body.dark-mode .sign-up-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .sign-up-btn:hover {
+    background-color: #e68a00;
+}
+
+body.dark-mode .login-link {
+    color: #e0e0e0;
+}
+
+body.dark-mode .login-link a {
+    color: #ff9800;
+}
+
+body.dark-mode .login-link a:hover {
+    color: #ffa500;
+}
+

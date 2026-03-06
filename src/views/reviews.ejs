@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-left">
+    <h2 class="logo">TaftEats</h2>
+  </div>
+  <div class="nav-right">
+    <a href="/establishments" class="nav-link">Home</a>
+    <a href="/about" class="nav-link">About</a>
+    <a href="/reviews" class="nav-link">Reviews</a>
+    <a href="/profile-view" class="nav-link">Profile</a>
+    <a href="/login" class="nav-btn login" id="navLoginBtn">Login</a>
+    <a href="/register" class="nav-btn register">Register</a>
+    <button id="themeToggle" class="theme-btn">🌙</button>
+  </div>
+</nav>
+
+<header class="header">
+  <h1 id="establishmentName"><%= establishment ? establishment.name : "All Reviews" %></h1>
+  <p id="establishmentDesc">
+    <% if (establishment) { %>
+      ⭐ <%= establishment.rating %> / 5 · <%= establishment.description %>
+    <% } else { %>
+      See what students are saying around Taft
+    <% } %>
+  </p>
+  <div class="header-actions">
+    <button class="review-btn" id="writeReviewBtn" onclick="openModal('reviewModal')" style="display:none;">Write Review</button>
+  </div>
+</header>
+
+<main class="container">
+  <div class="search-bar">
+    <input type="text" id="reviewSearch" placeholder="Search reviews..." />
+  </div>
+
+  <div id="reviewsContainer">
+    <% if (reviews && reviews.length > 0) { %>
+      <% reviews.slice().reverse().forEach(r => { %>
+        <div class="review-card" data-id="<%= r._id %>" data-rating="<%= r.rating %>" data-establishment="<%= establishment ? establishment._id : '' %>">
+          <% if (!establishment) { %>
+            <p class="review-resto"><%= r.establishment.name %></p>
+          <% } %>
+          <h3>
+            <span class="actual-title"><%= r.title %></span>
+            <% if (r.edited) { %>
+              <span class="edited-mark" style="font-size:0.6em; color:gray; font-weight:normal;"> (edited)</span>
+            <% } %>
+          </h3>
+          <p class="review-meta">
+            by <a href="/profile-view" style="color:#16a34a; text-decoration:none"><%= r.user %></a> ·
+            <span style="letter-spacing:2px; font-size:1.1rem;">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <% if (r.rating >= i) { %>
+                  <span style="color:#fbbf24;">★</span>
+                <% } else if (r.rating >= i - 0.5) { %>
+                  <span style="background: linear-gradient(to right, #fbbf24 50%, #d1d5db 50%); -webkit-background-clip: text; color: transparent;">★</span>
+                <% } else { %>
+                  <span style="color:#d1d5db;">★</span>
+                <% } %>
+              <% } %>
+            </span>
+          </p>
+          <div class="review-text" style="margin-bottom:10px;"><%= r.body %></div>
+
+          <% if (r.image) { %>
+            <img src="<%= r.image %>" style="max-width:100%; max-height:300px; border-radius:12px; margin-bottom:15px; border:1px solid #eee;">
+          <% } %>
+
+          <div style="display:flex; gap:10px; margin-top:5px;">
+            <button class="primary-btn" onclick="voteHelpful(this, 'helpful')" style="padding: 6px 14px; font-size:0.8rem;">
+              👍 Helpful (<span class="helpful-count"><%= r.helpful %></span>)
+            </button>
+            <button class="secondary-btn" onclick="voteHelpful(this, 'unhelpful')" style="padding: 6px 14px; font-size:0.8rem;">
+              👎 Unhelpful (<span class="unhelpful-count"><%= r.unhelpful %></span>)
+            </button>
+          </div>
+
+          <div class="owner-response">
+            <b>Owner Response</b><br>
+            Thanks for visiting! We hope to see you again soon.
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No reviews yet. Be the first to post!</p>
+    <% } %>
+  </div>
+</main>
+
+<div class="modal" id="reviewModal">
+  <div class="modal-card">
+    <h2>Create Review</h2>
+
+    <div class="star-rating-container" id="starContainer">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+      <span id="ratingValueDisplay">0.0/5</span>
+    </div>
+    <input type="hidden" id="selectedRating" value="0">
+
+    <input type="text" id="reviewTitle" placeholder="Title of your review" class="modal-input">
+
+    <div class="rich-editor-container">
+      <div class="editor-toolbar">
+        <button onclick="formatDoc('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+        <button onclick="formatDoc('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+        <button onclick="formatDoc('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+      </div>
+      <div id="reviewBody" class="editor-content" contenteditable="true" placeholder="Share your experience..."></div>
+    </div>
+
+    <div class="media-upload">
+      <label for="reviewImage" class="upload-label"><i class="fas fa-camera"></i> Attach Photo</label>
+      <input type="file" id="reviewImage" accept="image/*" style="display:none;" onchange="previewImage(this)">
+      <div id="imagePreviewContainer" style="display:none; margin-top:10px;">
+        <img id="imagePreview" src="" style="max-height: 100px; border-radius: 8px;">
+        <button onclick="removeImage()" style="background:none; border:none; color:red; cursor:pointer;">✖</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="primary-btn" onclick="submitReview()">Post Review</button>
+      <button class="secondary-btn" onclick="closeModal('reviewModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const currentUser = "<%= user ? user.username : '' %>";
+</script>
+<script src="/js/reviews-client.js"></script>
+<script src="/js/loggedUser-script.js"></script>
+<script src="/js/theme-toggle.js"></script>
+<script src="/js/user-direct.js"></script>
+</body>
+</html>
+
+<script>
+  const reviewSearchInput = document.getElementById('reviewSearch');
+  const reviewsContainer = document.getElementById('reviewsContainer');
+
+  reviewSearchInput.addEventListener('input', () => {
+    const query = reviewSearchInput.value.toLowerCase();
+    const reviewCards = reviewsContainer.querySelectorAll('.review-card');
+
+    reviewCards.forEach(card => {
+      const title = card.querySelector('.actual-title').textContent.toLowerCase();
+      const body = card.querySelector('.review-text').textContent.toLowerCase();
+      const resto = card.dataset.establishment.toLowerCase(); // optional: filter by establishment ID
+
+      if (title.includes(query) || body.includes(query)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>

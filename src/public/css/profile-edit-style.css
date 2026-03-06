@@ -1,0 +1,228 @@
+/* --- Edit Profile Page --- */
+
+.edit-profile-container  {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:  clamp(1rem, 3vw, 2rem);
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: min(650px, 100%);
+    margin-inline: clamp(0.2rem, 3vw, 1.5rem);
+    color: #010101;
+    padding: 2rem clamp(1.8rem, 4vw, 2.5rem);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: clamp(0.4rem, 2vw, 1rem);
+    background: transparent;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.edit-inputs {
+    display: flex;
+    padding: 1rem 1rem;
+}
+
+.edit-profile-avatar {
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    max-width: 200px;
+    max-height: 200px;
+    cursor: pointer;
+    position: relative;
+}
+
+.edit-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 50%;
+}
+
+.edit-profile-avatar:hover .upload-overlay {
+    opacity: 1;
+}
+
+.upload-icon {
+    font-size: 16px;
+    color: white;
+}
+
+
+.edit-info {
+    flex: 1;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    min-width: 200px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.input-box textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.edit-label {
+    display: block;
+    color: #065f46;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 0.9rem, 1rem);
+    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: none;
+}
+
+.edit-form-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.save-btn {
+    width: 100%;
+    padding: clamp(0.7rem, 2vw, 0.8rem);
+    margin-bottom: 1rem;
+    background: #065f46;
+    border: none;
+    border-radius: clamp(0.3rem, 2vw, 0.5rem);
+    color: white;
+    font-weight: 600;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #16a34a;
+}
+
+.discard-btn {
+    margin-left: 9.7rem;
+    width: 250px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 13px;
+    background-color: #16a34a;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.discard-btn:hover {
+    background-color: #065f46;
+}
+
+/* =========================
+   DARK MODE - Edit Profile Page
+========================= */
+body.dark-mode .edit-profile-container {
+    background-color: #121212;
+}
+
+body.dark-mode .edit-form {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #2c2c2c !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.dark-mode .edit-inputs {
+    gap: 1rem;
+}
+
+body.dark-mode .edit-profile-avatar {
+    border: 2px solid #444 !important;
+}
+
+body.dark-mode .upload-overlay {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode .upload-icon {
+    color: #ffd54f !important;
+}
+
+body.dark-mode .edit-info {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .edit-label {
+    color: #e0e0e0;
+}
+
+/* Input fields */
+body.dark-mode .edit-form input[type="text"],
+body.dark-mode .edit-form textarea {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #555 !important;
+}
+
+body.dark-mode .edit-form textarea {
+    resize: none;
+}
+
+/* Buttons */
+body.dark-mode .edit-form .save-btn {
+    background-color: #ff9800 !important;
+    color: #121212 !important;
+}
+
+body.dark-mode .edit-form .save-btn:hover {
+    background-color: #e68a00 !important;
+}
+
+body.dark-mode .edit-form .discard-btn {
+    background-color: #ffb74d !important;
+    color: #121212 !important;
+}
+
+body.dark-mode .edit-form .discard-btn:hover {
+    background-color: #e68a00 !important;
+}
+
+/* Optional: placeholder color for inputs */
+body.dark-mode .edit-form input::placeholder,
+body.dark-mode .edit-form textarea::placeholder {
+    color: #b0b0b0 !important;
+}
+

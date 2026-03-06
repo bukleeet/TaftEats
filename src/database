@@ -1,0 +1,322 @@
+// RESTAURANTS
+use myDatabase;
+
+db.establishments.insertMany([
+  {
+    _id: ObjectId('69a95a4dabf2603b58236914'),
+    name: 'Prelude',
+    rating: 3.5,
+    description: 'A cozy café perfect for studying, known for its coffee and pastries.',
+    image: 'prelude.jpg'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b58236915'),
+    name: 'Barn by Borro',
+    rating: 4.7,
+    description: "LaSallian's favorite! Offers affordable meals with generous servings.",
+    image: 'barn.jpeg'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b58236916'),
+    name: 'Asterisko',
+    rating: 3.9,
+    description: 'Good hangout spot with friends. Offers board games and refreshing drinks.',
+    image: 'asterisko.png'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b58236917'),
+    name: 'KuhMeal',
+    rating: 3.8,
+    description: 'Chicken and Fries served with special sauce.',
+    image: 'kuhmeal.png'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b58236918'),
+    name: 'La Elotes',
+    rating: 4.6,
+    description: 'Known for comfort food and affordable meals.',
+    image: 'laelotes.png'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b58236919'),
+    name: 'Gang Gang Chicken',
+    rating: 4.1,
+    description: 'Small but cozy place perfect for quick meals.',
+    image: 'ganggangchicken.png'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b5823691a'),
+    name: 'Calle Cafe',
+    rating: 4.8,
+    description: 'Trendy hangout spot with aesthetic interiors.',
+    image: 'callecafe.png'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b5823691b'),
+    name: 'Illo',
+    rating: 4,
+    description: 'Budget-friendly meals for students on the go.',
+    image: 'illo.jpeg'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b5823691c'),
+    name: 'Angrydobo',
+    rating: 4.4,
+    description: 'A Filipino restaurant specializing in elevated, comfort-style adobo and classic dishes.',
+    image: 'angrydobo.jpeg'
+  },
+  {
+    _id: ObjectId('69a95a4dabf2603b5823691d'),
+    name: 'Dapit-Hapon Cafe & Bistro',
+    rating: 4.2,
+    description: 'Chill café with drinks and light meals.',
+    image: 'dapithapon.jpeg'
+  }
+]);
+
+// REVIEWS
+use myDatabase
+
+db.reviews.insertMany([
+
+  // Prelude
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236914'),
+    title: "Perfect study spot",
+    user: "@jane_d",
+    rating: 5,
+    body: "The atmosphere is calm and the coffee is amazing. WiFi is stable too!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236914'),
+    title: "Good but crowded",
+    user: "@marky",
+    rating: 4,
+    body: "Love the drinks, but it gets really full during afternoons.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Barn by Borro
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236915'),
+    title: "Affordable and tasty",
+    user: "@ella_s",
+    rating: 5,
+    body: "Generous servings and super affordable. Perfect for lunch!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236915'),
+    title: "Noisy at peak hours",
+    user: "@miggy",
+    rating: 4,
+    body: "Food is great but the place can be really noisy at peak hours.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Asterisko
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236916'),
+    title: "Fun hangout spot",
+    user: "@kiks_m",
+    rating: 5,
+    body: "Board games and drinks are amazing! Great place to chill with friends.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236916'),
+    title: "Good drinks but limited seating",
+    user: "@sophia",
+    rating: 4,
+    body: "The drinks are refreshing but seating is a bit limited.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // KuhMeal
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236917'),
+    title: "Tasty chicken",
+    user: "@daniella",
+    rating: 4,
+    body: "Chicken and fries are yummy, perfect for a quick snack!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236917'),
+    title: "Fast service",
+    user: "@miggy",
+    rating: 5,
+    body: "Service is quick and friendly, definitely coming back.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // La Elotes
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236918'),
+    title: "Comfort food heaven",
+    user: "@ella_s",
+    rating: 5,
+    body: "Affordable and really tasty meals. Perfect for students.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236918'),
+    title: "Loved the place",
+    user: "@jane_d",
+    rating: 4,
+    body: "Cozy vibe and great food, though it gets crowded sometimes.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Gang Gang Chicken
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236919'),
+    title: "Good quick meals",
+    user: "@kiks_m",
+    rating: 4,
+    body: "Perfect for a quick bite, loved the chicken.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b58236919'),
+    title: "Nice spot",
+    user: "@sophia",
+    rating: 4,
+    body: "Small but cozy. Staff are friendly too!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Calle Cafe
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691a'),
+    title: "Aesthetic spot",
+    user: "@daniella",
+    rating: 5,
+    body: "Great interiors, perfect for photos. Drinks are amazing.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691a'),
+    title: "Trendy but pricey",
+    user: "@miggy",
+    rating: 4,
+    body: "Love the vibe, but meals are a bit expensive for students.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Illo
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691b'),
+    title: "Budget-friendly",
+    user: "@ella_s",
+    rating: 4,
+    body: "Good food at a reasonable price. Quick service too.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691b'),
+    title: "Great for students",
+    user: "@jane_d",
+    rating: 4,
+    body: "Easy to grab meals before class. Tasty sandwiches!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Angrydobo
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691c'),
+    title: "Delicious adobo",
+    user: "@kiks_m",
+    rating: 5,
+    body: "Classic Filipino dishes done right. Highly recommended!",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691c'),
+    title: "Cozy vibes",
+    user: "@sophia",
+    rating: 4,
+    body: "Loved the adobo, place is small but comfy.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+
+  // Dapit-Hapon Cafe & Bistro
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691d'),
+    title: "Chill café",
+    user: "@daniella",
+    rating: 4,
+    body: "Perfect place to relax with friends. Drinks are great.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  },
+  {
+    establishment: ObjectId('69a95a4dabf2603b5823691d'),
+    title: "Nice menu",
+    user: "@miggy",
+    rating: 5,
+    body: "Lots of options and very tasty meals.",
+    image: null,
+    helpful: 0,
+    unhelpful: 0,
+    edited: false
+  }
+
+])
