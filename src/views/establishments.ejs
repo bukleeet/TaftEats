@@ -74,7 +74,7 @@
             <h2><%= est.name %></h2>
             <p class="rating">⭐ <%= est.rating %> / 5</p>
             <p class="description"><%= est.description %></p>
-            <a href="/reviews?establishment=<%= encodeURIComponent(est.name) %>" class="view-btn">View Reviews</a>
+            <a href="/reviews/<%= est._id %>" class="view-btn">View Reviews</a>
           </div>
         </div>
       <% }) %>
