@@ -8,6 +8,8 @@ const app = express();
 // ===== ROUTES =====
 const establishmentRoutes = require('./src/routes/establishmentRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
+const aboutRoutes = require('./src/routes/aboutRoutes');
+app.use('/', aboutRoutes);
 
 // ===== MIDDLEWARE =====
 app.use(express.urlencoded({ extended: true }));
