@@ -1,0 +1,17 @@
+/* Alert / Error Banner */
+.alert-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+body.dark-mode .alert-error {
+  background-color: #3b1515;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TaftEats</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/alert.css" />
+</head>
+<body>
+
+<%- include('navbar') %>
+
+<main class="container login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Welcome Back</h2>
+      <p>Please enter your details to sign in.</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username"
+               class="form-input" placeholder="Enter your username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+               class="form-input" placeholder="••••••••" required>
+      </div>
+
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe" name="rememberMe" value="1">
+        <label for="rememberMe">Remember me for 3 weeks</label>
+      </div>
+
+      <button type="submit" class="login-submit-btn">Sign In</button>
+    </form>
+
+    <div class="register-link">
+      Don't have an account? <a href="/register">Register here</a>
+    </div>
+  </div>
+</main>
+
+<script src="/js/theme-toggle.js"></script>
+</body>
+</html>
