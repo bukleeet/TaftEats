@@ -34,16 +34,12 @@ sudo systemctl start mongod
 
 ### 3. Seed the database
 
-Seed establishments and reviews (run in a MongoDB shell or MongoDB Compass using the script at `src/database`):
-
-```
-src/database  ← your existing insertMany script for establishments and reviews
-```
+Seed establishments and reviews (run in a MongoDB shell or MongoDB Compass using the script at `src/database`)
 
 Then seed user accounts (students + establishment owners):
 
 ```bash
-npm run seed-users
+npm run seedUsers.js
 ```
 
 This will print the available login credentials to the console.
@@ -138,6 +134,7 @@ src/
     reviewDetail.ejs            ← Single review full view
     navbar.ejs                  ← Session-aware navbar partial
   database/
+    seed.js
     seedUsers.js                ← User seed script
   public/
     css/
