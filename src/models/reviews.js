@@ -44,10 +44,10 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  // Filename of uploaded image or video, served from /uploads/
+  // Filenames of uploaded images/videos, served from /uploads/ (up to 10)
   media: {
-    type: String,
-    default: null
+    type: [String],
+    default: []
   },
   edited: {
     type: Boolean,

@@ -1,37 +1,30 @@
-const registerUser = require('../models/users');
-const bcrypt = require('bcrypt');
+const User = require('../models/users');
 
-// Get the register page
-exports.getRegisterPage = async (req, res) => {
-    try {
-        res.render('register');
-    } catch {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
+exports.getRegisterPage = (req, res) => {
+  res.render('register');
 };
 
-// Creates new account
 exports.registerAccount = async (req, res) => {
-    try {
-        // Gets form values
-        const {username, email, password, description, avatar} = req.body;
+  try {
+    const { username, email, password, description } = req.body;
 
-        // Encodes Password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Creates new user
-        const newUser = await registerUser.create({
-            username: username,
-            email: email,
-            password: hashedPassword,
-            description: description,
-            avatar: avatar
-        });
-
-        res.status(201).json({ success: true, message: "Account created successfully." });
-    } catch(err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Failed to register account' });
+    const existing = await User.findOne({ $or: [{ username }, { email }] });
+    if (existing) {
+      return res.status(409).json({ success: false, message: 'Username or email already taken.' });
     }
+
+    // Do NOT hash here — the User model pre-save hook handles hashing automatically
+    const newUser = await User.create({
+      username,
+      email,
+      password,
+      description: description || '',
+      role: 'student'
+    });
+
+    res.status(201).json({ success: true, message: 'Account created successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to register account.' });
+  }
 };

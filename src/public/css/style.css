@@ -1,7 +1,3 @@
-
-/* Currently a Placeholder Document */
-
-/* --- Global Styles --- */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +5,6 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* --- Navbar --- */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -56,7 +51,6 @@
     color: white;
 }
 
-/* --- Hero Section --- */
 .hero {
     height: 70vh;
     background: linear-gradient(
@@ -96,13 +90,11 @@
     font-weight: 500;
 }
 
-
 body {
     background-color: #f7fdf7;
     color: #1f2933;
 }
 
-/* --- Header --- */
 .header {
     text-align: center;
     padding: 2rem 1rem;
@@ -122,7 +114,6 @@ body {
     font-weight: 500;
 }
 
-/* --- Register Button (Establishments only) --- */
 .register-btn {
     position: absolute;
     right: 1rem;
@@ -150,10 +141,15 @@ body {
     color: white;
     text-decoration: none;
     font-weight: 500;
+    cursor: pointer;
+    border: none;
     transition: background-color 0.2s ease;
 }
 
-/* --- Search Bar --- */
+.review-btn:hover {
+    background-color: #065f46;
+}
+
 .search-bar {
     display: flex;
     gap: 1rem;
@@ -180,14 +176,12 @@ body {
     box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
 }
 
-/* --- Main Container --- */
 .container {
     max-width: 900px;
     margin: 0 auto;
     padding: 0 1rem 3rem;
 }
 
-/* --- Establishment Cards (Box Layout) --- */
 .establishment-card {
     display: flex;
     align-items: center;
@@ -235,7 +229,6 @@ body {
     align-self: flex-start;
 }
 
-/* --- Review Cards --- */
 .review-card {
     border: 2px solid #d1fae5;
     border-radius: 12px;
@@ -269,14 +262,12 @@ body {
     line-height: 1.5;
 }
 
-/* --- Ratings (for establishments) --- */
 .rating {
     color: #16a34a;
     font-weight: 500;
     margin-bottom: 0.5rem;
 }
 
-/* --- Buttons --- */
 .view-btn {
     text-decoration: none;
     padding: 0.5rem 1.2rem;
@@ -291,7 +282,6 @@ body {
     background-color: #16a34a;
 }
 
-/* --- About Page Layout --- */
 .about-page {
     background: linear-gradient(
         to bottom,
@@ -300,7 +290,6 @@ body {
     );
 }
 
-/* --- About Cards (Upgraded) --- */
 .about-card {
     border-radius: 18px;
     padding: 2.2rem;
@@ -335,7 +324,6 @@ body {
     box-shadow: 0 18px 30px rgba(6, 95, 70, 0.18);
 }
 
-/* --- Card Header --- */
 .about-header {
     display: flex;
     align-items: center;
@@ -362,7 +350,6 @@ body {
     box-shadow: 0 6px 12px rgba(22, 163, 74, 0.25);
 }
 
-/* --- Text --- */
 .about-card p {
     font-size: 1rem;
     line-height: 1.7;
@@ -385,7 +372,6 @@ body {
     font-weight: bold;
 }
 
-/* --- Contact Highlight --- */
 .contact-info {
     margin-top: 1rem;
     padding: 1rem;
@@ -396,7 +382,6 @@ body {
     font-weight: 500;
 }
 
-/* --- Developers Section --- */
 .dev-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -427,7 +412,6 @@ body {
     font-style: italic;
 }
 
-/* --- Dev text + FB Link --- */
 .dev-details p {
     color: #374151;
     font-size: 0.9rem;
@@ -447,8 +431,6 @@ body {
     color: #16a34a;
 }
 
-
-/* --- Responsive --- */
 @media (max-width: 600px) {
     .search-bar {
         flex-direction: column;
@@ -568,17 +550,22 @@ body {
     align-items: center;
     gap: 5px;
 }
+
 .star {
     transition: color 0.2s;
 }
 
+.star { color: #ccc; }
+.star-filled { color: #fbbf24; }
+
 .star.half {
     background: linear-gradient(to right, #fbbf24 50%, #ccc 50%);
-	background-clip: text;
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-	color: transparent;
+    color: transparent;
 }
+
 #ratingValueDisplay {
     font-size: 1rem;
     color: #6b7280;
@@ -627,6 +614,7 @@ body {
 .media-upload {
     margin-top: 15px;
 }
+
 .upload-label {
     display: inline-block;
     padding: 8px 15px;
@@ -638,12 +626,11 @@ body {
     border: 1px solid #e5e7eb;
     transition: all 0.2s;
 }
+
 .upload-label:hover {
     background-color: #e5e7eb;
 }
 
-/* TEST */
-/* --- Theme Toggle Button --- */
 .theme-btn {
     background: #ecfdf5;
     border: 1px solid #d1fae5;
@@ -656,176 +643,6 @@ body {
 
 .theme-btn:hover {
     background-color: #dcfce7;
-}
-
-/* =========================
-   DARK MODE
-========================= */
-body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Navbar */
-body.dark-mode .navbar {
-    background-color: #1f1f1f;
-    border-bottom: 1px solid #2c2c2c;
-}
-
-body.dark-mode .logo,
-body.dark-mode .nav-link {
-    color: #f5f5f5;
-    transition: color 0.3s;
-}
-
-body.dark-mode .nav-link:hover {
-    color: #ffa500;
-}
-
-body.dark-mode .nav-btn.login {
-    color: #f5f5f5;
-    border: 1px solid #bbbbbb;
-    background-color: transparent;
-}
-
-body.dark-mode .nav-btn.login:hover {
-    background-color: #333;
-}
-
-body.dark-mode .nav-btn.register {
-    background-color: #ff9800;
-    color: #1f1f1f;
-}
-
-/* Hero Section */
-body.dark-mode .hero {
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url("../images/header.jpg");
-    background-size: cover;
-    background-position: center;
-}
-
-body.dark-mode .hero h1,
-body.dark-mode .hero p {
-    color: #ffffff;
-}
-
-body.dark-mode .hero-btn {
-    background-color: #ff9800;
-    color: #1f1f1f;
-}
-
-/* Header */
-body.dark-mode .header h1 {
-    color: #ffb74d;
-}
-
-body.dark-mode .header p {
-    color: #ffa500;
-}
-
-body.dark-mode .header {
-    border-bottom: 1px solid #2c2c2c;
-}
-
-/* Search Bar */
-body.dark-mode .search-bar input,
-body.dark-mode .search-bar select {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-}
-
-body.dark-mode .search-bar input:focus,
-body.dark-mode .search-bar select:focus {
-    border-color: #ff9800;
-    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
-}
-
-/* Cards */
-body.dark-mode .about-card,
-body.dark-mode .establishment-card,
-body.dark-mode .review-card {
-    background-color: #1f1f1f;
-    border: 1px solid #2c2c2c;
-    color: #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-body.dark-mode .about-card::before {
-    background-color: #ff9800; /* accent strip */
-}
-
-/* Headings */
-body.dark-mode h1,
-body.dark-mode h2,
-body.dark-mode h3 {
-    color: #ffb74d;
-}
-
-/* Long Text */
-body.dark-mode p,
-body.dark-mode li,
-body.dark-mode .dev-details p,
-body.dark-mode .contact-info {
-    color: #000000;
-}
-
-/* Bullets */
-body.dark-mode .about-list li::marker {
-    color: #ff9800;
-}
-
-/* Contact Info */
-body.dark-mode .contact-info {
-    background-color: #e0e0e0;
-    border: 1px dashed #ff9800;
-}
-
-/* Buttons */
-body.dark-mode .view-btn,
-body.dark-mode .primary-btn {
-    background-color: #ff9800;
-    color: #1f1f1f;
-}
-
-body.dark-mode .view-btn:hover,
-body.dark-mode .primary-btn:hover {
-    background-color: #e68a00;
-}
-
-body.dark-mode .secondary-btn {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-}
-
-body.dark-mode .theme-btn {
-    background-color: #2a2a2a;
-    color: #ff9800;
-    border: 1px solid #ff9800;
-}
-
-/* Review & Ratings */
-body.dark-mode .review-meta,
-body.dark-mode .rating {
-    color: #ff9800;
-}
-
-body.dark-mode .review-text {
-    color: #e0e0e0;
-}
-
-body.dark-mode .star-rating-container {
-    color: #ffc107;
-}
-
-body.dark-mode .star.half {
-    background: linear-gradient(to right, #ff9800 50%, #444 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
 }
 
 .review-resto {
@@ -843,118 +660,19 @@ body.dark-mode .star.half {
     color: #065f46;
 }
 
-
-/* About / Dev Section */
-body.dark-mode .about-header h2,
-body.dark-mode .dev-card h3 {
-    color: #ffb74d;
-}
-
-body.dark-mode .about-icon,
-body.dark-mode .dev-card img {
-    border-color: #ff9800;
-}
-
-body.dark-mode .dev-details a {
-    color: #ffb74d;
-}
-
-body.dark-mode .dev-details a:hover {
-    color: #ffa500;
-}
-
-body.dark-mode .review-btn {
-    position: absolute;
-    right: 1rem;
-    top: 2rem;
-    padding: 0.5rem 1.2rem;
-    border-radius: 999px;
-    background-color: #ffb74d;
-    color: black;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-
-/* Modal & Inputs */
-body.dark-mode .modal-card,
-body.dark-mode .modal-input {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-}
-
-body.dark-mode .modal-input:focus {
-    border-color: #ff9800;
-    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
-}
-
-/* Rich Editor / Toolbar */
-body.dark-mode .editor-toolbar {
-    background-color: #2a2a2a;
-    border-bottom: 1px solid #444;
-}
-
-body.dark-mode .editor-toolbar button {
-    background-color: #1f1f1f;
-    color: #e0e0e0;
-    border: 1px solid #444;
-}
-
-body.dark-mode .editor-toolbar button:hover {
-    background-color: #ff9800;
-    color: #1f1f1f;
-}
-
-body.dark-mode .editor-content {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-}
-
-/* Media Upload */
-body.dark-mode .upload-label {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-}
-
-body.dark-mode .upload-label:hover {
-    background-color: #ff9800;
-    color: #1f1f1f;
-}
-
-
 /* Modal Inputs */
-body.dark-mode .modal-card,
-body.dark-mode .modal-input {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1fae5;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
 }
 
-/* Star Rating */
-body.dark-mode .star-rating-container {
-    color: #ffc107; /* warm gold for stars, easy on the eyes */
+.modal-input:focus {
+    border-color: #16a34a;
 }
-
-body.dark-mode .review-resto {
-    color: #ffb74d;
-}
-
-body.dark-mode .owner-response {
-    background: #1f2933;
-    color: #e5e7eb;
-    border: 1px solid #334155;
-}
-
-body.dark-mode .establishment-info .description {
-    color: #FFFFFF;
-    margin-bottom: 0.8rem;
-}
-
-/* =========================
-   LOGIN PAGE – LIGHT MODE
-========================= */
 
 .login-container {
   display: flex;
@@ -1065,10 +783,335 @@ body.dark-mode .establishment-info .description {
   cursor: pointer;
 }
 
+.nav-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.3rem;
+  border-radius: 999px;
+  background-color: #16a34a;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
 
-/* =========================
-   LOGIN PAGE – DARK MODE
-========================= */
+.nav-user-pill:hover {
+  background-color: #065f46;
+}
+
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  flex-shrink: 0;
+}
+
+.nav-logout-btn {
+  background: transparent;
+  border: 1px solid #16a34a;
+  color: #065f46;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-logout-btn:hover {
+  background-color: #f0fdf4;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+    background-color: #1f1f1f;
+    border-bottom: 1px solid #2c2c2c;
+}
+
+body.dark-mode .logo,
+body.dark-mode .nav-link {
+    color: #f5f5f5;
+    transition: color 0.3s;
+}
+
+body.dark-mode .nav-link:hover {
+    color: #ffa500;
+}
+
+body.dark-mode .nav-btn.login {
+    color: #f5f5f5;
+    border: 1px solid #bbbbbb;
+    background-color: transparent;
+}
+
+body.dark-mode .nav-btn.login:hover {
+    background-color: #333;
+}
+
+body.dark-mode .nav-btn.register {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .nav-user-pill {
+  background-color: #ff9800;
+  color: #1f1f1f;
+}
+
+body.dark-mode .nav-user-pill:hover {
+  background-color: #e68a00;
+}
+
+body.dark-mode .nav-logout-btn {
+  background: transparent;
+  border-color: #ff9800;
+  color: #ff9800;
+}
+
+body.dark-mode .nav-logout-btn:hover {
+  background-color: #2a2a2a;
+}
+
+/* Hero Section */
+body.dark-mode .hero {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("../images/header.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+body.dark-mode .hero h1,
+body.dark-mode .hero p {
+    color: #ffffff;
+}
+
+body.dark-mode .hero-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+/* Header */
+body.dark-mode .header h1 {
+    color: #ffb74d;
+}
+
+body.dark-mode .header p {
+    color: #ffa500;
+}
+
+body.dark-mode .header {
+    border-bottom: 1px solid #2c2c2c;
+}
+
+/* Search Bar */
+body.dark-mode .search-bar input,
+body.dark-mode .search-bar select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .search-bar input:focus,
+body.dark-mode .search-bar select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+}
+
+/* Cards */
+body.dark-mode .about-card,
+body.dark-mode .establishment-card,
+body.dark-mode .review-card {
+    background-color: #1f1f1f;
+    border: 1px solid #2c2c2c;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .about-card::before {
+    background-color: #ff9800;
+}
+
+/* Headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+    color: #ffb74d;
+}
+
+/* Long Text */
+body.dark-mode p,
+body.dark-mode li,
+body.dark-mode .dev-details p,
+body.dark-mode .contact-info {
+    color: #000000;
+}
+
+/* Bullets */
+body.dark-mode .about-list li::marker {
+    color: #ff9800;
+}
+
+/* Contact Info */
+body.dark-mode .contact-info {
+    background-color: #e0e0e0;
+    border: 1px dashed #ff9800;
+}
+
+/* Buttons */
+body.dark-mode .view-btn,
+body.dark-mode .primary-btn {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .view-btn:hover,
+body.dark-mode .primary-btn:hover {
+    background-color: #e68a00;
+}
+
+body.dark-mode .secondary-btn {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .theme-btn {
+    background-color: #2a2a2a;
+    color: #ff9800;
+    border: 1px solid #ff9800;
+}
+
+/* Review & Ratings */
+body.dark-mode .review-meta,
+body.dark-mode .rating {
+    color: #ff9800;
+}
+
+body.dark-mode .review-text {
+    color: #e0e0e0;
+}
+
+body.dark-mode .star-rating-container {
+    color: #ffc107;
+}
+
+body.dark-mode .star.half {
+    background: linear-gradient(to right, #ff9800 50%, #444 50%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* About / Dev Section */
+body.dark-mode .about-header h2,
+body.dark-mode .dev-card h3 {
+    color: #ffb74d;
+}
+
+body.dark-mode .about-icon,
+body.dark-mode .dev-card img {
+    border-color: #ff9800;
+}
+
+body.dark-mode .dev-details a {
+    color: #ffb74d;
+}
+
+body.dark-mode .dev-details a:hover {
+    color: #ffa500;
+}
+
+body.dark-mode .review-btn {
+    position: absolute;
+    right: 1rem;
+    top: 2rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    background-color: #ffb74d;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* Modal & Inputs */
+body.dark-mode .modal-card,
+body.dark-mode .modal-input {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .modal-input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+}
+
+/* Rich Editor / Toolbar */
+body.dark-mode .editor-toolbar {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .editor-toolbar button {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .editor-toolbar button:hover {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+body.dark-mode .editor-content {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+/* Media Upload */
+body.dark-mode .upload-label {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode .upload-label:hover {
+    background-color: #ff9800;
+    color: #1f1f1f;
+}
+
+/* Star Rating */
+body.dark-mode .star-rating-container {
+    color: #ffc107;
+}
+
+body.dark-mode .review-resto {
+    color: #ffb74d;
+}
+
+body.dark-mode .owner-response {
+    background: #1f2933;
+    color: #e5e7eb;
+    border: 1px solid #334155;
+}
+
+body.dark-mode .establishment-info .description {
+    color: #FFFFFF;
+    margin-bottom: 0.8rem;
+}
 
 body.dark-mode .login-container {
     background-color: #121212;
@@ -1088,12 +1131,10 @@ body.dark-mode .login-header p {
     color: #e0e0e0;
 }
 
-/* Labels */
 body.dark-mode .form-group label {
     color: #ffb74d;
 }
 
-/* Inputs */
 body.dark-mode .form-input {
     background-color: #2a2a2a;
     color: #e0e0e0;
@@ -1109,7 +1150,6 @@ body.dark-mode .form-input:focus {
     box-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
 }
 
-/* Login Button */
 body.dark-mode .login-submit-btn {
     background-color: #ff9800;
     color: #1f1f1f;
@@ -1136,7 +1176,6 @@ body.dark-mode .remember-me label {
   cursor: pointer;
 }
 
-/* Register Text */
 body.dark-mode .register-link {
     color: #e0e0e0;
 }
@@ -1149,19 +1188,135 @@ body.dark-mode .register-link a:hover {
     color: #ffb74d;
 }
 
-
-
-
-
-/* Modal Inputs */
-.modal-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1fae5;
-    border-radius: 10px;
-    font-size: 1rem;
-    outline: none;
+.review-body-preview ul,
+.review-body-preview ol,
+.review-text ul,
+.review-text ol {
+    padding-left: 1.4rem;
+    margin: 0.4rem 0;
 }
-.modal-input:focus {
+
+.review-body-preview li,
+.review-text li {
+    margin-bottom: 0.2rem;
+}
+
+.editor-content ul,
+.editor-content ol {
+    padding-left: 1.4rem;
+    margin: 0.4rem 0;
+}
+
+.editor-content li {
+    margin-bottom: 0.2rem;
+}
+
+.preview-media-img {
+    max-width: 200px;
+    max-height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.preview-media-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.star-rating-container .rating-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-left: 6px;
+}
+
+.edited-tag {
+    font-size: 0.8rem;
+    font-style: italic;
+    cursor: default;
+    position: relative;
+}
+
+.edited-tag .edit-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #374151;
+    color: white;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.edited-tag:hover .edit-tooltip {
+    display: block;
+}
+
+.media-thumb-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.media-thumb-wrap .remove-media-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.rating-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.2rem;
+    align-items: center;
+}
+
+.rating-filter-row button {
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid #d1fae5;
+    background: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.rating-filter-row button.active,
+.rating-filter-row button:hover {
+    background: #16a34a;
+    color: white;
     border-color: #16a34a;
+}
+
+body.dark-mode .rating-filter-row button {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .rating-filter-row button.active,
+body.dark-mode .rating-filter-row button:hover {
+    background: #ff9800;
+    color: #1f1f1f;
+    border-color: #ff9800;
 }

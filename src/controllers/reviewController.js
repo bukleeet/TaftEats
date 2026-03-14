@@ -20,6 +20,15 @@ function sanitize(html) {
   return clean;
 }
 
+
+async function recalcEstablishmentRating(establishmentId) {
+  const reviews = await Review.find({ establishment: establishmentId }, 'rating');
+  if (!reviews.length) return;
+  const mean = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  const rounded = Math.round(mean * 2) / 2; // round to nearest 0.5
+  await Establishment.findByIdAndUpdate(establishmentId, { rating: rounded });
+}
+
 exports.getReviewsPage = async (req, res) => {
   try {
     const estId = req.params.id;
@@ -33,6 +42,8 @@ exports.getReviewsPage = async (req, res) => {
     const userId = req.session.userId || null;
     const reviewsWithVote = reviews.map(r => ({
       ...r,
+      helpfulCount:   r.helpfulVotes.length,
+      unhelpfulCount: r.unhelpfulVotes.length,
       userVote: userId
         ? r.helpfulVotes.some(id => id.toString() === userId)
           ? 'helpful'
@@ -68,7 +79,11 @@ exports.getAllReviewsPage = async (req, res) => {
       .lean({ virtuals: true });
 
     res.render('reviews', {
-      reviews,
+      reviews: reviews.map(r => ({
+        ...r,
+        helpfulCount:   r.helpfulVotes.length,
+        unhelpfulCount: r.unhelpfulVotes.length
+      })),
       establishment: null,
       user: req.session.userId
         ? {
@@ -99,9 +114,10 @@ exports.createReview = async (req, res) => {
       establishment,
       user:          req.session.userId,
       username:      req.session.username,
-      media:         req.file ? req.file.filename : null
+      media:         req.files ? req.files.map(f => f.filename) : []
     });
 
+    await recalcEstablishmentRating(establishment);
     res.status(201).json({ success: true, review });
   } catch (err) {
     console.error(err);
@@ -127,7 +143,13 @@ exports.getReviewDetail = async (req, res) => {
       : null;
 
     res.render('reviewDetail', {
-      review: { ...review, userVote },
+      review: {
+        ...review,
+        userVote,
+        helpfulCount:   review.helpfulVotes.length,
+        unhelpfulCount: review.unhelpfulVotes.length,
+        establishmentId: review.establishment._id.toString()
+      },
       user: userId
         ? {
             _id:                userId,
@@ -156,14 +178,25 @@ exports.editReview = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
-    const { title, body, rating } = req.body;
+    const { title, body, rating, deleteMedia } = req.body;
     if (title)  review.title  = title;
     if (body)   review.body   = sanitize(body);
     if (rating) review.rating = Number(rating);
     review.edited = true;
-    if (req.file) review.media = req.file.filename;
+
+    // Remove individually deleted files
+    if (deleteMedia) {
+      const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
+      review.media = review.media.filter(f => !toDelete.includes(f));
+    }
+
+    // Append newly uploaded files (keep total ≤ 10)
+    if (req.files && req.files.length > 0) {
+      review.media = review.media.concat(req.files.map(f => f.filename)).slice(0, 10);
+    }
 
     await review.save();
+    await recalcEstablishmentRating(review.establishment);
     res.json({ success: true, review });
   } catch (err) {
     console.error(err);
@@ -184,7 +217,9 @@ exports.deleteReview = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
+    const estId = review.establishment;
     await review.deleteOne();
+    await recalcEstablishmentRating(estId);
     res.json({ success: true });
   } catch (err) {
     console.error(err);

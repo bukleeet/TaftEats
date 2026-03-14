@@ -58,7 +58,7 @@
           <img src="/images/<%= est.image %>" alt="<%= est.name %>" class="establishment-img" />
           <div class="establishment-info">
             <h2><%= est.name %></h2>
-            <p class="rating">⭐ <%= est.rating %> / 5</p>
+            <p class="rating"><span class="star-display" data-rating="<%= est.rating %>"></span></p>
             <p class="description"><%= est.description %></p>
             <a href="/establishments/<%= est._id %>/reviews" class="view-btn">View Reviews</a>
           </div>
@@ -72,6 +72,25 @@
 
   <!-- Scripts -->
   <script>
+    function renderStars(rating) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        if (rating >= i) {
+          html += '<span class="star star-filled">★</span>';
+        } else if (rating >= i - 0.5) {
+          html += '<span class="star half">★</span>';
+        } else {
+          html += '<span class="star">★</span>';
+        }
+      }
+      html += '<span style="font-size:0.9rem;color:#6b7280;margin-left:6px;">' + parseFloat(rating).toFixed(1) + ' / 5</span>';
+      return html;
+    }
+
+    document.querySelectorAll('.star-display').forEach(el => {
+      el.innerHTML = renderStars(parseFloat(el.dataset.rating));
+    });
+
     const searchInput = document.getElementById("searchInput");
     const ratingFilter = document.getElementById("ratingFilter");
     const cards = document.querySelectorAll(".establishment-card");
