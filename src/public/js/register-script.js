@@ -1,41 +1,73 @@
 
-document.getElementById('profileForm').addEventListener('submit', function(e) {
+// Form Submission 
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
-    const user  = document.getElementById('username').value;
-    const email = document.getElementById('userEmail').value;
-    const pass  = document.getElementById('userPassword').value;
-    const desc = document.getElementById('userDesc').value;
-    const pfp  = document.getElementById('profileImage');
+
+    const username = document.getElementById('username').value;
+    const email    = document.getElementById('userEmail').value;
+    const password = document.getElementById('userPassword').value;
+    const description     = document.getElementById('userDesc').value;
 
     // Checks if Description & Profile Image is added
-    if (!pfp) {
+    if (!imgUploaded) {
         alert('Please upload a profile image.');
         return;  // Stop submission
-    } else if  (!desc) {
+    } else if  (!description) {
         alert('Please enter a description.');
         return;
     }
 
-    // Store Account Data in Local Storage
-    localStorage.setItem('currentUser', user);
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userPassword', pass);
-    localStorage.setItem('userDesc', desc);
-    localStorage.setItem('isLoggedIn', 'true');
+    // Form Data
+    const formData = { 
+        username, 
+        email, 
+        password, 
+        description, 
+        avatar: profileBase64 
+    };
 
-    // Store Image as Base64 string
-    if (pfp.files && pfp.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            localStorage.setItem('userProfile', e.target.result);
-        };
-        reader.readAsDataURL(pfp.files[0]);
+    // Send form data as POST request
+    const response = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData) 
+    });
+
+    const result = await response.json();
+    if (result.success) {
+        alert("Account created successfully.");
+        window.location.href = "/login";    // redirects to login page
+    } else {
+        alert("Failed to create an account.");
     }
 
-    alert('Account Created Successfully!');
+    // Clears all input fields and removes modal
+    imgUploaded = false;
+    document.getElementById('username').value = "";
+    document.getElementById('userEmail').value = "";
+    document.getElementById('userPassword').value = "";
+    document.getElementById('userDesc').value = "";
+    document.getElementById('profileImage').value = "";
     document.getElementById('profileModal').classList.remove("active");
-    window.location.href = 'reviews.html'; // Redirects to reviews page
+});
+
+// Image Upload
+let imgUploaded = false;
+let profileBase64 = '';
+document.getElementById('profileImage').addEventListener('change', function(e) {
+    const imageFile = this.files[0];
+    if (!imageFile) return;  // Return if file is empty
+
+    // Store Image as Base64 string
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        // Stores base64 image in hidden input
+        profileBase64 = e.target.result;
+        imgUploaded = true;
+    };
+    reader.readAsDataURL(imageFile);
+
+    console.log("IMAGE: " + imgUploaded);
 });
 
 // Function to Open Modal
@@ -78,6 +110,7 @@ function previewImage(input) {
     }
 }
 
+// Remove Image
 function removeImage() {
     document.getElementById('profileImage').value = "";
     document.getElementById('imagePreviewContainer').style.display = 'none';
