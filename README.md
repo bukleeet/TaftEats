@@ -21,7 +21,7 @@ npm install
 
 > **No bcrypt.** Password hashing uses Node's built-in `crypto` module (SHA-256 + random salt + `timingSafeEqual`) — zero extra packages needed. The Phase 2 spec doesn't require hashing yet, but this keeps passwords out of plain text without adding a dependency your team needs to coordinate.
 
-> **No dompurify/jsdom.** Server-side HTML sanitization uses `sanitize-html` (one small package) instead of the dompurify+jsdom pair.
+> **No dompurify/jsdom.** Server-side HTML sanitization uses a regex tag whitelist built into `reviewController.js` — no package needed.
 
 ### 2. Ensure MongoDB is running
 
@@ -52,13 +52,7 @@ npm run seed-users
 
 This will print the available login credentials to the console.
 
-### 4. Create the uploads directory
-
-```bash
-mkdir -p src/public/uploads
-```
-
-### 5. Start the server
+### 4. Start the server
 
 ```bash
 npm start
@@ -90,7 +84,7 @@ App runs at **http://localhost:3000**
 ## Features Implemented (Phase 2 – assigned tasks)
 
 ### Login / Logout
-- `POST /login` — authenticates with bcrypt, creates a session
+- `POST /login` — authenticates using crypto-based password verification, creates a session
 - "Remember Me" checkbox extends the session cookie to **3 weeks**; unchecked = session-only cookie
 - `POST /logout` — destroys session and clears cookie
 
@@ -98,7 +92,7 @@ App runs at **http://localhost:3000**
 - Only logged-in users can post reviews
 - Required fields: **title**, **body** (rich text), **star rating** (1–5)
 - Optional: **media attachment** (image or video, up to 20 MB)
-- Body is sanitized server-side with **DOMPurify + JSDOM** to prevent XSS
+- Body is sanitized server-side with a regex whitelist sanitizer (no external package) to prevent XSS
 - Route: `POST /reviews`
 
 ### Edit / Delete a Review (CRUD requirement)
@@ -133,7 +127,7 @@ src/
     establishmentController.js
     aboutController.js
   models/
-    users.js                    ← User schema (student | owner roles, bcrypt)
+    users.js                    ← User schema (student | owner roles, crypto hashing)
     reviews.js                  ← Review schema (votes, owner response, media)
     establishments.js
     about.js
@@ -147,10 +141,10 @@ src/
     reviews.ejs                 ← Review list + create/edit/delete modals
     reviewDetail.ejs            ← Single review full view
     navbar.ejs                  ← Session-aware navbar partial
-  database/seedUsers.js
-    database/seedUsers.js         ← User seed script
+  database/
+    seedUsers.js                ← User seed script
   public/
     css/
     js/
-    uploads/                    ← Media uploads
+    uploads/                    ← Media uploads (tracked via .gitkeep)
 ```
