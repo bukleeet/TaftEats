@@ -7,21 +7,7 @@
 </head>
 <body>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="nav-left">
-      <h2 class="logo">TaftEats</h2>
-    </div>
-    <div class="nav-right">
-      <a href="/establishments" class="nav-link">Home</a>
-      <a href="/about" class="nav-link">About</a>
-      <a href="/reviews" class="nav-link">Reviews</a>
-      <a href="/profile-view" class="nav-link">Profile</a>
-      <a href="/login" class="nav-btn login" id="navLoginBtn">Login</a>
-      <a href="/register" class="nav-btn register">Register</a>
-      <button id="themeToggle" class="theme-btn">🌙</button>
-    </div>
-  </nav>
+<%- include('navbar') %>
 
   <!-- Hero Section -->
   <header class="hero">
@@ -74,7 +60,7 @@
             <h2><%= est.name %></h2>
             <p class="rating">⭐ <%= est.rating %> / 5</p>
             <p class="description"><%= est.description %></p>
-            <a href="/reviews/<%= est._id %>" class="view-btn">View Reviews</a>
+            <a href="/establishments/<%= est._id %>/reviews" class="view-btn">View Reviews</a>
           </div>
         </div>
       <% }) %>
@@ -102,11 +88,11 @@
         const matchesSearch = title.includes(searchText) || desc.includes(searchText);
         let matchesRating = true;
 
-        if (selectedRating === 1) matchesRating = rating >=1 && rating <2;
-        if (selectedRating === 2) matchesRating = rating >=2 && rating <3;
-        if (selectedRating === 3) matchesRating = rating >=3 && rating <4;
-        if (selectedRating === 4) matchesRating = rating >=4 && rating <5;
-        if (selectedRating === 5) matchesRating = rating ===5;
+        if (selectedRating === 1) matchesRating = rating >= 1 && rating < 2;
+        if (selectedRating === 2) matchesRating = rating >= 2 && rating < 3;
+        if (selectedRating === 3) matchesRating = rating >= 3 && rating < 4;
+        if (selectedRating === 4) matchesRating = rating >= 4 && rating < 5;
+        if (selectedRating === 5) matchesRating = rating === 5;
 
         card.style.display = matchesSearch && matchesRating ? "flex" : "none";
       });

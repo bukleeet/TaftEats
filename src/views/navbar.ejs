@@ -1,0 +1,23 @@
+<%
+  const user = typeof sessionUser !== 'undefined' ? sessionUser : null;
+%>
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/establishments" style="text-decoration:none;"><h2 class="logo">TaftEats</h2></a>
+  </div>
+  <div class="nav-right">
+    <a href="/establishments" class="nav-link">Home</a>
+    <a href="/about" class="nav-link">About</a>
+    <a href="/reviews" class="nav-link">Reviews</a>
+    <% if (user) { %>
+      <a href="/profile/<%= user._id %>" class="nav-link"><%= user.username %></a>
+      <form action="/logout" method="POST" style="display:inline;">
+        <button type="submit" class="nav-btn login" style="cursor:pointer;border:none;background:none;padding:0.4rem 1rem;">Logout</button>
+      </form>
+    <% } else { %>
+      <a href="/login" class="nav-btn login">Login</a>
+      <a href="/register" class="nav-btn register">Register</a>
+    <% } %>
+    <button id="themeToggle" class="theme-btn">🌙</button>
+  </div>
+</nav>
