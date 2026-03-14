@@ -15,7 +15,7 @@ exports.getRegisterPage = async (req, res) => {
 exports.registerAccount = async (req, res) => {
     try {
         // Gets form values
-        const {username, email, password, description, profile} = req.body;
+        const {username, email, password, description, avatar} = req.body;
 
         // Encodes Password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,7 +26,7 @@ exports.registerAccount = async (req, res) => {
             email: email,
             password: hashedPassword,
             description: description,
-            profile: profile
+            avatar: avatar
         });
 
         res.status(201).json({ success: true, message: "Account created successfully." });
