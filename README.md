@@ -19,10 +19,6 @@ A Node.js/Express/MongoDB web application for reviewing restaurants around the D
 npm install
 ```
 
-> **No bcrypt.** Password hashing uses Node's built-in `crypto` module (SHA-256 + random salt + `timingSafeEqual`) — zero extra packages needed. The Phase 2 spec doesn't require hashing yet, but this keeps passwords out of plain text without adding a dependency your team needs to coordinate.
-
-> **No dompurify/jsdom.** Server-side HTML sanitization uses a regex tag whitelist built into `reviewController.js` — no package needed.
-
 ### 2. Ensure MongoDB is running
 
 ```bash
