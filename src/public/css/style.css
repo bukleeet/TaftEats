@@ -153,7 +153,7 @@ body {
 .search-bar {
     display: flex;
     gap: 1rem;
-    margin: 2rem 0 1.2rem;
+    margin: 1.2rem 0 0.75rem;
 }
 
 .search-bar input,
@@ -1290,6 +1290,7 @@ body.dark-mode .register-link a:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
+    margin-top: 0.5rem;
     margin-bottom: 1.2rem;
     align-items: center;
 }
@@ -1322,4 +1323,88 @@ body.dark-mode .rating-filter-row button:hover {
     background: #ff9800;
     color: #1f1f1f;
     border-color: #ff9800;
+}
+
+.review-body-preview p,
+.review-body-preview div,
+.review-text p,
+.review-text div {
+    margin-bottom: 0.4rem;
+}
+
+.review-body-preview p:last-child,
+.review-body-preview div:last-child,
+.review-text p:last-child,
+.review-text div:last-child {
+    margin-bottom: 0;
+}
+
+.thread-btn {
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid #e5e7eb;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    transition: all 0.15s ease;
+}
+
+.thread-btn:hover {
+    background-color: #e5e7eb;
+    color: #1f2933;
+}
+
+.thread-btn.danger {
+    color: #ef4444;
+    border-color: #fca5a5;
+}
+
+.thread-btn.danger:hover {
+    background-color: #fee2e2;
+}
+
+body.dark-mode .thread-btn {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .thread-btn:hover {
+    background-color: #3a3a3a;
+}
+
+body.dark-mode .thread-btn.danger {
+    color: #f87171;
+    border-color: #7f1d1d;
+}
+
+.thread-edited-tag {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    font-style: italic;
+    cursor: default;
+    position: relative;
+    margin-left: 0.3rem;
+}
+
+.thread-edited-tag .edit-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #374151;
+    color: white;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.thread-edited-tag:hover .edit-tooltip {
+    display: block;
 }

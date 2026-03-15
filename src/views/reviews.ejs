@@ -131,27 +131,56 @@
           </button>
         </div>
 
-        <% if (review.ownerResponse) { %>
-          <div class="owner-response">
-            <strong>🏪 Owner's Response:</strong>
-            <div><%- review.ownerResponse.body %></div>
-            <small style="color:#6b7280;"><%= new Date(review.ownerResponse.respondedAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) %></small>
-            <% if (user && user.role === 'owner' && user.ownedEstablishment && establishment && user.ownedEstablishment.toString() === establishment._id.toString()) { %>
-              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                <button class="secondary-btn edit-owner-response-btn"
-                        data-id="<%= review._id %>"
-                        data-body="<%= encodeURIComponent(review.ownerResponse.body) %>"
-                        style="font-size:0.8rem;">Edit Response</button>
-                <button class="secondary-btn delete-owner-response-btn"
-                        data-id="<%= review._id %>"
-                        style="font-size:0.8rem;color:#ef4444;">Delete Response</button>
+        <% if (review.responseThread && review.responseThread.length > 0) { %>
+          <div class="owner-response" style="margin-top:1rem;">
+            <% review.responseThread.forEach((msg, idx) => { %>
+              <%
+                const canEditMsg = user && (
+                  (msg.role === 'owner' && user.role === 'owner' && user.ownedEstablishment && establishment && user.ownedEstablishment.toString() === establishment._id.toString()) ||
+                  (msg.role === 'reviewer' && user._id.toString() === review.user.toString())
+                );
+              %>
+              <div style="margin-left:<%= idx > 0 ? '1.2rem' : '0' %>;margin-top:<%= idx > 0 ? '0.75rem' : '0' %>;padding-top:<%= idx > 0 ? '0.75rem' : '0' %>;<%= idx > 0 ? 'border-top:1px solid rgba(0,0,0,0.07);' : '' %>">
+                <strong style="font-size:0.85rem;">
+                  <%= msg.role === 'owner' ? '🏪 ' + msg.author : '💬 ' + msg.author %>
+                </strong>
+                <span style="font-size:0.75rem;color:#9ca3af;margin-left:0.4rem;">
+                  <%= new Date(msg.createdAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) %>
+                </span>
+                <% if (msg.edited && msg.updatedAt) { %>
+                  <span class="thread-edited-tag">(edited)<span class="edit-tooltip">Edited <%= new Date(msg.updatedAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></span></span>
+                <% } %>
+                <div style="margin-top:0.25rem;font-size:0.9rem;"><%- msg.body %></div>
+                <% if (canEditMsg) { %>
+                  <button class="thread-btn edit-thread-msg-btn" style="margin-top:0.3rem;"
+                          data-reviewid="<%= review._id %>"
+                          data-msgidx="<%= idx %>"
+                          data-body="<%= encodeURIComponent(msg.body) %>">Edit</button>
+                <% } %>
               </div>
-            <% } %>
+            <% }) %>
+            <%
+              const lastMsg = review.responseThread[review.responseThread.length - 1];
+              const isOwner = user && user.role === 'owner' && user.ownedEstablishment && establishment &&
+                              user.ownedEstablishment.toString() === establishment._id.toString();
+              const isReviewer = user && user._id.toString() === review.user.toString();
+            %>
+            <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;">
+              <% if (isOwner && lastMsg.role === 'reviewer') { %>
+                <button class="thread-btn owner-respond-btn" data-id="<%= review._id %>">💬 Reply as Owner</button>
+              <% } %>
+              <% if (isReviewer && lastMsg.role === 'owner') { %>
+                <button class="thread-btn reviewer-reply-btn" data-id="<%= review._id %>">↩ Reply</button>
+              <% } %>
+              <% if ((isOwner && lastMsg.role === 'owner') || (isReviewer && lastMsg.role === 'reviewer')) { %>
+                <button class="thread-btn danger delete-last-thread-btn" data-id="<%= review._id %>">Delete My Last Reply</button>
+              <% } %>
+            </div>
           </div>
         <% } else if (user && user.role === 'owner' && establishment && user.ownedEstablishment && user.ownedEstablishment.toString() === establishment._id.toString()) { %>
-          <button class="secondary-btn owner-respond-btn"
+          <button class="thread-btn owner-respond-btn"
                   data-id="<%= review._id %>"
-                  style="margin-top:0.75rem;font-size:0.9rem;">💬 Respond as Owner</button>
+                  style="margin-top:0.75rem;">💬 Respond as Owner</button>
         <% } %>
       </div>
     <% }) %>
@@ -598,35 +627,51 @@ document.querySelectorAll('.vote-btn').forEach(btn => {
   });
 });
 
-// Owner respond
+// Response thread
+let threadReviewId  = null;
+let threadEndpoint  = null; // the URL to POST to
+
 document.querySelectorAll('.owner-respond-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    threadReviewId = btn.dataset.id;
+    threadEndpoint = `/reviews/${threadReviewId}/owner-response`;
     document.getElementById('ownerModalTitle').textContent = 'Respond as Owner';
-    document.getElementById('ownerResponseReviewId').value = btn.dataset.id;
     document.getElementById('ownerResponseBody').innerHTML = '';
     openModal('ownerResponseModal');
   });
 });
 
-document.querySelectorAll('.edit-owner-response-btn').forEach(btn => {
+document.querySelectorAll('.reviewer-reply-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.getElementById('ownerModalTitle').textContent = 'Edit Your Response';
-    document.getElementById('ownerResponseReviewId').value = btn.dataset.id;
-    document.getElementById('ownerResponseBody').innerHTML = decodeURIComponent(btn.dataset.body);
+    threadReviewId = btn.dataset.id;
+    threadEndpoint = `/reviews/${threadReviewId}/reviewer-reply`;
+    document.getElementById('ownerModalTitle').textContent = 'Reply to Owner';
+    document.getElementById('ownerResponseBody').innerHTML = '';
     openModal('ownerResponseModal');
+  });
+});
+
+document.querySelectorAll('.delete-last-thread-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (!confirm('Delete your last message in this thread?')) return;
+    try {
+      const res  = await fetch(`/reviews/${btn.dataset.id}/thread-last-message`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) location.reload();
+      else alert(data.message);
+    } catch { alert('Network error.'); }
   });
 });
 
 const submitOwnerBtn = document.getElementById('submitOwnerResponse');
 if (submitOwnerBtn) {
   submitOwnerBtn.addEventListener('click', async () => {
-    const id      = document.getElementById('ownerResponseReviewId').value;
     const cleanBody = DOMPurify.sanitize(document.getElementById('ownerResponseBody').innerHTML, {
       ALLOWED_TAGS: ['b','i','u','strong','em','br','p'], ALLOWED_ATTR: []
     });
-    if (!cleanBody.trim()) return alert('Please write a response.');
+    if (!cleanBody.trim()) return alert('Please write something first.');
     try {
-      const res  = await fetch(`/reviews/${id}/owner-response`, {
+      const res  = await fetch(threadEndpoint, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ body: cleanBody })
       });
@@ -637,15 +682,44 @@ if (submitOwnerBtn) {
   });
 }
 
-document.querySelectorAll('.delete-owner-response-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    if (!confirm('Delete this response?')) return;
-    try {
-      const res  = await fetch(`/reviews/${btn.dataset.id}/owner-response`, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) location.reload();
-      else alert(data.message);
-    } catch { alert('Network error.'); }
+// Edit thread message (inline)
+document.querySelectorAll('.edit-thread-msg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const reviewId = btn.dataset.reviewid;
+    const msgIdx   = btn.dataset.msgidx;
+    const existing = btn.closest('div').querySelector('.thread-inline-editor');
+    if (existing) { existing.remove(); btn.textContent = 'Edit'; return; }
+    btn.textContent = 'Cancel';
+    const editor = document.createElement('div');
+    editor.className = 'thread-inline-editor';
+    editor.style.cssText = 'margin-top:0.5rem;';
+    const ta = document.createElement('div');
+    ta.contentEditable = true;
+    ta.innerHTML = decodeURIComponent(btn.dataset.body);
+    ta.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:8px;min-height:60px;font-size:0.9rem;outline:none;background:white;';
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'thread-btn';
+    saveBtn.textContent = 'Save';
+    saveBtn.style.marginTop = '0.4rem';
+    saveBtn.addEventListener('click', async () => {
+      const cleanBody = DOMPurify.sanitize(ta.innerHTML, {
+        ALLOWED_TAGS: ['b','i','u','strong','em','br','p','div','ul','ol','li'], ALLOWED_ATTR: []
+      });
+      if (!cleanBody.trim()) return alert('Cannot save empty message.');
+      try {
+        const res  = await fetch(`/reviews/${reviewId}/thread-message/${msgIdx}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body: cleanBody })
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+        else alert(data.message);
+      } catch { alert('Network error.'); }
+    });
+    editor.appendChild(ta);
+    editor.appendChild(saveBtn);
+    btn.insertAdjacentElement('afterend', editor);
+    ta.focus();
   });
 });
 
