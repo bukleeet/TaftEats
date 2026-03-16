@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 
-const ownerResponseSchema = new mongoose.Schema({
-  body:        { type: String, required: true },
-  respondedAt: { type: Date, default: Date.now }
+const threadMessageSchema = new mongoose.Schema({
+  body:      { type: String, required: true },
+  author:    { type: String, required: true },
+  role:      { type: String, enum: ['owner', 'reviewer'], required: true },
+  edited:    { type: Boolean, default: false },
+  updatedAt: { type: Date, default: null },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const reviewSchema = new mongoose.Schema({
@@ -16,7 +20,6 @@ const reviewSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  // Cached for display so we don't need to populate on every query
   username: {
     type: String,
     required: true
@@ -44,18 +47,20 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  // Filename of uploaded image or video, served from /uploads/
+  // Filenames of uploaded images/videos, served from /uploads/ (up to 10)
   media: {
-    type: String,
-    default: null
+    type: [String],
+    default: []
   },
   edited: {
     type: Boolean,
     default: false
   },
-  ownerResponse: {
-    type: ownerResponseSchema,
-    default: null
+  // Thread of alternating owner/reviewer messages.
+  // First message must be from owner, then reviewer, then owner, etc.
+  responseThread: {
+    type: [threadMessageSchema],
+    default: []
   }
 }, { timestamps: true });
 

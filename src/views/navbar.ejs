@@ -10,9 +10,12 @@
     <a href="/about" class="nav-link">About</a>
     <a href="/reviews" class="nav-link">Reviews</a>
     <% if (user) { %>
-      <a href="/profile/<%= user._id %>" class="nav-link"><%= user.username %></a>
+      <a href="/profile/<%= user._id %>" class="nav-user-pill">
+        <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="avatar" class="nav-avatar">
+        <span><%= user.username %></span>
+      </a>
       <form action="/logout" method="POST" style="display:inline;">
-        <button type="submit" class="nav-btn login" style="cursor:pointer;border:none;background:none;padding:0.4rem 1rem;">Logout</button>
+        <button type="submit" class="nav-btn login nav-logout-btn">Logout</button>
       </form>
     <% } else { %>
       <a href="/login" class="nav-btn login">Login</a>

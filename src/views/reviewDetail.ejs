@@ -24,15 +24,20 @@
       <div>
         <h2 style="color:#065f46;"><%= review.title %></h2>
         <p class="review-meta">
-          ⭐ <%= review.rating %>/5 &nbsp;·&nbsp;
-          @<%= review.username %> &nbsp;·&nbsp;
-          <%= new Date(review.createdAt).toLocaleDateString() %>
-          <% if (review.edited) { %><em style="font-size:0.8rem;">(edited)</em><% } %>
+          <span class="star-display" data-rating="<%= review.rating %>"></span>
+          &nbsp;·&nbsp; @<%= review.username %> &nbsp;·&nbsp;
+          <%= new Date(review.createdAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) %>
+          <% if (review.edited) { %>
+            <span class="edited-tag">
+              (edited)
+              <span class="edit-tooltip">Last edited <%= new Date(review.updatedAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></span>
+            </span>
+          <% } %>
         </p>
       </div>
 
       <!-- Author actions -->
-      <% if (user && user._id.toString() === review.user.toString()) { %>
+      <% if (user && user._id === review.reviewerId) { %>
         <div style="display:flex;gap:0.5rem;">
           <button class="secondary-btn" id="openEditModal">Edit</button>
           <button class="secondary-btn" id="deleteReviewBtn" style="color:#ef4444;">Delete</button>
@@ -46,13 +51,17 @@
     </div>
 
     <!-- Media -->
-    <% if (review.media) { %>
-      <% const isVideo = /\.(mp4|mov|webm)$/i.test(review.media); %>
-      <% if (isVideo) { %>
-        <video src="/uploads/<%= review.media %>" controls style="max-width:100%;border-radius:8px;margin-top:1rem;"></video>
-      <% } else { %>
-        <img src="/uploads/<%= review.media %>" alt="Review media" style="max-width:100%;border-radius:8px;margin-top:1rem;">
-      <% } %>
+    <% if (review.media && Array.isArray(review.media) && review.media.length > 0) { %>
+      <div class="preview-media-row" style="margin-top:1rem;">
+        <% review.media.forEach(file => { %>
+          <% const isVid = /\.(mp4|mov|webm)$/i.test(file); %>
+          <% if (isVid) { %>
+            <video src="/uploads/<%= file %>" controls style="max-width:100%;border-radius:8px;"></video>
+          <% } else { %>
+            <img src="/uploads/<%= file %>" alt="Review media" style="max-width:320px;max-height:240px;object-fit:cover;border-radius:8px;">
+          <% } %>
+        <% }) %>
+      </div>
     <% } %>
 
     <!-- Votes -->
@@ -60,34 +69,63 @@
       <button class="vote-btn <%= review.userVote === 'helpful'   ? 'primary-btn' : 'secondary-btn' %>"
               data-type="helpful"
               <%= !user ? 'disabled title="Login to vote"' : '' %>>
-        👍 <span class="helpful-count"><%= review.helpfulCount %></span> Helpful
+        👍 Helpful (<span class="helpful-count"><%= review.helpfulCount %></span>)
       </button>
       <button class="vote-btn <%= review.userVote === 'unhelpful' ? 'primary-btn' : 'secondary-btn' %>"
               data-type="unhelpful"
               <%= !user ? 'disabled title="Login to vote"' : '' %>>
-        👎 <span class="unhelpful-count"><%= review.unhelpfulCount %></span> Unhelpful
+        👎 Unhelpful (<span class="unhelpful-count"><%= review.unhelpfulCount %></span>)
       </button>
     </div>
 
     <!-- Owner response -->
-    <% if (review.ownerResponse) { %>
+    <% if (review.responseThread && review.responseThread.length > 0) { %>
       <div class="owner-response" style="margin-top:1.5rem;">
-        <strong>🏪 Owner's Response:</strong>
-        <div style="margin-top:0.5rem;"><%- review.ownerResponse.body %></div>
-        <small style="color:#6b7280;">
-          <%= new Date(review.ownerResponse.respondedAt).toLocaleDateString() %>
-        </small>
-        <% if (user && user.role === 'owner' && user.ownedEstablishment &&
-               user.ownedEstablishment.toString() === review.establishment._id.toString()) { %>
-          <br>
-          <button class="secondary-btn" id="deleteOwnerResponseBtn" style="font-size:0.8rem;margin-top:0.5rem;">
-            Delete Response
-          </button>
-        <% } %>
+        <% review.responseThread.forEach((msg, idx) => { %>
+          <%
+            const canEditMsg = user && (
+              (msg.role === 'owner' && user.role === 'owner' && user.ownedEstablishment === review.establishmentId) ||
+              (msg.role === 'reviewer' && user._id === review.reviewerId)
+            );
+          %>
+          <div style="margin-left:<%= idx > 0 ? '1.5rem' : '0' %>;margin-top:<%= idx > 0 ? '0.85rem' : '0' %>;padding-top:<%= idx > 0 ? '0.85rem' : '0' %>;<%= idx > 0 ? 'border-top:1px solid rgba(0,0,0,0.08);' : '' %>">
+            <strong style="font-size:0.9rem;">
+              <%= msg.role === 'owner' ? '🏪 ' + msg.author : '💬 ' + msg.author %>
+            </strong>
+            <span style="font-size:0.78rem;color:#9ca3af;margin-left:0.4rem;">
+              <%= new Date(msg.createdAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }) %>
+            </span>
+            <% if (msg.edited && msg.updatedAt) { %>
+              <span class="thread-edited-tag">(edited)<span class="edit-tooltip">Edited <%= new Date(msg.updatedAt).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></span></span>
+            <% } %>
+            <div style="margin-top:0.3rem;line-height:1.6;"><%- msg.body %></div>
+            <% if (canEditMsg) { %>
+              <button class="thread-btn edit-thread-msg-btn" style="margin-top:0.3rem;"
+                      data-reviewid="<%= review._id %>"
+                      data-msgidx="<%= idx %>"
+                      data-body="<%= encodeURIComponent(msg.body) %>">Edit</button>
+            <% } %>
+          </div>
+        <% }) %>
+        <%
+          const lastMsg    = review.responseThread[review.responseThread.length - 1];
+          const isOwner    = user && user.role === 'owner' && user.ownedEstablishment === review.establishmentId;
+          const isReviewer = user && user._id === review.reviewerId;
+        %>
+        <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+          <% if (isOwner && lastMsg.role === 'reviewer') { %>
+            <button class="thread-btn" id="openOwnerResponseModal">💬 Reply as Owner</button>
+          <% } %>
+          <% if (isReviewer && lastMsg.role === 'owner') { %>
+            <button class="thread-btn" id="openReviewerReplyModal">↩ Reply</button>
+          <% } %>
+          <% if ((isOwner && lastMsg.role === 'owner') || (isReviewer && lastMsg.role === 'reviewer')) { %>
+            <button class="thread-btn danger" id="deleteLastThreadBtn">Delete My Last Reply</button>
+          <% } %>
+        </div>
       </div>
-    <% } else if (user && user.role === 'owner' && user.ownedEstablishment &&
-                  user.ownedEstablishment.toString() === review.establishment._id.toString()) { %>
-      <button class="secondary-btn" id="openOwnerResponseModal" style="margin-top:1rem;">
+    <% } else if (user && user.role === 'owner' && user.ownedEstablishment === review.establishmentId) { %>
+      <button class="thread-btn" id="openOwnerResponseModal" style="margin-top:1rem;">
         💬 Respond as Owner
       </button>
     <% } %>
@@ -95,7 +133,7 @@
 </div>
 
 <!-- Edit Review Modal -->
-<% if (user && user._id.toString() === review.user.toString()) { %>
+<% if (user && user._id === review.reviewerId) { %>
 <div class="modal" id="editReviewModal">
   <div class="modal-card" style="max-width:560px;">
     <h3 style="color:#065f46;margin-bottom:1rem;">Edit Review</h3>
@@ -104,12 +142,15 @@
            value="<%= review.title %>" style="margin-bottom:0.75rem;">
 
     <div class="star-rating-container" id="editStarRating">
-      <% for (let i = 1; i <= 5; i++) { %>
-        <span class="star <%= i <= review.rating ? 'star-filled' : '' %>" data-value="<%= i %>">★</span>
-      <% } %>
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
       <span id="editRatingDisplay"><%= review.rating %> / 5</span>
     </div>
     <input type="hidden" id="editReviewRating" value="<%= review.rating %>">
+    <input type="hidden" id="editMediaJson" value="<%= JSON.stringify(Array.isArray(review.media) ? review.media : []) %>">
 
     <div class="rich-editor-container" style="margin-bottom:0.75rem;">
       <div class="editor-toolbar">
@@ -117,14 +158,18 @@
         <button type="button" onclick="document.execCommand('italic');"><i>I</i></button>
         <button type="button" onclick="document.execCommand('underline');"><u>U</u></button>
         <button type="button" onclick="document.execCommand('strikeThrough');"><s>S</s></button>
+        <button type="button" onclick="document.execCommand('insertUnorderedList');">• List</button>
+        <button type="button" onclick="document.execCommand('insertOrderedList');">1. List</button>
       </div>
       <div class="editor-content" id="editReviewBody" contenteditable="true"><%- review.body %></div>
     </div>
 
     <div class="media-upload">
-      <label class="upload-label" for="editReviewMedia">📎 Replace photo/video</label>
-      <input type="file" id="editReviewMedia" accept="image/*,video/*" style="display:none;">
-      <span id="editMediaFilename" style="font-size:0.85rem;margin-left:0.5rem;color:#6b7280;"></span>
+      <p style="font-size:0.85rem;color:#6b7280;margin-bottom:0.4rem;">Current photos/videos:</p>
+      <div id="editExistingMedia" class="preview-media-row"></div>
+      <label class="upload-label" for="editReviewMedia" style="margin-top:0.5rem;display:inline-block;">📎 Add more (up to 10 total, max 6 MB each)</label>
+      <input type="file" id="editReviewMedia" accept="image/*,video/*" multiple style="display:none;">
+      <div id="editNewMediaPreview" class="preview-media-row" style="margin-top:0.5rem;"></div>
     </div>
 
     <div class="modal-actions">
@@ -135,11 +180,11 @@
 </div>
 <% } %>
 
-<!-- Owner Response Modal -->
-<% if (user && user.role === 'owner') { %>
+<!-- Response Thread Modal (used by both owner responses and reviewer replies) -->
+<% if (user) { %>
 <div class="modal" id="ownerResponseModal">
   <div class="modal-card" style="max-width:480px;">
-    <h3 style="color:#065f46;margin-bottom:1rem;">Respond as Owner</h3>
+    <h3 id="ownerModalTitle" style="color:#065f46;margin-bottom:1rem;">Respond as Owner</h3>
     <div class="rich-editor-container" style="margin-bottom:0.75rem;">
       <div class="editor-toolbar">
         <button type="button" onclick="document.execCommand('bold');"><b>B</b></button>
@@ -168,18 +213,128 @@ if (openEditBtn) openEditBtn.addEventListener('click', () => openModal('editRevi
 const cancelEdit = document.getElementById('cancelEditReview');
 if (cancelEdit) cancelEdit.addEventListener('click', () => closeModal('editReviewModal'));
 
-// Star rating for edit
-const editStars = document.querySelectorAll('#editStarRating .star');
-const editHidden = document.getElementById('editReviewRating');
-const editDisplay = document.getElementById('editRatingDisplay');
-editStars.forEach(s => {
-  s.addEventListener('click', () => {
-    const v = parseInt(s.dataset.value);
-    if (editHidden) editHidden.value = v;
-    if (editDisplay) editDisplay.textContent = v + ' / 5';
-    editStars.forEach(x => x.style.color = parseInt(x.dataset.value) <= v ? '#fbbf24' : '#ccc');
+// Half-star display renderer
+function renderStars(rating) {
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    if (rating >= i) {
+      html += '<span class="star star-filled">★</span>';
+    } else if (rating >= i - 0.5) {
+      html += '<span class="star half">★</span>';
+    } else {
+      html += '<span class="star">★</span>';
+    }
+  }
+  html += '<span style="font-size:0.9rem;color:#6b7280;margin-left:6px;">' + parseFloat(rating).toFixed(1) + ' / 5</span>';
+  return html;
+}
+document.querySelectorAll('.star-display').forEach(el => {
+  el.innerHTML = renderStars(parseFloat(el.dataset.rating));
+});
+
+// Star rating for edit — half-star mousemove input
+const editContainer = document.getElementById('editStarRating');
+const editHidden    = document.getElementById('editReviewRating');
+const editDisplay   = document.getElementById('editRatingDisplay');
+
+function applyEditHighlight(val) {
+  editContainer.querySelectorAll('.star').forEach(s => {
+    const sv = parseFloat(s.dataset.value);
+    if (val >= sv)         { s.classList.add('star-filled'); s.classList.remove('half'); }
+    else if (val >= sv - 0.5) { s.classList.add('half'); s.classList.remove('star-filled'); }
+    else                   { s.classList.remove('star-filled', 'half'); }
+    s.style.color = '';
+  });
+}
+
+// Pre-fill stars with the review's current rating on page load
+const initialRating = parseFloat('<%= review.rating %>');
+editHidden.value = initialRating;
+applyEditHighlight(initialRating);
+
+editContainer.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('mousemove', e => {
+    const rect = star.getBoundingClientRect();
+    const val  = parseFloat(star.dataset.value) - (e.clientX < rect.left + rect.width / 2 ? 0.5 : 0);
+    applyEditHighlight(val);
+    editDisplay.textContent = val + ' / 5';
+  });
+  star.addEventListener('click', e => {
+    const rect = star.getBoundingClientRect();
+    const val  = parseFloat(star.dataset.value) - (e.clientX < rect.left + star.offsetWidth / 2 ? 0.5 : 0);
+    editHidden.value = val;
+    editDisplay.textContent = val + ' / 5';
+    applyEditHighlight(val);
+  });
+  star.addEventListener('mouseleave', () => {
+    const current = parseFloat(editHidden.value) || 0;
+    applyEditHighlight(current);
+    editDisplay.textContent = current + ' / 5';
   });
 });
+
+// Edit media state
+let detailEditDeleteList = [];
+let detailEditNewFiles   = [];
+
+function renderDetailEditExisting() {
+  const mediaArr = JSON.parse(document.getElementById('editMediaJson')?.value || '[]');
+  const row = document.getElementById('editExistingMedia');
+  if (!row) return;
+  row.innerHTML = '';
+  if (!mediaArr.length) { row.innerHTML = '<span style="font-size:0.82rem;color:#6b7280;">None</span>'; return; }
+  mediaArr.forEach(file => {
+    if (detailEditDeleteList.includes(file)) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'media-thumb-wrap';
+    const isVideo = /\.(mp4|mov|webm)$/i.test(file);
+    const el = document.createElement(isVideo ? 'video' : 'img');
+    el.src = '/uploads/' + file;
+    el.className = 'preview-media-img';
+    if (isVideo) el.controls = true;
+    const rm = document.createElement('button');
+    rm.className = 'remove-media-btn';
+    rm.textContent = '×';
+    rm.addEventListener('click', () => { detailEditDeleteList.push(file); renderDetailEditExisting(); });
+    wrap.appendChild(el);
+    wrap.appendChild(rm);
+    row.appendChild(wrap);
+  });
+}
+
+const detailEditMediaInput = document.getElementById('editReviewMedia');
+if (detailEditMediaInput) {
+  detailEditMediaInput.addEventListener('change', function() {
+    detailEditNewFiles = detailEditNewFiles.concat(Array.from(this.files)).slice(0, 10);
+    renderDetailNewPreviews();
+    this.value = '';
+  });
+}
+
+function renderDetailNewPreviews() {
+  const row = document.getElementById('editNewMediaPreview');
+  if (!row) return;
+  row.innerHTML = '';
+  detailEditNewFiles.forEach((file, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'media-thumb-wrap';
+    const isVideo = file.type.startsWith('video/');
+    const el = document.createElement(isVideo ? 'video' : 'img');
+    el.src = URL.createObjectURL(file);
+    el.className = 'preview-media-img';
+    if (isVideo) el.controls = true;
+    const rm = document.createElement('button');
+    rm.className = 'remove-media-btn';
+    rm.textContent = '×';
+    rm.addEventListener('click', () => { detailEditNewFiles.splice(idx, 1); renderDetailNewPreviews(); });
+    wrap.appendChild(el);
+    wrap.appendChild(rm);
+    row.appendChild(wrap);
+  });
+}
+
+// Init existing media on page load
+renderDetailEditExisting();
 
 // Edit submit
 const submitEditBtn = document.getElementById('submitEditReview');
@@ -188,7 +343,6 @@ if (submitEditBtn) {
     const title   = document.getElementById('editReviewTitle').value.trim();
     const rawBody = document.getElementById('editReviewBody').innerHTML;
     const rating  = document.getElementById('editReviewRating').value;
-    const file    = document.getElementById('editReviewMedia').files[0];
     if (!title) return alert('Enter a title.');
     if (!rating || rating === '0') return alert('Select a rating.');
     const cleanBody = DOMPurify.sanitize(rawBody, {
@@ -199,7 +353,8 @@ if (submitEditBtn) {
     fd.append('title', title);
     fd.append('body', cleanBody);
     fd.append('rating', rating);
-    if (file) fd.append('media', file);
+    detailEditDeleteList.forEach(f => fd.append('deleteMedia', f));
+    detailEditNewFiles.forEach(f => fd.append('media', f));
     const res  = await fetch(`/reviews/${REVIEW_ID}`, { method: 'PUT', body: fd });
     const data = await res.json();
     if (data.success) location.reload();
@@ -237,9 +392,29 @@ document.querySelectorAll('.vote-btn').forEach(btn => {
   });
 });
 
-// Owner response
+// Response thread
+let detailThreadEndpoint = null;
+
 const openOwnerBtn = document.getElementById('openOwnerResponseModal');
-if (openOwnerBtn) openOwnerBtn.addEventListener('click', () => openModal('ownerResponseModal'));
+if (openOwnerBtn) {
+  openOwnerBtn.addEventListener('click', () => {
+    detailThreadEndpoint = `/reviews/${REVIEW_ID}/owner-response`;
+    document.getElementById('ownerModalTitle').textContent = 'Respond as Owner';
+    document.getElementById('ownerResponseBody').innerHTML = '';
+    openModal('ownerResponseModal');
+  });
+}
+
+const openReviewerReplyBtn = document.getElementById('openReviewerReplyModal');
+if (openReviewerReplyBtn) {
+  openReviewerReplyBtn.addEventListener('click', () => {
+    detailThreadEndpoint = `/reviews/${REVIEW_ID}/reviewer-reply`;
+    document.getElementById('ownerModalTitle').textContent = 'Reply to Owner';
+    document.getElementById('ownerResponseBody').innerHTML = '';
+    openModal('ownerResponseModal');
+  });
+}
+
 const cancelOwner = document.getElementById('cancelOwnerResponse');
 if (cancelOwner) cancelOwner.addEventListener('click', () => closeModal('ownerResponseModal'));
 
@@ -251,8 +426,8 @@ if (submitOwnerBtn) {
       ALLOWED_TAGS: ['b','i','u','strong','em','br','p'],
       ALLOWED_ATTR: []
     });
-    if (!cleanBody.trim()) return alert('Write a response first.');
-    const res  = await fetch(`/reviews/${REVIEW_ID}/owner-response`, {
+    if (!cleanBody.trim()) return alert('Write something first.');
+    const res  = await fetch(detailThreadEndpoint, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ body: cleanBody })
@@ -263,16 +438,57 @@ if (submitOwnerBtn) {
   });
 }
 
-const deleteOwnerBtn = document.getElementById('deleteOwnerResponseBtn');
-if (deleteOwnerBtn) {
-  deleteOwnerBtn.addEventListener('click', async () => {
-    if (!confirm('Delete this response?')) return;
-    const res  = await fetch(`/reviews/${REVIEW_ID}/owner-response`, { method: 'DELETE' });
+const deleteLastThreadBtn = document.getElementById('deleteLastThreadBtn');
+if (deleteLastThreadBtn) {
+  deleteLastThreadBtn.addEventListener('click', async () => {
+    if (!confirm('Delete your last message in this thread?')) return;
+    const res  = await fetch(`/reviews/${REVIEW_ID}/thread-last-message`, { method: 'DELETE' });
     const data = await res.json();
     if (data.success) location.reload();
     else alert(data.message);
   });
 }
+
+// Edit thread message (inline)
+document.querySelectorAll('.edit-thread-msg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const reviewId = btn.dataset.reviewid;
+    const msgIdx   = btn.dataset.msgidx;
+    const existing = btn.closest('div').querySelector('.thread-inline-editor');
+    if (existing) { existing.remove(); btn.textContent = 'Edit'; return; }
+    btn.textContent = 'Cancel';
+    const editor = document.createElement('div');
+    editor.className = 'thread-inline-editor';
+    editor.style.cssText = 'margin-top:0.5rem;';
+    const ta = document.createElement('div');
+    ta.contentEditable = true;
+    ta.innerHTML = decodeURIComponent(btn.dataset.body);
+    ta.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:8px;min-height:60px;font-size:0.9rem;outline:none;background:white;';
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'thread-btn';
+    saveBtn.textContent = 'Save';
+    saveBtn.style.marginTop = '0.4rem';
+    saveBtn.addEventListener('click', async () => {
+      const cleanBody = DOMPurify.sanitize(ta.innerHTML, {
+        ALLOWED_TAGS: ['b','i','u','strong','em','br','p','div','ul','ol','li'], ALLOWED_ATTR: []
+      });
+      if (!cleanBody.trim()) return alert('Cannot save empty message.');
+      try {
+        const res  = await fetch(`/reviews/${reviewId}/thread-message/${msgIdx}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body: cleanBody })
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+        else alert(data.message);
+      } catch { alert('Network error.'); }
+    });
+    editor.appendChild(ta);
+    editor.appendChild(saveBtn);
+    btn.insertAdjacentElement('afterend', editor);
+    ta.focus();
+  });
+});
 
 // Close modal on backdrop click
 ['editReviewModal','ownerResponseModal'].forEach(id => {

@@ -6,8 +6,8 @@ const MongoStore = require('connect-mongo');
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'src/public')));
 
 app.set('view engine', 'ejs');
@@ -23,7 +23,7 @@ app.use(session({
   secret: 'tafteats-secret-key',
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongoUrl: MONGO_URI }),
+  store: MongoStore.create({ mongoUrl: MONGO_URI }),
   cookie: { httpOnly: true }
 }));
 
@@ -34,6 +34,7 @@ app.use((req, res, next) => {
         _id:                req.session.userId,
         username:           req.session.username,
         role:               req.session.role,
+        avatar:             req.session.avatar || 'defaultprofile.png',
         ownedEstablishment: req.session.ownedEstablishment
       }
     : null;
@@ -44,11 +45,13 @@ const aboutRoutes         = require('./src/routes/aboutRoutes');
 const establishmentRoutes = require('./src/routes/establishmentRoutes');
 const reviewRoutes        = require('./src/routes/reviewRoutes');
 const authRoutes          = require('./src/routes/authRoutes');
+const registerRoutes      = require('./src/routes/registerRoutes');
 
 app.use('/', aboutRoutes);
 app.use('/', establishmentRoutes);
 app.use('/', reviewRoutes);
 app.use('/', authRoutes);
+app.use('/', registerRoutes);
 
 app.get('/', (req, res) => res.redirect('/establishments'));
 

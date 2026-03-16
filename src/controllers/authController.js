@@ -24,6 +24,7 @@ exports.postLogin = async (req, res) => {
     req.session.userId             = user._id.toString();
     req.session.username           = user.username;
     req.session.role               = user.role;
+    req.session.avatar             = user.avatar || 'defaultprofile.png';
     req.session.ownedEstablishment = user.ownedEstablishment
       ? user.ownedEstablishment.toString()
       : null;

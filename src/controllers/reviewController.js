@@ -4,7 +4,7 @@ const Establishment = require('../models/establishments');
 // Regex-based HTML sanitizer — no external package needed.
 // Only allows tags produced by the rich-text toolbar.
 // See comments below for known edge case tradeoffs.
-const ALLOWED_TAGS = /^\/?(b|i|u|s|strong|em|br|p|ul|ol|li)$/i;
+const ALLOWED_TAGS = /^\/?(b|i|u|s|strong|em|br|p|div|ul|ol|li)$/i;
 
 function sanitize(html) {
   if (!html) return '';
@@ -20,6 +20,15 @@ function sanitize(html) {
   return clean;
 }
 
+
+async function recalcEstablishmentRating(establishmentId) {
+  const reviews = await Review.find({ establishment: establishmentId }, 'rating');
+  if (!reviews.length) return;
+  const mean = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  const rounded = Math.round(mean * 2) / 2; // round to nearest 0.5
+  await Establishment.findByIdAndUpdate(establishmentId, { rating: rounded });
+}
+
 exports.getReviewsPage = async (req, res) => {
   try {
     const estId = req.params.id;
@@ -33,6 +42,8 @@ exports.getReviewsPage = async (req, res) => {
     const userId = req.session.userId || null;
     const reviewsWithVote = reviews.map(r => ({
       ...r,
+      helpfulCount:   r.helpfulVotes.length,
+      unhelpfulCount: r.unhelpfulVotes.length,
       userVote: userId
         ? r.helpfulVotes.some(id => id.toString() === userId)
           ? 'helpful'
@@ -68,7 +79,11 @@ exports.getAllReviewsPage = async (req, res) => {
       .lean({ virtuals: true });
 
     res.render('reviews', {
-      reviews,
+      reviews: reviews.map(r => ({
+        ...r,
+        helpfulCount:   r.helpfulVotes.length,
+        unhelpfulCount: r.unhelpfulVotes.length
+      })),
       establishment: null,
       user: req.session.userId
         ? {
@@ -99,9 +114,10 @@ exports.createReview = async (req, res) => {
       establishment,
       user:          req.session.userId,
       username:      req.session.username,
-      media:         req.file ? req.file.filename : null
+      media:         req.files ? req.files.map(f => f.filename) : []
     });
 
+    await recalcEstablishmentRating(establishment);
     res.status(201).json({ success: true, review });
   } catch (err) {
     console.error(err);
@@ -127,7 +143,14 @@ exports.getReviewDetail = async (req, res) => {
       : null;
 
     res.render('reviewDetail', {
-      review: { ...review, userVote },
+      review: {
+        ...review,
+        userVote,
+        helpfulCount:    review.helpfulVotes.length,
+        unhelpfulCount:  review.unhelpfulVotes.length,
+        establishmentId: review.establishment._id.toString(),
+        reviewerId:      review.user.toString()
+      },
       user: userId
         ? {
             _id:                userId,
@@ -156,14 +179,25 @@ exports.editReview = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
-    const { title, body, rating } = req.body;
+    const { title, body, rating, deleteMedia } = req.body;
     if (title)  review.title  = title;
     if (body)   review.body   = sanitize(body);
     if (rating) review.rating = Number(rating);
     review.edited = true;
-    if (req.file) review.media = req.file.filename;
+
+    // Remove individually deleted files
+    if (deleteMedia) {
+      const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
+      review.media = review.media.filter(f => !toDelete.includes(f));
+    }
+
+    // Append newly uploaded files (keep total ≤ 10)
+    if (req.files && req.files.length > 0) {
+      review.media = review.media.concat(req.files.map(f => f.filename)).slice(0, 10);
+    }
 
     await review.save();
+    await recalcEstablishmentRating(review.establishment);
     res.json({ success: true, review });
   } catch (err) {
     console.error(err);
@@ -184,7 +218,9 @@ exports.deleteReview = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
+    const estId = review.establishment;
     await review.deleteOne();
+    await recalcEstablishmentRating(estId);
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -257,37 +293,132 @@ exports.ownerRespond = async (req, res) => {
       return res.status(403).json({ success: false, message: 'You can only respond to reviews on your establishment.' });
     }
 
-    review.ownerResponse = {
-      body:        sanitize(req.body.body || ''),
-      respondedAt: new Date()
-    };
+    const thread = review.responseThread;
+    const lastMsg = thread[thread.length - 1];
+
+    // Owner can only post if thread is empty or last message is from the reviewer
+    if (lastMsg && lastMsg.role === 'owner') {
+      return res.status(400).json({ success: false, message: 'You already responded. Wait for the reviewer to reply first.' });
+    }
+
+    thread.push({
+      body:   sanitize(req.body.body || ''),
+      author: req.session.username,
+      role:   'owner'
+    });
 
     await review.save();
-    res.json({ success: true, ownerResponse: review.ownerResponse });
+    res.json({ success: true, responseThread: review.responseThread });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Failed to post response.' });
   }
 };
 
-exports.deleteOwnerResponse = async (req, res) => {
+exports.reviewerReply = async (req, res) => {
   try {
-    if (!req.session.userId || req.session.role !== 'owner') {
-      return res.status(403).json({ success: false, message: 'Only establishment owners can delete responses.' });
+    if (!req.session.userId) {
+      return res.status(401).json({ success: false, message: 'Must be logged in.' });
+    }
+
+    const review = await Review.findById(req.params.reviewId);
+    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+
+    // Only the original reviewer can reply
+    if (review.user.toString() !== req.session.userId) {
+      return res.status(403).json({ success: false, message: 'Only the original reviewer can reply here.' });
+    }
+
+    const thread = review.responseThread;
+    const lastMsg = thread[thread.length - 1];
+
+    // Reviewer can only reply if the last message is from the owner
+    if (!lastMsg || lastMsg.role !== 'owner') {
+      return res.status(400).json({ success: false, message: 'You can only reply after the owner responds.' });
+    }
+
+    thread.push({
+      body:   sanitize(req.body.body || ''),
+      author: req.session.username,
+      role:   'reviewer'
+    });
+
+    await review.save();
+    res.json({ success: true, responseThread: review.responseThread });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to post reply.' });
+  }
+};
+
+exports.deleteLastThreadMessage = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ success: false, message: 'Must be logged in.' });
     }
 
     const review = await Review.findById(req.params.reviewId).populate('establishment');
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-    if (review.establishment._id.toString() !== req.session.ownedEstablishment) {
-      return res.status(403).json({ success: false, message: 'Not your establishment.' });
+    const thread = review.responseThread;
+    if (!thread.length) {
+      return res.status(400).json({ success: false, message: 'Nothing to delete.' });
     }
 
-    review.ownerResponse = null;
+    const lastMsg = thread[thread.length - 1];
+
+    // Owner can delete their own last message; reviewer can delete theirs
+    const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
+    const isReviewer = review.user.toString() === req.session.userId;
+
+    if (lastMsg.role === 'owner' && !isOwner) {
+      return res.status(403).json({ success: false, message: 'Not authorized.' });
+    }
+    if (lastMsg.role === 'reviewer' && !isReviewer) {
+      return res.status(403).json({ success: false, message: 'Not authorized.' });
+    }
+
+    review.responseThread.pop();
     await review.save();
-    res.json({ success: true });
+    res.json({ success: true, responseThread: review.responseThread });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to delete response.' });
+    res.status(500).json({ success: false, message: 'Failed to delete message.' });
+  }
+};
+
+exports.editThreadMessage = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ success: false, message: 'Must be logged in.' });
+    }
+
+    const { messageIndex } = req.params;
+    const review = await Review.findById(req.params.reviewId).populate('establishment');
+    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+
+    const idx = parseInt(messageIndex);
+    const msg = review.responseThread[idx];
+    if (!msg) return res.status(404).json({ success: false, message: 'Message not found.' });
+
+    const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
+    const isReviewer = review.user.toString() === req.session.userId;
+
+    if (msg.role === 'owner' && !isOwner) {
+      return res.status(403).json({ success: false, message: 'Not authorized.' });
+    }
+    if (msg.role === 'reviewer' && !isReviewer) {
+      return res.status(403).json({ success: false, message: 'Not authorized.' });
+    }
+
+    msg.body      = sanitize(req.body.body || '');
+    msg.edited    = true;
+    msg.updatedAt = new Date();
+
+    await review.save();
+    res.json({ success: true, responseThread: review.responseThread });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to edit message.' });
   }
 };

@@ -12,28 +12,60 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
-      <h1 id="hero-text">Are you hungry?</h1>
+      <h1 id="hero-text">Are you hungry?<span id="hero-cursor" style="border-right:3px solid white;margin-left:2px;animation:blink 0.7s step-end infinite;"></span></h1>
       <p>Discover restaurants around Taft</p>
       <a href="#restaurants" class="hero-btn">Explore Now</a>
     </div>
   </header>
 
+  <style>
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  </style>
+
   <script>
-    const heroText = document.getElementById("hero-text");
-    const translations = [
+    const phrases = [
       "Are you hungry?",
       "Gutom ka na ba?",
       "¿Tienes hambre?",
-      "你饿了吗？",
+      "你饿了吗",
       "Vous avez faim?",
       "Hast du Hunger?",
       "Hai fame?"
     ];
-    let index = 0;
-    setInterval(() => {
-      index = (index + 1) % translations.length;
-      heroText.textContent = translations[index];
-    }, 3000);
+
+    const el     = document.getElementById('hero-text');
+    const cursor = document.getElementById('hero-cursor');
+    let phraseIdx = 0;
+    let charIdx   = phrases[0].length; // start fully typed
+
+    const TYPE_SPEED   = 65;
+    const DELETE_SPEED = 35;
+    const PAUSE_AFTER  = 2000;
+    const PAUSE_BEFORE = 300;
+
+    function type() {
+      const target = phrases[phraseIdx];
+      if (charIdx < target.length) {
+        el.firstChild.textContent = target.slice(0, ++charIdx);
+        setTimeout(type, TYPE_SPEED);
+      } else {
+        setTimeout(erase, PAUSE_AFTER);
+      }
+    }
+
+    function erase() {
+      if (charIdx > 0) {
+        el.firstChild.textContent = phrases[phraseIdx].slice(0, --charIdx);
+        setTimeout(erase, DELETE_SPEED);
+      } else {
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        setTimeout(type, PAUSE_BEFORE);
+      }
+    }
+
+    // Initialise — el has a text node then the cursor span; keep that structure
+    el.firstChild.textContent = phrases[0];
+    setTimeout(erase, PAUSE_AFTER);
   </script>
 
   <main class="container" id="restaurants">
@@ -58,7 +90,7 @@
           <img src="/images/<%= est.image %>" alt="<%= est.name %>" class="establishment-img" />
           <div class="establishment-info">
             <h2><%= est.name %></h2>
-            <p class="rating">⭐ <%= est.rating %> / 5</p>
+            <p class="rating"><span class="star-display" data-rating="<%= est.rating %>"></span></p>
             <p class="description"><%= est.description %></p>
             <a href="/establishments/<%= est._id %>/reviews" class="view-btn">View Reviews</a>
           </div>
@@ -72,6 +104,25 @@
 
   <!-- Scripts -->
   <script>
+    function renderStars(rating) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        if (rating >= i) {
+          html += '<span class="star star-filled">★</span>';
+        } else if (rating >= i - 0.5) {
+          html += '<span class="star half">★</span>';
+        } else {
+          html += '<span class="star">★</span>';
+        }
+      }
+      html += '<span style="font-size:0.9rem;color:#6b7280;margin-left:6px;">' + parseFloat(rating).toFixed(1) + ' / 5</span>';
+      return html;
+    }
+
+    document.querySelectorAll('.star-display').forEach(el => {
+      el.innerHTML = renderStars(parseFloat(el.dataset.rating));
+    });
+
     const searchInput = document.getElementById("searchInput");
     const ratingFilter = document.getElementById("ratingFilter");
     const cards = document.querySelectorAll(".establishment-card");
