@@ -46,12 +46,14 @@ const establishmentRoutes = require('./src/routes/establishmentRoutes');
 const reviewRoutes        = require('./src/routes/reviewRoutes');
 const authRoutes          = require('./src/routes/authRoutes');
 const registerRoutes      = require('./src/routes/registerRoutes');
+const profileRoutes       = require('./src/routes/profileRoutes');
 
 app.use('/', aboutRoutes);
 app.use('/', establishmentRoutes);
 app.use('/', reviewRoutes);
 app.use('/', authRoutes);
 app.use('/', registerRoutes);
+app.use('/', profileRoutes);
 
 app.get('/', (req, res) => res.redirect('/establishments'));
 
