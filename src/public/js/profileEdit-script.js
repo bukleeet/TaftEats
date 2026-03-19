@@ -1,4 +1,4 @@
-// Saves Edits Made to Profile   << SAVE TO DATABASE >>
+// Saves Edits Made to Profile
 async function saveEdits() {
     const username    = document.getElementById('username-txt').value;
     const description = document.getElementById('desc-txt').value;
@@ -13,32 +13,25 @@ async function saveEdits() {
         alert("Description cannot be empty.");
         return;
     }
+
+    // FormData to contain updated values
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('description', description);
     
-    // Store Image as Base64 string
-    let profileBase64 = '';
+    // Stores Image if file is uploaded
     if (avatar.files && avatar.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            profileBase64 = e.target.result;
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+        formData.append('profileImage', avatar.files[0]); 
     }
 
-    // Updated User Data
-    const payload = {
-        username,
-        description,
-        avatar: profileBase64 || null
-    };
-    
     try {
         // Send form data as POST request
         const response = await fetch(`/profile/${userId}/edit`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload) 
+            body: formData
         });
 
+        // Checks result of fetch
         const result = await response.json();
         if (result.success) {
             alert("User profile updated successfully.");
