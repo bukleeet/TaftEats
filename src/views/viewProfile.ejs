@@ -20,7 +20,7 @@
         <!-- Profile Image-->
         <div class="profile-left">
             <div class="profile-avatar">
-                <img src="" alt="user-profile">
+                <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="user-profile">
             </div>
 
             <a href="/profile/<%= user._id %>/edit" class="edit-btn" id="editProfileBtn" style="display:none;"> Edit Profile </a>
