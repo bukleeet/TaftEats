@@ -1,15 +1,15 @@
-
 // Form Submission 
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const username = document.getElementById('username').value;
-    const email    = document.getElementById('userEmail').value;
-    const password = document.getElementById('userPassword').value;
-    const description     = document.getElementById('userDesc').value;
+    const username    = document.getElementById('username').value;
+    const email       = document.getElementById('userEmail').value;
+    const password    = document.getElementById('userPassword').value;
+    const description = document.getElementById('userDesc').value;
+    const avatar      = document.getElementById('profileImage');
 
     // Checks if Description & Profile Image is added
-    if (!imgUploaded) {
+    if (!avatar.files || !avatar.files[0]) {
         alert('Please upload a profile image.');
         return;  // Stop submission
     } else if  (!description) {
@@ -17,58 +17,39 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
 
-    // Form Data
-    const formData = { 
-        username, 
-        email, 
-        password, 
-        description, 
-        avatar: profileBase64 
-    };
+    // Form Data to contain values
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('description', description);
+    formData.append('profileImage', avatar.files[0]);
 
-    // Send form data as POST request
-    const response = await fetch('/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData) 
-    });
+    try {
+        // Send form data as POST request
+        const response = await fetch('/register', {
+            method: 'POST',
+            body: formData
+        });
 
-    const result = await response.json();
-    if (result.success) {
-        alert("Account created successfully.");
-        window.location.href = "/login";    // redirects to login page
-    } else {
-        alert("Failed to create an account.");
+        // Checks result of fetch
+        const result = await response.json();
+        if (result.success) {
+            alert("Account created successfully.");
+            window.location.href = "/login";  // redirects to login page
+        } else {
+            alert("Failed to create an account.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error in account creation.");
     }
 
-    // Clears all input fields and removes modal
-    imgUploaded = false;
-    document.getElementById('username').value = "";
-    document.getElementById('userEmail').value = "";
-    document.getElementById('userPassword').value = "";
-    document.getElementById('userDesc').value = "";
-    document.getElementById('profileImage').value = "";
+    // Reset form and removes modal
+    document.getElementById('registerForm').reset();
     document.getElementById('profileModal').classList.remove("active");
 });
 
-// Image Upload
-let imgUploaded = false;
-let profileBase64 = '';
-document.getElementById('profileImage').addEventListener('change', function(e) {
-    const imageFile = this.files[0];
-    if (!imageFile) return;  // Return if file is empty
-
-    // Store Image as Base64 string
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        // Stores base64 image in hidden input
-        profileBase64 = e.target.result;
-        imgUploaded = true;
-    };
-    reader.readAsDataURL(imageFile);
-
-    console.log("IMAGE: " + imgUploaded);
-});
 
 // Function to Open Modal
 function openModal(id) {
