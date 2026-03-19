@@ -30,9 +30,6 @@ exports.getEditPage = async (req, res) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
-
-        console.log(user.username);
-        console.log(user.description);
         
         res.render('editProfile', {
             user: user,
@@ -47,7 +44,7 @@ exports.getEditPage = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userID = req.params.userId;  // Extracts ID from URL
-        const {username, description, avatar} = req.body;
+        const { username, description } = req.body;
 
         // Updated Data
         const updatedData = {
@@ -56,10 +53,11 @@ exports.updateProfile = async (req, res) => {
         };
 
         // Updates avatar if image is provided
-        if (avatar) {
-            updatedData.avatar = avatar;
+        if (req.file) {
+            updatedData.avatar = req.file.filename;
         }
 
+        // Updates Database
         await User.findByIdAndUpdate(userID, updatedData);
         res.json({ success: true });
     } catch (err) {
