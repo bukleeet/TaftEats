@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/profileView-style.css">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<%- include('navbar') %>
+
+<!-- View Profile -->
+<div class="container profile-container">
+        
+    <!-- User Profile Header-->
+    <div class="profile-content">
+        <!-- Profile Image-->
+        <div class="profile-left">
+            <div class="profile-avatar">
+                <img src="" alt="user-profile">
+            </div>
+
+            <a href="profile-edit.html" class="edit-btn" id="editProfileBtn" style="display:none;"> Edit Profile </a>
+        </div>
+        <!-- Username & Description -->
+        <div class="user-info">
+            <h1 id="username-display"><%= user.username %></h1>
+            <p id="desc-display">
+                <%= user.description %>
+            </p>
+        </div>
+    </div>
+
+    <!-- User Activity -->
+    <div class="activity-section">
+        <!-- Activity Tabs -->
+        <div class="activity-sidebar tabs">
+
+            <!-- User Recent Activity -->
+            <input type="radio" id="activity-tab" name="tabs" data-tab="recent-activity" checked>
+            <label for="activity-tab" class="tab-label">Recent Activity</label>
+
+            <!-- User All Reviews -->
+            <input type="radio" id="posts-tab" name="tabs" data-tab="all-posts">
+            <label for="posts-tab" class="tab-label">All Posts</label>
+
+            <!-- User All Comments -->
+            <input type="radio" id="comments-tab" name="tabs" data-tab="all-comments">
+            <label for="comments-tab" class="tab-label">All Comments</label>
+        </div>
+
+
+        <!-- Activity Container -->
+        <div class="activity-contents">
+
+            <!-- Recent Activity Tab -->
+            <div id="recent-activity" class="tab-content active">
+                <div class="review-card">
+                    <a href="views/reviews.ejs">
+                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    </a>
+
+                    <!-- Review Contents -->
+                    <div class="review-content">
+                        <h2>Establishment</h2>
+                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">
+                            The user's review of this establishment is...
+                        </p>
+                    </div>                    
+                </div>
+            </div> 
+
+            <!-- All Posts Tab -->
+            <div id="all-posts" class="tab-content">
+                <div class="review-card">
+                    <a href="views/reviews.ejs">
+                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    </a>
+
+                    <!-- Review Contents -->
+                    <div class="review-content">
+                        <h2>Review Establishments</h2>
+                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">
+                            More of the user's review of this establishment is...
+                        </p>
+                    </div>                    
+                </div>
+            </div>
+
+            <!-- All Comments Tab -->
+            <div id="all-comments" class="tab-content">
+                <div class="review-card">
+                    <a href="views/reviews.ejs?establishment=Prelude">
+                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
+                    </a>
+
+                    <!-- Review Contents -->
+                    <div class="review-content">
+                        <h2>Comments</h2>
+                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
+                        <p class="review-text">
+                            The user's comment of this establishment is...
+                        </p>
+                    </div>                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Script to pass IDs to javascript  -->
+<% const currentUser = typeof sessionUser !== 'undefined' ? sessionUser : null %>
+<script>
+    const viewedUserID  = "<%= user._id %>";
+    const currentUserID = "<%= currentUser._id %>";
+</script>
+
+<!-- Script for Tab Navigation & Showing Edit Button -->
+<script src="/js/profileView-script.js"></script>
+
+<script src="/js/loggedUser-script.js"></script>
+<script src="/js/theme-toggle.js"></script>
+
+</body>
+</html>
+
