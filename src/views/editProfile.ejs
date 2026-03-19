@@ -30,7 +30,7 @@
         <div class="edit-inputs">
             <!-- Image Preview -->
             <div class="edit-profile-avatar">
-                <img src="/images/defaultprofile.png" alt="current profile" />
+                <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="current profile" />
                 <div class="upload-overlay">
                     <span class="upload-icon">Upload</span>
                 </div>
