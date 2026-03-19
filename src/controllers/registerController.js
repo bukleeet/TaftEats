@@ -6,20 +6,27 @@ exports.getRegisterPage = (req, res) => {
 
 exports.registerAccount = async (req, res) => {
   try {
-    const { username, email, password, description } = req.body;
+    const { username, email, password, description} = req.body;
 
     const existing = await User.findOne({ $or: [{ username }, { email }] });
     if (existing) {
       return res.status(409).json({ success: false, message: 'Username or email already taken.' });
     }
 
+    // Stores avatar filename by multer
+    let avatarFilename = 'defaultprofile.png';
+    if (req.file) {
+      avatarFilename = req.file.filename;
+    }
+
     // Do NOT hash here — the User model pre-save hook handles hashing automatically
     const newUser = await User.create({
-      username,
-      email,
-      password,
+      username: username,
+      email: email,
+      password: password,
       description: description || '',
-      role: 'student'
+      role: 'student',
+      avatar: avatarFilename
     });
 
     res.status(201).json({ success: true, message: 'Account created successfully.' });
