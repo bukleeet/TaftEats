@@ -1,49 +1,57 @@
+// Saves Edits Made to Profile   << SAVE TO DATABASE >>
+async function saveEdits() {
+    const username    = document.getElementById('username-txt').value;
+    const description = document.getElementById('desc-txt').value;
+    const avatar      = document.getElementById('profileImage');
 
-// Loads Profile Data from LocalStorage
-function loadProfile() {
-    // Gets user profile
-    const user = localStorage.getItem('currentUser');
-    const desc = localStorage.getItem('userDesc');
-    const profileImg = localStorage.getItem('userProfile');
-
-    // Sets Text Content
-    document.getElementById('username-txt').textContent = user;
-    document.getElementById('desc-txt').textContent = desc;
-    document.querySelector('.edit-profile-avatar img').src = profileImg;
-}
-
-loadProfile();
-
-
-// Saves Edits Made to Profile
-function saveEdits() {
-    const user  = document.getElementById('username-txt').value;
-    const desc = document.getElementById('desc-txt').value;
-    const pfp  = document.getElementById('profileImage');
-
-    localStorage.setItem('currentUser', user);
-    localStorage.setItem('userDesc', desc);
+    // Send Alert if fields are empty
+    if (!username) {
+        alert("Username cannot be empty.");
+        return;
+    }
+    if (!description) {
+        alert("Description cannot be empty.");
+        return;
+    }
     
     // Store Image as Base64 string
-    if (pfp.files && pfp.files[0]) {
+    let profileBase64 = '';
+    if (avatar.files && avatar.files[0]) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            localStorage.setItem('userProfile', e.target.result);
+            profileBase64 = e.target.result;
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
-    window.location.href = `profile-view.html?username=${encodeURIComponent(user)}`;
+
+    // Updated User Data
+    const payload = {
+        username,
+        description,
+        avatar: profileBase64 || null
+    };
+    
+    try {
+        // Send form data as POST request
+        const response = await fetch(`/profile/${userId}/edit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload) 
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert("User profile updated successfully.");
+            window.location.href = `/profile/${userId}`;
+        } else {
+            alert("Failed to update user profile.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error in updating user profile.");
+    }
 }
 
-
-// Ensures Discard Button Returns to Correct Page
-const profileLink = document.querySelector('a.discard-btn[href="profile-view.html"]');
-
-// Gets current username from localStorage & includes it as parameter in href
-if (profileLink) {
-    const username = localStorage.getItem('currentUser');
-    profileLink.href = `profile-view.html?username=${encodeURIComponent(username)}`;
-}
 
 // Upload Profile Photo
 const avatar = document.querySelector('.edit-profile-avatar');
