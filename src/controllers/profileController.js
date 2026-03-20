@@ -59,6 +59,13 @@ exports.updateProfile = async (req, res) => {
 
         // Updates Database
         await User.findByIdAndUpdate(userID, updatedData);
+
+		// Sync session so navbar reflects changes immediately
+        if (req.session.userId === userID) {
+            if (updatedData.avatar)  req.session.avatar   = updatedData.avatar;
+            if (updatedData.username) req.session.username = updatedData.username;
+        }
+
         res.json({ success: true });
     } catch (err) {
         console.error(err);

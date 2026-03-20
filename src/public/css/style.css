@@ -1408,3 +1408,17 @@ body.dark-mode .thread-btn.danger {
 .thread-edited-tag:hover .edit-tooltip {
     display: block;
 }
+
+.review-body-preview p,
+.review-body-preview div,
+.review-text p,
+.review-text div {
+    margin-bottom: 0.4rem;
+}
+
+.review-body-preview p:last-child,
+.review-body-preview div:last-child,
+.review-text p:last-child,
+.review-text div:last-child {
+    margin-bottom: 0;
+}
