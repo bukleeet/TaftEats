@@ -27,11 +27,29 @@ const bea      = db.users.findOne({ username: 'bea_t' })._id;
 const lance    = db.users.findOne({ username: 'lance_v' })._id;
 const trisha   = db.users.findOne({ username: 'trisha_m' })._id;
 const pau         = db.users.findOne({ username: 'pau_g' })._id;
+
+/*
 const ownAsterisko  = db.users.findOne({ username: 'owner_asterisko' })._id;
 const ownKuhmeal    = db.users.findOne({ username: 'owner_kuhmeal' })._id;
 const ownGangGang   = db.users.findOne({ username: 'owner_ganggang' })._id;
 const ownIllo       = db.users.findOne({ username: 'owner_illo' })._id;
 const ownDapit      = db.users.findOne({ username: 'owner_dapithapon' })._id;
+*/
+
+/*
+
+| `owner_prelude`    | Prelude               |
+| `owner_barn`       | Barn by Borro         |
+| `owner_callecafe`  | Calle Cafe            |
+| `owner_angrydobo`  | Angrydobo             |
+| `owner_laelotes`   | La Elotes             |
+| `owner_asterisko`  | Asterisko             |
+| `owner_kuhmeal`    | KuhMeal               |
+| `owner_ganggang`   | Gang Gang Chicken     |
+| `owner_illo`       | Illo                  |
+| `owner_dapithapon` | Dapit-Hapon Cafe      |
+
+*/
 
 db.reviews.deleteMany({});
 db.reviews.insertMany([
@@ -45,7 +63,7 @@ db.reviews.insertMany([
     body: 'The atmosphere is calm and the coffee is amazing. WiFi is stable too!',
     helpfulVotes: [miggy, carlos, bea, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you so much, Jane! We work hard to keep the vibe study-friendly. See you next time! ☕', author: 'owner', role: 'owner', createdAt: new Date('2025-01-17T10:00:00') }],
+    responseThread: [{ body: 'Thank you so much, Jane! We work hard to keep the vibe study-friendly. See you next time! ☕', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-01-17T10:00:00') }],
     createdAt: new Date('2025-01-15T09:30:00'), updatedAt: new Date('2025-01-15T09:30:00')
   },
   {
@@ -56,7 +74,7 @@ db.reviews.insertMany([
     body: 'Love the drinks, but it gets really full during afternoons. Hard to find a seat after 1pm.',
     helpfulVotes: [sophia, trisha], unhelpfulVotes: [daniella],
     media: [], edited: false,
-    responseThread: [{ body: 'Thanks for the feedback, Marky! We know afternoons get busy — try coming in before 12 or after 3pm for a quieter experience ☕', author: 'owner', role: 'owner', createdAt: new Date('2025-02-05T09:00:00') }],
+    responseThread: [{ body: 'Thanks for the feedback, Marky! We know afternoons get busy — try coming in before 12 or after 3pm for a quieter experience ☕', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-02-05T09:00:00') }],
     createdAt: new Date('2025-02-03T14:15:00'), updatedAt: new Date('2025-02-03T14:15:00')
   },
   {
@@ -67,7 +85,7 @@ db.reviews.insertMany([
     body: 'The matcha latte is great but I waited almost 20 minutes during peak hours.',
     helpfulVotes: [pau, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Hi Sophia, we apologize for the wait! We are working on speeding up service during busy hours. Thanks for the feedback.', author: 'owner', role: 'owner', createdAt: new Date('2025-03-22T09:00:00') }],
+    responseThread: [{ body: 'Hi Sophia, we apologize for the wait! We are working on speeding up service during busy hours. Thanks for the feedback.', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-03-22T09:00:00') }],
     createdAt: new Date('2025-03-20T11:00:00'), updatedAt: new Date('2025-03-20T11:00:00')
   },
 
@@ -80,7 +98,7 @@ db.reviews.insertMany([
     body: 'Generous servings and super affordable. Perfect for lunch between classes!',
     helpfulVotes: [jane, miggy, kiks, carlos, trisha, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you, Ella! Keeping meals affordable for students is our mission. Come back anytime! 🍱', author: 'owner', role: 'owner', createdAt: new Date('2025-01-24T08:30:00') }],
+    responseThread: [{ body: 'Thank you, Ella! Keeping meals affordable for students is our mission. Come back anytime! 🍱', author: 'owner_barn', role: 'owner', createdAt: new Date('2025-01-24T08:30:00') }],
     createdAt: new Date('2025-01-22T12:00:00'), updatedAt: new Date('2025-01-22T12:00:00')
   },
   {
@@ -91,7 +109,7 @@ db.reviews.insertMany([
     body: 'Food is great but the place can be really noisy at peak hours. Bring earphones.',
     helpfulVotes: [bea, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: "Haha we know peak hours can get loud! We're exploring ways to expand our space. Thanks for sticking with us, Miggy!", author: 'owner', role: 'owner', createdAt: new Date('2025-02-12T09:00:00') }],
+    responseThread: [{ body: "Haha we know peak hours can get loud! We're exploring ways to expand our space. Thanks for sticking with us, Miggy!", author: 'owner_barn', role: 'owner', createdAt: new Date('2025-02-12T09:00:00') }],
     createdAt: new Date('2025-02-10T13:45:00'), updatedAt: new Date('2025-02-10T13:45:00')
   },
   {
@@ -102,7 +120,7 @@ db.reviews.insertMany([
     body: 'Consistently good food and the rice meals are filling. Staff is friendly too.',
     helpfulVotes: [sophia, trisha, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Always happy to see you, Daniella! Our staff appreciates the kind words. See you again soon! 🍱', author: 'owner', role: 'owner', createdAt: new Date('2025-04-07T08:00:00') }],
+    responseThread: [{ body: 'Always happy to see you, Daniella! Our staff appreciates the kind words. See you again soon! 🍱', author: 'owner_barn', role: 'owner', createdAt: new Date('2025-04-07T08:00:00') }],
     createdAt: new Date('2025-04-05T12:30:00'), updatedAt: new Date('2025-04-05T12:30:00')
   },
 
@@ -115,7 +133,7 @@ db.reviews.insertMany([
     body: 'Board games and drinks are amazing! Great place to chill with friends after class.',
     helpfulVotes: [jane, ella, carlos, bea, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Org bondings are our specialty! Thanks for bringing the squad, Kiks. Come back for game night every Friday 🎲', author: 'owner', role: 'owner', createdAt: new Date('2025-01-30T10:00:00') }],
+    responseThread: [{ body: 'Org bondings are our specialty! Thanks for bringing the squad, Kiks. Come back for game night every Friday 🎲', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-01-30T10:00:00') }],
     createdAt: new Date('2025-01-28T17:00:00'), updatedAt: new Date('2025-01-28T17:00:00')
   },
   {
@@ -126,7 +144,7 @@ db.reviews.insertMany([
     body: 'The drinks are refreshing but seating is a bit limited. Best to come early.',
     helpfulVotes: [miggy, trisha], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Hi Sophia! We are working on expanding seating — stay tuned for updates. In the meantime, weekday mornings are usually less crowded! 🕹️', author: 'owner', role: 'owner', createdAt: new Date('2025-03-03T09:00:00') }],
+    responseThread: [{ body: 'Hi Sophia! We are working on expanding seating — stay tuned for updates. In the meantime, weekday mornings are usually less crowded! 🕹️', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-03-03T09:00:00') }],
     createdAt: new Date('2025-03-01T16:30:00'), updatedAt: new Date('2025-03-01T16:30:00')
   },
   {
@@ -137,7 +155,7 @@ db.reviews.insertMany([
     body: 'Brought my org here and everyone had a great time. The board game selection is solid.',
     helpfulVotes: [daniella, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'So glad the board game selection hit! We keep adding new titles every month. Which game was the favorite? 😄', author: 'owner', role: 'owner', createdAt: new Date('2025-04-14T09:00:00') }],
+    responseThread: [{ body: 'So glad the board game selection hit! We keep adding new titles every month. Which game was the favorite? 😄', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-04-14T09:00:00') }],
     createdAt: new Date('2025-04-12T18:00:00'), updatedAt: new Date('2025-04-12T18:00:00')
   },
 
@@ -150,7 +168,7 @@ db.reviews.insertMany([
     body: 'Chicken and fries are yummy, perfect for a quick snack between classes!',
     helpfulVotes: [lance, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you Daniella! The special sauce is our secret weapon 😄 Hope to see you again soon!', author: 'owner', role: 'owner', createdAt: new Date('2025-02-16T10:00:00') }],
+    responseThread: [{ body: 'Thank you Daniella! The special sauce is our secret weapon 😄 Hope to see you again soon!', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-02-16T10:00:00') }],
     createdAt: new Date('2025-02-14T15:00:00'), updatedAt: new Date('2025-02-14T15:00:00')
   },
   {
@@ -161,7 +179,7 @@ db.reviews.insertMany([
     body: 'Service is quick and friendly, definitely coming back. The sauce is addictive.',
     helpfulVotes: [jane, kiks, carlos], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Speed is our promise! Thanks for noticing, Miggy. Our team works hard to keep wait times short 💪', author: 'owner', role: 'owner', createdAt: new Date('2025-03-10T10:00:00') }],
+    responseThread: [{ body: 'Speed is our promise! Thanks for noticing, Miggy. Our team works hard to keep wait times short 💪', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-03-10T10:00:00') }],
     createdAt: new Date('2025-03-08T14:00:00'), updatedAt: new Date('2025-03-08T14:00:00')
   },
   {
@@ -172,7 +190,7 @@ db.reviews.insertMany([
     body: 'It is what it is. Fills you up for a reasonable price. Not something I would go out of my way for.',
     helpfulVotes: [trisha], unhelpfulVotes: [ella],
     media: [], edited: false,
-    responseThread: [{ body: 'Fair enough, Marky! We hope you give us another shot — we have some new items coming to the menu soon that might change your mind 😊', author: 'owner', role: 'owner', createdAt: new Date('2025-04-20T09:00:00') }],
+    responseThread: [{ body: 'Fair enough, Marky! We hope you give us another shot — we have some new items coming to the menu soon that might change your mind 😊', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-04-20T09:00:00') }],
     createdAt: new Date('2025-04-18T13:00:00'), updatedAt: new Date('2025-04-18T13:00:00')
   },
 
@@ -185,7 +203,7 @@ db.reviews.insertMany([
     body: 'Affordable and really tasty meals. Perfect for students on a budget.',
     helpfulVotes: [jane, marky, miggy, daniella, carlos, bea], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Means the world to us, Ella! Comfort food for students is exactly what we are about. 💚', author: 'owner', role: 'owner', createdAt: new Date('2025-01-12T11:00:00') }],
+    responseThread: [{ body: 'Means the world to us, Ella! Comfort food for students is exactly what we are about. 💚', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-01-12T11:00:00') }],
     createdAt: new Date('2025-01-10T12:00:00'), updatedAt: new Date('2025-01-10T12:00:00')
   },
   {
@@ -196,7 +214,7 @@ db.reviews.insertMany([
     body: 'Cozy vibe and great food, though it gets crowded sometimes.',
     helpfulVotes: [sophia, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you Jane! The crowd is a sign that people love us 😄 We are working on adding more seating. Come early to grab a good spot!', author: 'owner', role: 'owner', createdAt: new Date('2025-02-22T09:00:00') }],
+    responseThread: [{ body: 'Thank you Jane! The crowd is a sign that people love us 😄 We are working on adding more seating. Come early to grab a good spot!', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-02-22T09:00:00') }],
     createdAt: new Date('2025-02-20T11:30:00'), updatedAt: new Date('2025-02-20T11:30:00')
   },
   {
@@ -207,7 +225,7 @@ db.reviews.insertMany([
     body: 'Not many people know about this place but the food is consistently good. Elotes are a must.',
     helpfulVotes: [lance, trisha, carlos], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thanks for spreading the word, Kiks! The elotes are our pride. Hope to see you again soon! 🌽', author: 'owner', role: 'owner', createdAt: new Date('2025-03-17T10:00:00') }],
+    responseThread: [{ body: 'Thanks for spreading the word, Kiks! The elotes are our pride. Hope to see you again soon! 🌽', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-03-17T10:00:00') }],
     createdAt: new Date('2025-03-15T12:45:00'), updatedAt: new Date('2025-03-15T12:45:00')
   },
 
@@ -220,7 +238,7 @@ db.reviews.insertMany([
     body: 'Perfect for a quick bite, loved the chicken.',
     helpfulVotes: [bea, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thanks Kiks! Quick and delicious — that is exactly what we are going for. See you next time! 🍗', author: 'owner', role: 'owner', createdAt: new Date('2025-02-01T10:00:00') }],
+    responseThread: [{ body: 'Thanks Kiks! Quick and delicious — that is exactly what we are going for. See you next time! 🍗', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-02-01T10:00:00') }],
     createdAt: new Date('2025-01-30T13:00:00'), updatedAt: new Date('2025-01-30T13:00:00')
   },
   {
@@ -231,7 +249,7 @@ db.reviews.insertMany([
     body: 'Small but cozy. Staff are friendly too! Wish they had more seating.',
     helpfulVotes: [marky, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Hi Sophia! We appreciate the kind words about our staff ❤️ More seating is in our plans — watch this space!', author: 'owner', role: 'owner', createdAt: new Date('2025-02-27T09:00:00') }],
+    responseThread: [{ body: 'Hi Sophia! We appreciate the kind words about our staff ❤️ More seating is in our plans — watch this space!', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-02-27T09:00:00') }],
     createdAt: new Date('2025-02-25T14:30:00'), updatedAt: new Date('2025-02-25T14:30:00')
   },
   {
@@ -242,7 +260,7 @@ db.reviews.insertMany([
     body: 'Always come here when I need something fast. Never disappointed.',
     helpfulVotes: [jane, miggy, trisha], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Never disappointed is all we ask for, Ella! Come back anytime and bring friends 🐔', author: 'owner', role: 'owner', createdAt: new Date('2025-04-04T09:00:00') }],
+    responseThread: [{ body: 'Never disappointed is all we ask for, Ella! Come back anytime and bring friends 🐔', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-04-04T09:00:00') }],
     createdAt: new Date('2025-04-02T12:15:00'), updatedAt: new Date('2025-04-02T12:15:00')
   },
 
@@ -255,7 +273,7 @@ db.reviews.insertMany([
     body: 'Great interiors, perfect for photos. Drinks are amazing and the playlist is good.',
     helpfulVotes: [jane, kiks, sophia, carlos, bea, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you so much Daniella! We put a lot of love into the atmosphere here. Tag us in your photos! 📸', author: 'owner', role: 'owner', createdAt: new Date('2025-01-07T11:00:00') }],
+    responseThread: [{ body: 'Thank you so much Daniella! We put a lot of love into the atmosphere here. Tag us in your photos! 📸', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-01-07T11:00:00') }],
     createdAt: new Date('2025-01-05T16:00:00'), updatedAt: new Date('2025-01-05T16:00:00')
   },
   {
@@ -266,7 +284,7 @@ db.reviews.insertMany([
     body: 'Love the vibe, but meals are a bit expensive for students. Worth it for special occasions.',
     helpfulVotes: [marky, trisha, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'We hear you, Miggy! We do have student-friendly options on the menu — ask our staff about our value picks next time. 🙏', author: 'owner', role: 'owner', createdAt: new Date('2025-02-20T09:30:00') }],
+    responseThread: [{ body: 'We hear you, Miggy! We do have student-friendly options on the menu — ask our staff about our value picks next time. 🙏', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-02-20T09:30:00') }],
     createdAt: new Date('2025-02-18T15:30:00'), updatedAt: new Date('2025-02-18T15:30:00')
   },
   {
@@ -277,7 +295,7 @@ db.reviews.insertMany([
     body: 'The cold brew here is unmatched. I come here every Friday as a treat to myself.',
     helpfulVotes: [ella, daniella, pau, bea], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Friday treat well deserved, Jane! The cold brew is brewed fresh daily just for regulars like you ☕ See you this Friday!', author: 'owner', role: 'owner', createdAt: new Date('2025-03-30T09:00:00') }],
+    responseThread: [{ body: 'Friday treat well deserved, Jane! The cold brew is brewed fresh daily just for regulars like you ☕ See you this Friday!', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-03-30T09:00:00') }],
     createdAt: new Date('2025-03-28T10:00:00'), updatedAt: new Date('2025-03-28T10:00:00')
   },
 
@@ -290,7 +308,7 @@ db.reviews.insertMany([
     body: 'Good food at a reasonable price. Quick service too.',
     helpfulVotes: [carlos, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thank you, Ella! Budget-friendly is our commitment. Come back anytime! 🙏', author: 'owner', role: 'owner', createdAt: new Date('2025-01-20T10:00:00') }],
+    responseThread: [{ body: 'Thank you, Ella! Budget-friendly is our commitment. Come back anytime! 🙏', author: 'owner_illo', role: 'owner', createdAt: new Date('2025-01-20T10:00:00') }],
     createdAt: new Date('2025-01-18T12:00:00'), updatedAt: new Date('2025-01-18T12:00:00')
   },
   {
@@ -301,7 +319,7 @@ db.reviews.insertMany([
     body: 'Easy to grab meals before class. Tasty sandwiches!',
     helpfulVotes: [trisha, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Sandwiches before class — the perfect fuel! Thanks for the love, Jane 😊', author: 'owner', role: 'owner', createdAt: new Date('2025-03-02T09:00:00') }],
+    responseThread: [{ body: 'Sandwiches before class — the perfect fuel! Thanks for the love, Jane 😊', author: 'owner_illo', role: 'owner', createdAt: new Date('2025-03-02T09:00:00') }],
     createdAt: new Date('2025-02-28T11:00:00'), updatedAt: new Date('2025-02-28T11:00:00')
   },
   {
@@ -312,7 +330,7 @@ db.reviews.insertMany([
     body: 'People sleep on this place. The silog meals are solid and you get a lot for the price.',
     helpfulVotes: [miggy, kiks, sophia, bea], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: "Ha! We are glad you found us, Marky. Tell your barkada — the silog secret is out 🍳", author: 'owner', role: 'owner', createdAt: new Date('2025-04-12T09:00:00') }],
+    responseThread: [{ body: "Ha! We are glad you found us, Marky. Tell your barkada — the silog secret is out 🍳", author: 'owner_illo', role: 'owner', createdAt: new Date('2025-04-12T09:00:00') }],
     createdAt: new Date('2025-04-10T08:30:00'), updatedAt: new Date('2025-04-10T08:30:00')
   },
 
@@ -325,7 +343,7 @@ db.reviews.insertMany([
     body: 'Classic Filipino dishes done right. The adobo has the perfect balance of sour and savory.',
     helpfulVotes: [jane, ella, daniella, carlos, trisha, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Your kind words mean everything to us, Kiks! The adobo recipe has been in the family for years. 🙏🇵🇭', author: 'owner', role: 'owner', createdAt: new Date('2025-01-27T09:00:00') }],
+    responseThread: [{ body: 'Your kind words mean everything to us, Kiks! The adobo recipe has been in the family for years. 🙏🇵🇭', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-01-27T09:00:00') }],
     createdAt: new Date('2025-01-25T12:30:00'), updatedAt: new Date('2025-01-25T12:30:00')
   },
   {
@@ -336,7 +354,7 @@ db.reviews.insertMany([
     body: 'Loved the adobo, place is small but comfy. Service could be faster.',
     helpfulVotes: [miggy, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Thanks for the honest feedback, Sophia! We are training more staff to get orders out faster. Hope to see you again!', author: 'owner', role: 'owner', createdAt: new Date('2025-03-07T10:00:00') }],
+    responseThread: [{ body: 'Thanks for the honest feedback, Sophia! We are training more staff to get orders out faster. Hope to see you again!', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-03-07T10:00:00') }],
     createdAt: new Date('2025-03-05T13:00:00'), updatedAt: new Date('2025-03-05T13:00:00')
   },
   {
@@ -347,7 +365,7 @@ db.reviews.insertMany([
     body: 'Reminds me of home cooking. The pork adobo is phenomenal and the rice is always hot.',
     helpfulVotes: [marky, bea, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Home cooking is exactly the feeling we want to give! The pork adobo is made fresh every morning. Thanks, Miggy! 🇵🇭', author: 'owner', role: 'owner', createdAt: new Date('2025-04-22T09:00:00') }],
+    responseThread: [{ body: 'Home cooking is exactly the feeling we want to give! The pork adobo is made fresh every morning. Thanks, Miggy! 🇵🇭', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-04-22T09:00:00') }],
     createdAt: new Date('2025-04-20T12:00:00'), updatedAt: new Date('2025-04-20T12:00:00')
   },
 
@@ -360,7 +378,7 @@ db.reviews.insertMany([
     body: 'Perfect place to relax with friends. Drinks are great and the sunset view is nice.',
     helpfulVotes: [sophia, trisha, lance], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'Relaxing with friends is what Dapit-Hapon was made for! Come back for the sunset again soon 🌇', author: 'owner', role: 'owner', createdAt: new Date('2025-02-09T09:00:00') }],
+    responseThread: [{ body: 'Relaxing with friends is what Dapit-Hapon was made for! Come back for the sunset again soon 🌇', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-02-09T09:00:00') }],
     createdAt: new Date('2025-02-07T17:30:00'), updatedAt: new Date('2025-02-07T17:30:00')
   },
   {
@@ -371,7 +389,7 @@ db.reviews.insertMany([
     body: 'Lots of options and very tasty meals. The pasta dishes are standout.',
     helpfulVotes: [jane, ella, pau], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'The pasta is chef-made daily, Miggy! Glad the menu had something for everyone. Hope to see you back soon 🍝', author: 'owner', role: 'owner', createdAt: new Date('2025-03-14T09:00:00') }],
+    responseThread: [{ body: 'The pasta is chef-made daily, Miggy! Glad the menu had something for everyone. Hope to see you back soon 🍝', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-03-14T09:00:00') }],
     createdAt: new Date('2025-03-12T18:00:00'), updatedAt: new Date('2025-03-12T18:00:00')
   },
   {
@@ -382,7 +400,7 @@ db.reviews.insertMany([
     body: 'The name says it all — best visited in the afternoon. Good coffee and the ambiance is relaxing.',
     helpfulVotes: [daniella, bea, carlos], unhelpfulVotes: [],
     media: [], edited: false,
-    responseThread: [{ body: 'The afternoon light here really is something special! Thanks for capturing the vibe perfectly, Marky ☀️', author: 'owner', role: 'owner', createdAt: new Date('2025-04-24T09:00:00') }],
+    responseThread: [{ body: 'The afternoon light here really is something special! Thanks for capturing the vibe perfectly, Marky ☀️', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-04-24T09:00:00') }],
     createdAt: new Date('2025-04-22T16:45:00'), updatedAt: new Date('2025-04-22T16:45:00')
   }
 
