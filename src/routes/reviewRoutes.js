@@ -44,9 +44,11 @@ router.post('/reviews',            handleUpload, reviewCtrl.createReview);
 router.put('/reviews/:reviewId',   handleUpload, reviewCtrl.editReview);
 router.delete('/reviews/:reviewId',                reviewCtrl.deleteReview);
 router.post('/reviews/:reviewId/vote',             reviewCtrl.voteReview);
+router.get('/api/user/profile-activity',           reviewCtrl.getUserProfileActivity);
 router.post('/reviews/:reviewId/owner-response',                    reviewCtrl.ownerRespond);
 router.post('/reviews/:reviewId/reviewer-reply',                    reviewCtrl.reviewerReply);
 router.delete('/reviews/:reviewId/thread-last-message',             reviewCtrl.deleteLastThreadMessage);
 router.put('/reviews/:reviewId/thread-message/:messageIndex',       reviewCtrl.editThreadMessage);
+
 
 module.exports = router;
