@@ -9,79 +9,55 @@
 </head>
 <body>
 
-<!-- Navigation Bar -->
 <%- include('navbar') %>
 
-<!-- View Profile -->
 <div class="container profile-container">
-        
-    <!-- User Profile Header-->
+
     <div class="profile-content">
-        <!-- Profile Image-->
         <div class="profile-left">
             <div class="profile-avatar">
                 <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="user-profile">
             </div>
-
-            <a href="/profile/<%= user._id %>/edit" class="edit-btn" id="editProfileBtn" style="display:none;"> Edit Profile </a>
+            <a href="/profile/<%= user._id %>/edit" class="edit-btn" id="editProfileBtn" style="display:none;">Edit Profile</a>
         </div>
-        <!-- Username & Description -->
         <div class="user-info">
             <h1 id="username-display"><%= user.username %></h1>
-            <p id="desc-display">
-                <%= user.description %>
-            </p>
+            <p id="desc-display"><%= user.description %></p>
         </div>
     </div>
 
-    <!-- User Activity -->
     <div class="activity-section">
-        <!-- Activity Tabs -->
         <div class="activity-sidebar tabs">
-
-            <!-- User Recent Activity -->
             <input type="radio" id="activity-tab" name="tabs" data-tab="recent-activity" checked>
             <label for="activity-tab" class="tab-label">Recent Activity</label>
 
-            <!-- User All Reviews -->
-            <input type="radio" id="posts-tab" name="tabs" data-tab="all-posts">
-            <label for="posts-tab" class="tab-label">All Posts</label>
+            <input type="radio" id="reviews-tab" name="tabs" data-tab="all-reviews">
+            <label for="reviews-tab" class="tab-label">Reviews</label>
 
-            <!-- User All Comments -->
-            <input type="radio" id="comments-tab" name="tabs" data-tab="all-comments">
-            <label for="comments-tab" class="tab-label">All Comments</label>
+            <input type="radio" id="replies-tab" name="tabs" data-tab="all-replies">
+            <label for="replies-tab" class="tab-label">Replies</label>
         </div>
 
-        <!-- Activity Container -->
         <div class="activity-contents">
-
-            <!-- Recent Activity Tab -->
             <div id="recent-activity" class="tab-content active">
-                <p style="color:#6b7280;padding:1rem;">Loading activity...</p>
+                <p style="color:#6b7280;padding:1rem 0;">Loading...</p>
             </div>
-
-            <!-- All Posts Tab -->
-            <div id="all-posts" class="tab-content">
-                <p style="color:#6b7280;padding:1rem;">Loading posts...</p>
+            <div id="all-reviews" class="tab-content">
+                <p style="color:#6b7280;padding:1rem 0;">Loading...</p>
             </div>
-
-            <!-- All Comments Tab -->
-            <div id="all-comments" class="tab-content">
-                <p style="color:#6b7280;padding:1rem;">Loading comments...</p>
+            <div id="all-replies" class="tab-content">
+                <p style="color:#6b7280;padding:1rem 0;">Loading...</p>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Pass IDs safely to JS — guard against null sessionUser -->
 <% const currentUser = typeof sessionUser !== 'undefined' ? sessionUser : null %>
 <script>
     const viewedUserID  = "<%= user._id %>";
     const currentUserID = "<%= currentUser ? currentUser._id : '' %>";
 </script>
 
-<!-- Tab Navigation & Edit Button -->
 <script src="/js/profileView-script.js"></script>
 <script src="/js/theme-toggle.js"></script>
 

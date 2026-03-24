@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 
 const express    = require('express');
 const mongoose   = require('mongoose');
@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'src/public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-const MONGO_URI = 'mongodb://127.0.0.1:27017/myDatabase';
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB connected to: ' + mongoose.connection.db.databaseName))

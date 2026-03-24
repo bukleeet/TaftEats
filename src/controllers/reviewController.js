@@ -431,41 +431,40 @@ exports.editThreadMessage = async (req, res) => {
 
 exports.getUserProfileActivity = async (req, res) => {
   try {
-    const userId   = req.session.userId;
-    const username = req.session.username;
+    // Accept ?userId= for viewing other profiles, fall back to session user
+    const userId   = req.query.userId || req.session.userId;
+    const username = req.query.userId
+      ? (await require('../models/users').findById(req.query.userId).select('username').lean())?.username
+      : req.session.username;
 
     if (!userId) return res.status(401).json({ success: false, message: 'Not logged in' });
 
     const posts = await Review.find({ user: userId })
-      .populate('establishment')
+      .populate('establishment', 'name _id')
       .sort({ createdAt: -1 })
       .lean();
 
-    const reviewsWithComments = await Review.find({ 'responseThread.author': username })
-      .populate('establishment')
+    const reviewsWithReplies = await Review.find({ 'responseThread.author': username })
+      .populate('establishment', 'name _id')
       .lean();
 
-    const comments = [];
-    reviewsWithComments.forEach(rev => {
+    const replies = [];
+    reviewsWithReplies.forEach(rev => {
       rev.responseThread.forEach(msg => {
         if (msg.author === username) {
-          comments.push({
-            establishmentName: rev.establishment.name,
-            reviewTitle: rev.title,
-            body: msg.body,
-            createdAt: msg.createdAt,
-            reviewId: rev._id
+          replies.push({
+            establishmentName: rev.establishment ? rev.establishment.name : 'Unknown',
+            reviewTitle:       rev.title,
+            body:              msg.body,
+            createdAt:         msg.createdAt,
+            reviewId:          rev._id
           });
         }
       });
     });
-    comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const recentActivity = [...posts, ...comments]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 5);
-
-    res.json({ success: true, posts, comments, recentActivity });
+    res.json({ success: true, posts, replies });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error' });

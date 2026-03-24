@@ -86,7 +86,7 @@
           </div>
 
           <div style="display:flex;gap:0.5rem;">
-            <% if (user && review.isReviewer) { %>
+            <% if (user && user._id.toString() === review.user.toString()) { %>
               <button class="secondary-btn edit-review-btn"
                       data-id="<%= review._id %>"
                       data-title="<%= review.title %>"
@@ -100,7 +100,7 @@
           </div>
         </div>
 
-        <div class="review-text review-body-preview" style="max-height:120px;overflow:hidden;">
+        <div class="review-text review-body-preview">
           <%- review.body %>
         </div>
         <a href="/reviews/<%= review._id %>" style="font-size:0.85rem;color:#16a34a;">Read full review →</a>
@@ -163,7 +163,7 @@
               const lastMsg = review.responseThread[review.responseThread.length - 1];
               const isOwner = user && user.role === 'owner' && user.ownedEstablishment && establishment &&
                               user.ownedEstablishment.toString() === establishment._id.toString();
-              const isReviewer = user && review.isReviewer;
+              const isReviewer = user && user._id.toString() === review.user.toString();
             %>
             <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;">
               <% if (isOwner && lastMsg.role === 'reviewer') { %>
@@ -324,16 +324,16 @@ function initStars(containerId, hiddenId, displayId) {
   if (!container) return;
   container.querySelectorAll('.star').forEach(star => {
     star.addEventListener('mousemove', e => {
-      const val = parseFloat(star.dataset.value) - (e.clientX < star.getBoundingClientRect().left + star.offsetWidth/2 ? 0.5 : 0);
-      applyHighlight(container, val);
-      display.textContent = val + ' / 5';
-    });
-    star.addEventListener('click', e => {
-      const val = parseFloat(star.dataset.value) - (e.clientX < star.getBoundingClientRect().left + star.offsetWidth/2 ? 0.5 : 0);
-      hidden.value = val;
-      display.textContent = val + ' / 5';
-      applyHighlight(container, val);
-    });
+		const val = Math.max(1, parseFloat(star.dataset.value) - (e.clientX < star.getBoundingClientRect().left + star.offsetWidth/2 ? 0.5 : 0));
+		applyHighlight(container, val);
+		display.textContent = val + ' / 5';
+	});
+	star.addEventListener('click', e => {
+		const val = Math.max(1, parseFloat(star.dataset.value) - (e.clientX < star.getBoundingClientRect().left + star.offsetWidth/2 ? 0.5 : 0));
+		hidden.value = val;
+		display.textContent = val + ' / 5';
+		applyHighlight(container, val);
+	});
     star.addEventListener('mouseleave', () => {
       const cur = parseFloat(hidden.value) || 0;
       applyHighlight(container, cur);
@@ -412,7 +412,10 @@ function openModal(id)  { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 const openBtn = document.getElementById('openReviewModal');
-if (openBtn) openBtn.addEventListener('click', () => openModal('reviewModal'));
+if (openBtn) openBtn.addEventListener('click', () => {
+  document.execCommand('defaultParagraphSeparator', false, 'p');
+  openModal('reviewModal');
+});
 document.getElementById('cancelReview').addEventListener('click',     () => closeModal('reviewModal'));
 document.getElementById('cancelEditReview').addEventListener('click', () => closeModal('editReviewModal'));
 const cancelOwner = document.getElementById('cancelOwnerResponse');
@@ -464,7 +467,7 @@ document.getElementById('submitReview').addEventListener('click', async () => {
   if (!rawBody.trim())           return alert('Please write a review.');
 
   const cleanBody = DOMPurify.sanitize(rawBody, {
-    ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','ul','ol','li','a'],
+    ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','div','ul','ol','li','a'],
     ALLOWED_ATTR: ['href','target','rel']
   });
 
@@ -489,6 +492,7 @@ let editNewFiles     = [];
 
 document.querySelectorAll('.edit-review-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    document.execCommand('defaultParagraphSeparator', false, 'p');
     document.getElementById('editReviewId').value       = btn.dataset.id;
     document.getElementById('editReviewTitle').value    = btn.dataset.title;
     document.getElementById('editReviewBody').innerHTML = decodeURIComponent(btn.dataset.body);
@@ -571,7 +575,7 @@ document.getElementById('submitEditReview').addEventListener('click', async () =
   if (!rating || rating === '0') return alert('Please select a rating.');
 
   const cleanBody = DOMPurify.sanitize(rawBody, {
-    ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','ul','ol','li','a'],
+    ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','div','ul','ol','li','a'],
     ALLOWED_ATTR: ['href','target','rel']
   });
 
@@ -667,7 +671,7 @@ const submitOwnerBtn = document.getElementById('submitOwnerResponse');
 if (submitOwnerBtn) {
   submitOwnerBtn.addEventListener('click', async () => {
     const cleanBody = DOMPurify.sanitize(document.getElementById('ownerResponseBody').innerHTML, {
-      ALLOWED_TAGS: ['b','i','u','strong','em','br','p'], ALLOWED_ATTR: []
+      ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','div','ul','ol','li','a'], ALLOWED_ATTR: []
     });
     if (!cleanBody.trim()) return alert('Please write something first.');
     try {
@@ -732,6 +736,15 @@ document.getElementById('searchInput').addEventListener('input', function() {
     card.style.display = (title.includes(q) || body.includes(q)) ? '' : 'none';
   });
  
+});
+
+// Defer overflow check until after layout is painted
+requestAnimationFrame(() => {
+  document.querySelectorAll('.review-body-preview').forEach(el => {
+    if (el.scrollHeight > el.clientHeight) {
+      el.classList.add('overflows');
+    }
+  });
 });
 </script>
 

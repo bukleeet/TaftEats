@@ -37,7 +37,7 @@
       </div>
 
       <!-- Author actions -->
-      <% if (user && review.isReviewer) { %>
+      <% if (user && user._id === review.reviewerId) { %>
         <div style="display:flex;gap:0.5rem;">
           <button class="secondary-btn" id="openEditModal">Edit</button>
           <button class="secondary-btn" id="deleteReviewBtn" style="color:#ef4444;">Delete</button>
@@ -85,7 +85,7 @@
           <%
             const canEditMsg = user && (
               (msg.role === 'owner' && user.role === 'owner' && user.ownedEstablishment === review.establishmentId) ||
-              (msg.role === 'reviewer' && review.isReviewer)
+              (msg.role === 'reviewer' && user._id === review.reviewerId)
             );
           %>
           <div style="margin-left:<%= idx > 0 ? '1.5rem' : '0' %>;margin-top:<%= idx > 0 ? '0.85rem' : '0' %>;padding-top:<%= idx > 0 ? '0.85rem' : '0' %>;<%= idx > 0 ? 'border-top:1px solid rgba(0,0,0,0.08);' : '' %>">
@@ -110,7 +110,7 @@
         <%
           const lastMsg    = review.responseThread[review.responseThread.length - 1];
           const isOwner    = user && user.role === 'owner' && user.ownedEstablishment === review.establishmentId;
-          const isReviewer = user && review.isReviewer;
+          const isReviewer = user && user._id === review.reviewerId;
         %>
         <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
           <% if (isOwner && lastMsg.role === 'reviewer') { %>
@@ -133,7 +133,7 @@
 </div>
 
 <!-- Edit Review Modal -->
-<% if (user && review.isReviewer) { %>
+<% if (user && user._id === review.reviewerId) { %>
 <div class="modal" id="editReviewModal">
   <div class="modal-card" style="max-width:560px;">
     <h3 style="color:#065f46;margin-bottom:1rem;">Edit Review</h3>
@@ -209,7 +209,10 @@ function closeModal(id) { document.getElementById(id)?.classList.remove('active'
 
 // Edit modal
 const openEditBtn = document.getElementById('openEditModal');
-if (openEditBtn) openEditBtn.addEventListener('click', () => openModal('editReviewModal'));
+if (openEditBtn) openEditBtn.addEventListener('click', () => {
+  document.execCommand('defaultParagraphSeparator', false, 'p');
+  openModal('editReviewModal');
+});
 const cancelEdit = document.getElementById('cancelEditReview');
 if (cancelEdit) cancelEdit.addEventListener('click', () => closeModal('editReviewModal'));
 
@@ -254,18 +257,18 @@ applyEditHighlight(initialRating);
 
 editContainer.querySelectorAll('.star').forEach(star => {
   star.addEventListener('mousemove', e => {
-    const rect = star.getBoundingClientRect();
-    const val  = parseFloat(star.dataset.value) - (e.clientX < rect.left + rect.width / 2 ? 0.5 : 0);
-    applyEditHighlight(val);
-    editDisplay.textContent = val + ' / 5';
-  });
-  star.addEventListener('click', e => {
-    const rect = star.getBoundingClientRect();
-    const val  = parseFloat(star.dataset.value) - (e.clientX < rect.left + star.offsetWidth / 2 ? 0.5 : 0);
-    editHidden.value = val;
-    editDisplay.textContent = val + ' / 5';
-    applyEditHighlight(val);
-  });
+      const rect = star.getBoundingClientRect();
+      const val  = Math.max(1, parseFloat(star.dataset.value) - (e.clientX < rect.left + rect.width / 2 ? 0.5 : 0));
+      applyEditHighlight(val);
+      editDisplay.textContent = val + ' / 5';
+    });
+    star.addEventListener('click', e => {
+      const rect = star.getBoundingClientRect();
+      const val  = Math.max(1, parseFloat(star.dataset.value) - (e.clientX < rect.left + star.offsetWidth / 2 ? 0.5 : 0));
+      editHidden.value = val;
+      editDisplay.textContent = val + ' / 5';
+      applyEditHighlight(val);
+    });
   star.addEventListener('mouseleave', () => {
     const current = parseFloat(editHidden.value) || 0;
     applyEditHighlight(current);
@@ -346,7 +349,7 @@ if (submitEditBtn) {
     if (!title) return alert('Enter a title.');
     if (!rating || rating === '0') return alert('Select a rating.');
     const cleanBody = DOMPurify.sanitize(rawBody, {
-      ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','ul','ol','li'],
+      ALLOWED_TAGS: ['b','i','u','s','strong','em','br','p','div','ul','ol','li','a'],
       ALLOWED_ATTR: []
     });
     const fd = new FormData();
