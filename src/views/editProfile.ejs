@@ -9,15 +9,8 @@
 </head>
 <body>
 
-<!-- Navigation Bar -->
-<nav class="navbar">
-    <div class="nav-left">
-        <h2 class="logo">TaftEats</h2>
-    </div>
-    <div class="nav-right">
-        <button id="themeToggle" class="theme-btn">🌙</button>
-    </div>
-</nav>
+<!-- Navigation Bar (session-aware) -->
+<%- include('navbar') %>
 
 <!-- Edit Profile -->
 <div class="edit-profile-container">
@@ -42,32 +35,30 @@
                 <!-- Edit Username -->
                 <div class="input-box">
                     <label for="username-txt" class="edit-label">Username</label>
-                    <textarea type="text" id="username-txt" rows="1" placeholder="Enter your username" class="edit-input" required><%= user.username %></textarea>
+                    <textarea id="username-txt" rows="1" placeholder="Enter your username" class="edit-input" required><%= user.username %></textarea>
                 </div>
 
                 <!-- Edit Description -->
                 <div class="input-box">
                     <label for="desc-txt" class="edit-label">Description</label>
-                    <textarea type="text" id="desc-txt" rows="4" name="" placeholder="Enter description" class="edit-input" required><%= user.description %></textarea>
+                    <textarea id="desc-txt" rows="4" placeholder="Enter description" class="edit-input" required><%= user.description %></textarea>
                 </div>
             </div>
         </div>
 
         <!-- Form Buttons -->
         <div class="edit-form-buttons">
-            <!-- Submit Button -->
-            <button type="submit" class="save-btn" onclick="saveEdits()">Save Changes</button>
+            <button type="button" class="save-btn" onclick="saveEdits()">Save Changes</button>
             <a href="/profile/<%= user._id %>" class="discard-btn">Discard Changes</a>
         </div>
     </div>
 </div>
 
-<!-- Script to pass IDs to javascript  -->
+<!-- Pass userId to JS -->
 <script>
     const userId = "<%= user._id %>";
 </script>
 
-<!-- Script for Profile Editing -->
 <script src="/js/profileEdit-script.js"></script>
 <script src="/js/theme-toggle.js"></script>
 

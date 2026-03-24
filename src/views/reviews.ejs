@@ -86,7 +86,7 @@
           </div>
 
           <div style="display:flex;gap:0.5rem;">
-            <% if (user && user._id.toString() === review.user.toString()) { %>
+            <% if (user && review.isReviewer) { %>
               <button class="secondary-btn edit-review-btn"
                       data-id="<%= review._id %>"
                       data-title="<%= review.title %>"
@@ -163,7 +163,7 @@
               const lastMsg = review.responseThread[review.responseThread.length - 1];
               const isOwner = user && user.role === 'owner' && user.ownedEstablishment && establishment &&
                               user.ownedEstablishment.toString() === establishment._id.toString();
-              const isReviewer = user && user._id.toString() === review.user.toString();
+              const isReviewer = user && review.isReviewer;
             %>
             <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;">
               <% if (isOwner && lastMsg.role === 'reviewer') { %>

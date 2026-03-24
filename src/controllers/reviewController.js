@@ -2,31 +2,35 @@ const Review        = require('../models/reviews');
 const Establishment = require('../models/establishments');
 
 // Regex-based HTML sanitizer — no external package needed.
-// Only allows tags produced by the rich-text toolbar.
-// See comments below for known edge case tradeoffs.
-const ALLOWED_TAGS = /^\/?(b|i|u|s|strong|em|br|p|div|ul|ol|li)$/i;
+const ALLOWED_TAGS = /^\/?(?:b|i|u|s|strong|em|br|p|div|ul|ol|li)$/i;
 
 function sanitize(html) {
   if (!html) return '';
-  // Strip all attributes from every tag first (removes onclick, style, etc.)
   let clean = html.replace(/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, '<$1>');
-  // Remove any tag not in the whitelist
   clean = clean.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tag) => {
     return ALLOWED_TAGS.test(tag) ? match : '';
   });
-  // Decode common HTML entities to prevent double-encoded payloads like &#60;script&#62;
   const entities = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
   clean = clean.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, e => entities[e.toLowerCase()] || '');
   return clean;
 }
 
-
 async function recalcEstablishmentRating(establishmentId) {
   const reviews = await Review.find({ establishment: establishmentId }, 'rating');
   if (!reviews.length) return;
   const mean = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-  const rounded = Math.round(mean * 2) / 2; // round to nearest 0.5
+  const rounded = Math.round(mean * 2) / 2;
   await Establishment.findByIdAndUpdate(establishmentId, { rating: rounded });
+}
+
+// Check if the current session user is the reviewer of a review.
+// Matches on ObjectId OR username; username fallback handles seeded reviews
+// whose user ObjectId may not match if the DB was reseeded after the reviews were created.
+function isReviewer(review, session) {
+  if (!session.userId) return false;
+  const byId       = review.user.toString() === session.userId;
+  const byUsername = review.username === session.username;
+  return byId || byUsername;
 }
 
 exports.getReviewsPage = async (req, res) => {
@@ -50,7 +54,9 @@ exports.getReviewsPage = async (req, res) => {
           : r.unhelpfulVotes.some(id => id.toString() === userId)
             ? 'unhelpful'
             : null
-        : null
+        : null,
+      // Expose whether the session user is this review's author (used in EJS)
+      isReviewer: isReviewer(r, req.session)
     }));
 
     res.render('reviews', {
@@ -78,16 +84,19 @@ exports.getAllReviewsPage = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean({ virtuals: true });
 
+    const userId = req.session.userId || null;
+
     res.render('reviews', {
       reviews: reviews.map(r => ({
         ...r,
         helpfulCount:   r.helpfulVotes.length,
-        unhelpfulCount: r.unhelpfulVotes.length
+        unhelpfulCount: r.unhelpfulVotes.length,
+        isReviewer: isReviewer(r, req.session)
       })),
       establishment: null,
-      user: req.session.userId
+      user: userId
         ? {
-            _id:      req.session.userId,
+            _id:      userId,
             username: req.session.username,
             role:     req.session.role
           }
@@ -142,6 +151,8 @@ exports.getReviewDetail = async (req, res) => {
           : null
       : null;
 
+    const reviewerFlag = isReviewer(review, req.session);
+
     res.render('reviewDetail', {
       review: {
         ...review,
@@ -149,7 +160,8 @@ exports.getReviewDetail = async (req, res) => {
         helpfulCount:    review.helpfulVotes.length,
         unhelpfulCount:  review.unhelpfulVotes.length,
         establishmentId: review.establishment._id.toString(),
-        reviewerId:      review.user.toString()
+        reviewerId:      review.user.toString(),
+        isReviewer:      reviewerFlag
       },
       user: userId
         ? {
@@ -175,7 +187,7 @@ exports.editReview = async (req, res) => {
     const review = await Review.findById(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-    if (review.user.toString() !== req.session.userId) {
+    if (!isReviewer(review, req.session)) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
@@ -185,13 +197,11 @@ exports.editReview = async (req, res) => {
     if (rating) review.rating = Number(rating);
     review.edited = true;
 
-    // Remove individually deleted files
     if (deleteMedia) {
       const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
       review.media = review.media.filter(f => !toDelete.includes(f));
     }
 
-    // Append newly uploaded files (keep total ≤ 10)
     if (req.files && req.files.length > 0) {
       review.media = review.media.concat(req.files.map(f => f.filename)).slice(0, 10);
     }
@@ -214,7 +224,7 @@ exports.deleteReview = async (req, res) => {
     const review = await Review.findById(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-    if (review.user.toString() !== req.session.userId) {
+    if (!isReviewer(review, req.session)) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
@@ -296,7 +306,6 @@ exports.ownerRespond = async (req, res) => {
     const thread = review.responseThread;
     const lastMsg = thread[thread.length - 1];
 
-    // Owner can only post if thread is empty or last message is from the reviewer
     if (lastMsg && lastMsg.role === 'owner') {
       return res.status(400).json({ success: false, message: 'You already responded. Wait for the reviewer to reply first.' });
     }
@@ -324,15 +333,14 @@ exports.reviewerReply = async (req, res) => {
     const review = await Review.findById(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-    // Only the original reviewer can reply
-    if (review.user.toString() !== req.session.userId) {
+    // Use isReviewer() — handles both ObjectId match and username match for seeded accounts
+    if (!isReviewer(review, req.session)) {
       return res.status(403).json({ success: false, message: 'Only the original reviewer can reply here.' });
     }
 
     const thread = review.responseThread;
     const lastMsg = thread[thread.length - 1];
 
-    // Reviewer can only reply if the last message is from the owner
     if (!lastMsg || lastMsg.role !== 'owner') {
       return res.status(400).json({ success: false, message: 'You can only reply after the owner responds.' });
     }
@@ -365,16 +373,14 @@ exports.deleteLastThreadMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Nothing to delete.' });
     }
 
-    const lastMsg = thread[thread.length - 1];
-
-    // Owner can delete their own last message; reviewer can delete theirs
+    const lastMsg    = thread[thread.length - 1];
     const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
-    const isReviewer = review.user.toString() === req.session.userId;
+    const reviewerOk = isReviewer(review, req.session);
 
     if (lastMsg.role === 'owner' && !isOwner) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
-    if (lastMsg.role === 'reviewer' && !isReviewer) {
+    if (lastMsg.role === 'reviewer' && !reviewerOk) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
@@ -402,12 +408,12 @@ exports.editThreadMessage = async (req, res) => {
     if (!msg) return res.status(404).json({ success: false, message: 'Message not found.' });
 
     const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
-    const isReviewer = review.user.toString() === req.session.userId;
+    const reviewerOk = isReviewer(review, req.session);
 
     if (msg.role === 'owner' && !isOwner) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
-    if (msg.role === 'reviewer' && !isReviewer) {
+    if (msg.role === 'reviewer' && !reviewerOk) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 
@@ -425,19 +431,17 @@ exports.editThreadMessage = async (req, res) => {
 
 exports.getUserProfileActivity = async (req, res) => {
   try {
-    const userId = req.session.userId;
+    const userId   = req.session.userId;
     const username = req.session.username;
 
-    if (!userId) return res.status(401).json({ success: false, message: "Not logged in" });
+    if (!userId) return res.status(401).json({ success: false, message: 'Not logged in' });
 
-    // Get reviews created by this user
     const posts = await Review.find({ user: userId })
       .populate('establishment')
       .sort({ createdAt: -1 })
       .lean();
 
-    // Get comments created by this user
-    const reviewsWithComments = await Review.find({ "responseThread.author": username })
+    const reviewsWithComments = await Review.find({ 'responseThread.author': username })
       .populate('establishment')
       .lean();
 
@@ -455,10 +459,8 @@ exports.getUserProfileActivity = async (req, res) => {
         }
       });
     });
-    // Sort comments by date
     comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // Recent activity combining reviews and comments, sorted by top 5
     const recentActivity = [...posts, ...comments]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5);
@@ -466,6 +468,6 @@ exports.getUserProfileActivity = async (req, res) => {
     res.json({ success: true, posts, comments, recentActivity });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };

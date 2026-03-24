@@ -7,7 +7,8 @@
 const mongoose = require('mongoose');
 const User     = require('../src/models/users');
 
-const MONGO_URI = 'mongodb://127.0.0.1:27017/myDatabase';
+require('dotenv').config();
+const MONGO_URI = process.env.MONGO_URI;
 
 const EST_IDS = {
   prelude:    '69a95a4dabf2603b58236914',

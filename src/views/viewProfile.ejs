@@ -52,81 +52,38 @@
             <label for="comments-tab" class="tab-label">All Comments</label>
         </div>
 
-
         <!-- Activity Container -->
         <div class="activity-contents">
 
             <!-- Recent Activity Tab -->
             <div id="recent-activity" class="tab-content active">
-                <div class="review-card">
-                    <a href="views/reviews.ejs">
-                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
-                    </a>
-
-                    <!-- Review Contents -->
-                    <div class="review-content">
-                        <h2>Establishment</h2>
-                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">
-                            The user's review of this establishment is...
-                        </p>
-                    </div>                    
-                </div>
-            </div> 
+                <p style="color:#6b7280;padding:1rem;">Loading activity...</p>
+            </div>
 
             <!-- All Posts Tab -->
             <div id="all-posts" class="tab-content">
-                <div class="review-card">
-                    <a href="views/reviews.ejs">
-                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
-                    </a>
-
-                    <!-- Review Contents -->
-                    <div class="review-content">
-                        <h2>Review Establishments</h2>
-                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">
-                            More of the user's review of this establishment is...
-                        </p>
-                    </div>                    
-                </div>
+                <p style="color:#6b7280;padding:1rem;">Loading posts...</p>
             </div>
 
             <!-- All Comments Tab -->
             <div id="all-comments" class="tab-content">
-                <div class="review-card">
-                    <a href="views/reviews.ejs?establishment=Prelude">
-                        <img src="/images/header.jpg" alt="establishment image" class="establishment-img"/>
-                    </a>
-
-                    <!-- Review Contents -->
-                    <div class="review-content">
-                        <h2>Comments</h2>
-                        <p class="review-meta">Title · ⭐⭐⭐⭐⭐</p>
-                        <p class="review-text">
-                            The user's comment of this establishment is...
-                        </p>
-                    </div>                    
-                </div>
+                <p style="color:#6b7280;padding:1rem;">Loading comments...</p>
             </div>
 
         </div>
     </div>
 </div>
 
-<!-- Script to pass IDs to javascript  -->
+<!-- Pass IDs safely to JS — guard against null sessionUser -->
 <% const currentUser = typeof sessionUser !== 'undefined' ? sessionUser : null %>
 <script>
     const viewedUserID  = "<%= user._id %>";
-    const currentUserID = "<%= currentUser._id %>";
+    const currentUserID = "<%= currentUser ? currentUser._id : '' %>";
 </script>
 
-<!-- Script for Tab Navigation & Showing Edit Button -->
+<!-- Tab Navigation & Edit Button -->
 <script src="/js/profileView-script.js"></script>
-
-<script src="/js/loggedUser-script.js"></script>
 <script src="/js/theme-toggle.js"></script>
 
 </body>
 </html>
-
