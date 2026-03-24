@@ -22,7 +22,7 @@ mongoose.connect(MONGO_URI)
   .catch(err => console.log('MongoDB connection error:', err));
 
 app.use(session({
-  secret: 'tafteats-secret-key',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: MONGO_URI }),
@@ -59,5 +59,4 @@ app.use('/', profileRoutes);
 
 app.get('/', (req, res) => res.redirect('/establishments'));
 
-const PORT = 3000;
-app.listen(PORT, () => console.log('Server running on http://localhost:' + PORT));
+module.exports = app;
