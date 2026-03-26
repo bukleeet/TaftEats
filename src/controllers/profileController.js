@@ -73,12 +73,21 @@ exports.updateProfile = async (req, res) => {
         const userID = req.params.userId;
         const { username, description } = req.body;
 
+        // Back-end validation
+        if (!username || !username.trim()) {
+            return res.status(400).json({ success: false, message: 'Username cannot be empty.' });
+        }
+        if (!description || !description.trim()) {
+            return res.status(400).json({ success: false, message: 'Description cannot be empty.' });
+        }
+        // End validation
+
         const user = await User.findById(userID);
         if (!user) return res.status(404).send("User not found");
 
         const updatedData = {
-            username,
-            description
+            username: username.trim(),
+            description: description.trim()
         };
 
         // checks if a new file buffer exists and overwrites avatar with the new cloudinary link

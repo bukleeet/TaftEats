@@ -129,6 +129,25 @@ exports.createReview = async (req, res) => {
 
     const { title, body, rating, establishment } = req.body;
 
+    // Back-end validation
+    if (!title || !title.trim()) {
+      return res.status(400).json({ success: false, message: 'Review title is required.' });
+    }
+    if (!body || !body.trim()) {
+      return res.status(400).json({ success: false, message: 'Review body is required.' });
+    }
+    if (!rating) {
+      return res.status(400).json({ success: false, message: 'A star rating is required.' });
+    }
+    const ratingNum = Number(rating);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5.' });
+    }
+    if (!establishment) {
+      return res.status(400).json({ success: false, message: 'Establishment is required.' });
+    }
+    // End validation
+
     let mediaUrls = [];
     
     // iterate through the memory buffers and push the returned cloudinary urls to our array
@@ -140,9 +159,9 @@ exports.createReview = async (req, res) => {
     }
 
     const review = await Review.create({
-      title,
+      title:         title.trim(),
       body:          sanitize(body || ''),
-      rating:        Number(rating),
+      rating:        ratingNum,
       establishment,
       user:          req.session.userId,
       username:      req.session.username,
@@ -211,7 +230,23 @@ exports.editReview = async (req, res) => {
         if (!isReviewer(review, req.session)) return res.status(403).json({ success: false, message: 'Not authorized.' });
 
         const { title, body, rating, deleteMedia } = req.body;
-        if (title)  review.title  = title;
+
+        // Back-end validation
+        if (title !== undefined && !title.trim()) {
+          return res.status(400).json({ success: false, message: 'Review title cannot be empty.' });
+        }
+        if (body !== undefined && !body.trim()) {
+          return res.status(400).json({ success: false, message: 'Review body cannot be empty.' });
+        }
+        if (rating !== undefined) {
+          const ratingNum = Number(rating);
+          if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+            return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5.' });
+          }
+        }
+        // End validation
+
+        if (title)  review.title  = title.trim();
         if (body)   review.body   = sanitize(body);
         if (rating) review.rating = Number(rating);
         review.edited = true;
@@ -326,6 +361,12 @@ exports.ownerRespond = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Only establishment owners can respond.' });
     }
 
+    // Back-end validation
+    if (!req.body.body || !req.body.body.trim()) {
+      return res.status(400).json({ success: false, message: 'Response cannot be empty.' });
+    }
+    // End validation
+
     const review = await Review.findById(req.params.reviewId).populate('establishment');
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
@@ -359,6 +400,12 @@ exports.reviewerReply = async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ success: false, message: 'Must be logged in.' });
     }
+
+    // Back-end validation
+    if (!req.body.body || !req.body.body.trim()) {
+      return res.status(400).json({ success: false, message: 'Reply cannot be empty.' });
+    }
+    // End validation
 
     const review = await Review.findById(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
@@ -427,6 +474,12 @@ exports.editThreadMessage = async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ success: false, message: 'Must be logged in.' });
     }
+
+    // Back-end validation
+    if (!req.body.body || !req.body.body.trim()) {
+      return res.status(400).json({ success: false, message: 'Message cannot be empty.' });
+    }
+    // End validation
 
     const { messageIndex } = req.params;
     const review = await Review.findById(req.params.reviewId).populate('establishment');

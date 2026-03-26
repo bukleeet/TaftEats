@@ -22,7 +22,26 @@ exports.getRegisterPage = (req, res) => {
 
 exports.registerAccount = async (req, res) => {
   try {
-    const { username, email, password, description} = req.body;
+    const { username, email, password, description } = req.body;
+
+    // Back-end validation
+    if (!username || !username.trim()) {
+      return res.status(400).json({ success: false, message: 'Username is required.' });
+    }
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Email is required.' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
+    }
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required.' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.' });
+    }
+    // End validation
 
     const existing = await User.findOne({ $or: [{ username }, { email }] });
     if (existing) {
@@ -39,10 +58,10 @@ exports.registerAccount = async (req, res) => {
 
     // hashing remains deferred to the mongoose pre-save hook
     const newUser = await User.create({
-      username: username,
-      email: email,
+      username: username.trim(),
+      email: email.trim(),
       password: password,
-      description: description || '',
+      description: description ? description.trim() : '',
       role: 'student',
       avatar: avatarUrl
     });
