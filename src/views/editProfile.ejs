@@ -51,12 +51,53 @@
             <button type="button" class="save-btn" onclick="saveEdits()">Save Changes</button>
             <a href="/profile/<%= user._id %>" class="discard-btn">Discard Changes</a>
         </div>
+		
+		<div class="danger-zone">
+			<h3>Danger Zone</h3>
+			<p>Once you delete your account, there is no going back. All of your reviews, comments, and uploaded photos will be permanently erased.</p>
+			<button type="button" id="deleteAccountBtn" data-id="<%= user._id %>" class="danger-btn">Delete Account</button>
+		</div>
     </div>
 </div>
 
 <!-- Pass userId to JS -->
 <script>
     const userId = "<%= user._id %>";
+	const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+
+if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener('click', async function() {
+        const userId = this.dataset.id;
+        
+        const confirmed = confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');
+        if (!confirmed) return;
+
+        // Two-step verification to prevent accidental misclicks
+        const textCheck = prompt('Please type "DELETE" to confirm account deletion:');
+        if (textCheck !== 'DELETE') {
+            return alert('Account deletion cancelled.');
+        }
+
+        try {
+            const res = await fetch(`/profile/${userId}/delete`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const data = await res.json();
+
+            if (data.success) {
+                alert('Your account has been successfully deleted.');
+                window.location.href = '/establishments'; 
+            } else {
+                alert(data.message || 'Failed to delete account.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('A network error occurred.');
+        }
+    });
+}
 </script>
 
 <script src="/js/profileEdit-script.js"></script>

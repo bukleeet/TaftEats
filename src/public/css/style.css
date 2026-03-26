@@ -1534,3 +1534,57 @@ body.dark-mode .pac-title {
 body.dark-mode .pac-body {
     color: #e0e0e0;
 }
+
+.danger-zone {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #fca5a5;
+}
+
+.danger-zone h3 {
+    color: #ef4444;
+    margin-bottom: 0.5rem;
+}
+
+.danger-zone p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+}
+
+.danger-btn {
+    padding: 0.7rem 1.2rem;
+    border-radius: 999px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.danger-btn:hover {
+    background-color: #dc2626;
+}
+
+/* Dark mode overrides for Danger Zone */
+body.dark-mode .danger-zone {
+    border-top-color: #7f1d1d;
+}
+
+body.dark-mode .danger-zone h3 {
+    color: #f87171;
+}
+
+body.dark-mode .danger-zone p {
+    color: #9ca3af;
+}
+
+body.dark-mode .danger-btn {
+    background-color: #991b1b;
+    color: #fee2e2;
+}
+
+body.dark-mode .danger-btn:hover {
+    background-color: #b91c1c;
+}

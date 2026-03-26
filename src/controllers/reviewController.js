@@ -202,69 +202,70 @@ exports.getReviewDetail = async (req, res) => {
 };
 
 exports.editReview = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
+    try {
+        if (!req.session.userId) return res.status(401).json({ success: false, message: 'Must be logged in.' });
+
+        const review = await Review.findById(req.params.reviewId);
+        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+
+        if (!isReviewer(review, req.session)) return res.status(403).json({ success: false, message: 'Not authorized.' });
+
+        const { title, body, rating, deleteMedia } = req.body;
+        if (title)  review.title  = title;
+        if (body)   review.body   = sanitize(body);
+        if (rating) review.rating = Number(rating);
+        review.edited = true;
+
+        if (deleteMedia) {
+            const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
+            
+            for (const url of toDelete) {
+                await deleteFromCloudinary(url);
+            }
+            
+            review.media = review.media.filter(url => !toDelete.includes(url));
+        }
+
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const result = await uploadToCloudinary(file.buffer);
+                review.media.push(result.secure_url);
+            }
+            review.media = review.media.slice(0, 10);
+        }
+
+        await review.save();
+        await recalcEstablishmentRating(review.establishment);
+        res.json({ success: true, review });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Failed to edit review.' });
     }
-
-    const review = await Review.findById(req.params.reviewId);
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    if (!isReviewer(review, req.session)) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-
-    const { title, body, rating, deleteMedia } = req.body;
-    if (title)  review.title  = title;
-    if (body)   review.body   = sanitize(body);
-    if (rating) review.rating = Number(rating);
-    review.edited = true;
-
-    // strip out any urls the client flagged for deletion
-    if (deleteMedia) {
-      const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
-      review.media = review.media.filter(url => !toDelete.includes(url));
-    }
-
-    // upload newly added files and enforce the 10-item limit on the document array
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
-        review.media.push(result.secure_url);
-      }
-      review.media = review.media.slice(0, 10);
-    }
-
-    await review.save();
-    await recalcEstablishmentRating(review.establishment);
-    res.json({ success: true, review });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to edit review.' });
-  }
 };
 
 exports.deleteReview = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
+    try {
+        if (!req.session.userId) return res.status(401).json({ success: false, message: 'Must be logged in.' });
+
+        const review = await Review.findById(req.params.reviewId);
+        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+
+        if (!isReviewer(review, req.session)) return res.status(403).json({ success: false, message: 'Not authorized.' });
+
+        if (review.media && review.media.length > 0) {
+            for (const url of review.media) {
+                await deleteFromCloudinary(url);
+            }
+        }
+
+        const estId = review.establishment;
+        await review.deleteOne();
+        await recalcEstablishmentRating(estId);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Failed to delete review.' });
     }
-
-    const review = await Review.findById(req.params.reviewId);
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    if (!isReviewer(review, req.session)) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-
-    const estId = review.establishment;
-    await review.deleteOne();
-    await recalcEstablishmentRating(estId);
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to delete review.' });
-  }
 };
 
 exports.voteReview = async (req, res) => {
@@ -497,4 +498,18 @@ exports.getUserProfileActivity = async (req, res) => {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
+};
+
+const deleteFromCloudinary = async (url) => {
+    if (!url || url.includes('defaultprofile')) return; 
+    try {
+        const parts = url.split('/tafteats/');
+        if (parts.length === 2) {
+            const filename = parts[1].split('.')[0];
+            const publicId = `tafteats/${filename}`;
+            await cloudinary.uploader.destroy(publicId);
+        }
+    } catch (err) {
+        console.error('Cloudinary delete error:', err);
+    }
 };

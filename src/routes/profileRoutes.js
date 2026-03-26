@@ -32,5 +32,6 @@ function handleUpload(req, res, next) {
 router.get('/profile/:userId', profileController.getProfilePage);
 router.get('/profile/:userId/edit', profileController.getEditPage);
 router.post('/profile/:userId/edit', handleUpload, profileController.updateProfile);
+router.delete('/profile/:userId/delete', profileController.deleteAccount);
 
 module.exports = router;
