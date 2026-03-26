@@ -16,14 +16,14 @@
   <p><%= establishment ? establishment.description : 'Browse all reviews' %></p>
   <% if (establishment) { %>
     <% if (establishment.image) { %>
-      <img src="/images/<%= establishment.image %>" alt="<%= establishment.name %>"
+      <img src="<%= establishment.image %>" alt="<%= establishment.name %>"
            style="width:80px;height:80px;object-fit:cover;border-radius:50%;border:3px solid #16a34a;margin:0.5rem auto 0;display:block;">
     <% } %>
     <div class="star-display" data-rating="<%= establishment.rating %>"
          data-count="<%= reviews.length %>"
          style="justify-content:center;margin-top:0.5rem;"></div>
   <% } %>
-  <% if (user) { %>
+  <% if (user && establishment) { %>
     <button class="review-btn" id="openReviewModal">+ Write a Review</button>
   <% } %>
 </div>
@@ -110,9 +110,9 @@
             <% review.media.forEach(file => { %>
               <% const isVideo = /\.(mp4|mov|webm)$/i.test(file); %>
               <% if (isVideo) { %>
-                <video src="/uploads/<%= file %>" controls class="preview-media-img"></video>
+                <video src="<%= file %>" controls class="preview-media-img"></video>
               <% } else { %>
-                <img src="/uploads/<%= file %>" alt="Review media" class="preview-media-img">
+                <img src="<%= file %>" alt="Review media" class="preview-media-img">
               <% } %>
             <% }) %>
           </div>

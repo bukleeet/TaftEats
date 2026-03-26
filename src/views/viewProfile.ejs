@@ -16,7 +16,7 @@
     <div class="profile-content">
         <div class="profile-left">
             <div class="profile-avatar">
-                <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="user-profile">
+                <img src="<%= user.avatar || 'https://res.cloudinary.com/ddbdnydcd/image/upload/v1774355965/defaultprofile_aldk8t.webp' %>" alt="user-profile">
             </div>
             <a href="/profile/<%= user._id %>/edit" class="edit-btn" id="editProfileBtn" style="display:none;">Edit Profile</a>
         </div>

@@ -87,7 +87,7 @@
     <% if (establishments && establishments.length > 0) { %>
       <% establishments.forEach(est => { %>
         <div class="establishment-card" data-rating="<%= est.rating %>">
-          <img src="/images/<%= est.image %>" alt="<%= est.name %>" class="establishment-img" />
+          <img src="<%= est.image %>" alt="<%= est.name %>" class="establishment-img" />
           <div class="establishment-info">
             <h2><%= est.name %></h2>
             <p class="rating"><span class="star-display" data-rating="<%= est.rating %>"></span></p>

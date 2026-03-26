@@ -1,7 +1,9 @@
 const Review        = require('../models/reviews');
 const Establishment = require('../models/establishments');
+const cloudinary    = require('../config/cloudinary');
+const streamifier   = require('streamifier');
 
-// Regex-based HTML sanitizer — no external package needed.
+// strips invalid html tags to prevent xss without needing heavy external packages
 const ALLOWED_TAGS = /^\/?(?:b|i|u|s|strong|em|br|p|div|ul|ol|li)$/i;
 
 function sanitize(html) {
@@ -23,15 +25,27 @@ async function recalcEstablishmentRating(establishmentId) {
   await Establishment.findByIdAndUpdate(establishmentId, { rating: rounded });
 }
 
-// Check if the current session user is the reviewer of a review.
-// Matches on ObjectId OR username; username fallback handles seeded reviews
-// whose user ObjectId may not match if the DB was reseeded after the reviews were created.
+// checks if the session user owns this review. we check both objectid and username because seeded database records might have mismatched objectids if the db was rebuilt
 function isReviewer(review, session) {
   if (!session.userId) return false;
   const byId       = review.user.toString() === session.userId;
   const byUsername = review.username === session.username;
   return byId || byUsername;
 }
+
+// wraps the upload stream in a promise so we can await the result before saving the db record
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'tafteats' },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    streamifier.createReadStream(fileBuffer).pipe(stream);
+  });
+};
 
 exports.getReviewsPage = async (req, res) => {
   try {
@@ -55,7 +69,6 @@ exports.getReviewsPage = async (req, res) => {
             ? 'unhelpful'
             : null
         : null,
-      // Expose whether the session user is this review's author (used in EJS)
       isReviewer: isReviewer(r, req.session)
     }));
 
@@ -116,6 +129,16 @@ exports.createReview = async (req, res) => {
 
     const { title, body, rating, establishment } = req.body;
 
+    let mediaUrls = [];
+    
+    // iterate through the memory buffers and push the returned cloudinary urls to our array
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const result = await uploadToCloudinary(file.buffer);
+        mediaUrls.push(result.secure_url);
+      }
+    }
+
     const review = await Review.create({
       title,
       body:          sanitize(body || ''),
@@ -123,7 +146,7 @@ exports.createReview = async (req, res) => {
       establishment,
       user:          req.session.userId,
       username:      req.session.username,
-      media:         req.files ? req.files.map(f => f.filename) : []
+      media:         mediaUrls 
     });
 
     await recalcEstablishmentRating(establishment);
@@ -197,13 +220,19 @@ exports.editReview = async (req, res) => {
     if (rating) review.rating = Number(rating);
     review.edited = true;
 
+    // strip out any urls the client flagged for deletion
     if (deleteMedia) {
       const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
-      review.media = review.media.filter(f => !toDelete.includes(f));
+      review.media = review.media.filter(url => !toDelete.includes(url));
     }
 
+    // upload newly added files and enforce the 10-item limit on the document array
     if (req.files && req.files.length > 0) {
-      review.media = review.media.concat(req.files.map(f => f.filename)).slice(0, 10);
+      for (const file of req.files) {
+        const result = await uploadToCloudinary(file.buffer);
+        review.media.push(result.secure_url);
+      }
+      review.media = review.media.slice(0, 10);
     }
 
     await review.save();
@@ -333,7 +362,6 @@ exports.reviewerReply = async (req, res) => {
     const review = await Review.findById(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-    // Use isReviewer() — handles both ObjectId match and username match for seeded accounts
     if (!isReviewer(review, req.session)) {
       return res.status(403).json({ success: false, message: 'Only the original reviewer can reply here.' });
     }
@@ -431,7 +459,7 @@ exports.editThreadMessage = async (req, res) => {
 
 exports.getUserProfileActivity = async (req, res) => {
   try {
-    // Accept ?userId= for viewing other profiles, fall back to session user
+    // allows fetching activity for a specific user via query string, otherwise defaults to the logged-in user
     const userId   = req.query.userId || req.session.userId;
     const username = req.query.userId
       ? (await require('../models/users').findById(req.query.userId).select('username').lean())?.username

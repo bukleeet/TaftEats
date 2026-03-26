@@ -11,7 +11,7 @@
     <a href="/reviews" class="nav-link">Reviews</a>
     <% if (user) { %>
       <a href="/profile/<%= user._id %>" class="nav-user-pill">
-        <img src="/images/<%= user.avatar || 'defaultprofile.png' %>" alt="avatar" class="nav-avatar">
+        <img src="<%= user.avatar || 'https://res.cloudinary.com/ddbdnydcd/image/upload/v1774355965/defaultprofile_aldk8t.webp' %>" alt="avatar" class="nav-avatar">
         <span><%= user.username %></span>
       </a>
       <form action="/logout" method="POST" style="display:inline;">

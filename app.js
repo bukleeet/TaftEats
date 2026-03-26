@@ -1,4 +1,18 @@
-// require('dotenv').config();
+require('dotenv').config();
+
+const requiredEnv = [
+  'MONGO_URI',
+  'SESSION_SECRET',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET'
+];
+
+requiredEnv.forEach((key) => {
+  if (!process.env[key]) {
+    throw new Error(`${key} is not defined`);
+  }
+});
 
 const express    = require('express');
 const mongoose   = require('mongoose');

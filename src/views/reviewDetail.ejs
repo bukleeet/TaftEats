@@ -56,9 +56,9 @@
         <% review.media.forEach(file => { %>
           <% const isVid = /\.(mp4|mov|webm)$/i.test(file); %>
           <% if (isVid) { %>
-            <video src="/uploads/<%= file %>" controls style="max-width:100%;border-radius:8px;"></video>
+            <video src="<%= file %>" controls style="max-width:100%;border-radius:8px;"></video>
           <% } else { %>
-            <img src="/uploads/<%= file %>" alt="Review media" style="max-width:320px;max-height:240px;object-fit:cover;border-radius:8px;">
+            <img src="<%= file %>" alt="Review media" style="max-width:320px;max-height:240px;object-fit:cover;border-radius:8px;">
           <% } %>
         <% }) %>
       </div>

@@ -1,12 +1,26 @@
 const User = require('../models/users');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
-// Get the profile view page
+// wraps streamifier in a promise so the route handler can await the cloudinary url return
+const uploadToCloudinary = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: 'tafteats' },
+            (error, result) => {
+                if (result) resolve(result);
+                else reject(error);
+            }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+};
+
 exports.getProfilePage = async (req, res) => {
     try {
-        const userID = req.params.userId;  // Extracts ID from URL
+        const userID = req.params.userId;
         const user = await User.findById(userID).lean();
 
-        // Checks if user exists
         if (!user) {
             return res.status(404).send("User not found");
         }
@@ -20,13 +34,11 @@ exports.getProfilePage = async (req, res) => {
     }
 };
 
-// Get the profile editor page
 exports.getEditPage = async (req, res) => {
     try {
-        const userID = req.params.userId;  // Extracts ID from URL
+        const userID = req.params.userId;
         const user = await User.findById(userID).lean();
 
-        // Checks if user exists
         if (!user) {
             return res.status(404).send("User not found");
         }
@@ -40,30 +52,28 @@ exports.getEditPage = async (req, res) => {
     }
 };
 
-// Updates user data to database
 exports.updateProfile = async (req, res) => {
     try {
-        const userID = req.params.userId;  // Extracts ID from URL
+        const userID = req.params.userId;
         const { username, description } = req.body;
 
-        // Updated Data
         const updatedData = {
             username,
             description
         };
 
-        // Updates avatar if image is provided
+        // checks if a new file buffer exists and overwrites avatar with the new cloudinary link
         if (req.file) {
-            updatedData.avatar = req.file.filename;
+            const result = await uploadToCloudinary(req.file.buffer);
+            updatedData.avatar = result.secure_url;
         }
 
-        // Updates Database
         await User.findByIdAndUpdate(userID, updatedData);
 
-		// Sync session so navbar reflects changes immediately
+        // keeps the session storage synced so the header updates instantly without relogging
         if (req.session.userId === userID) {
-            if (updatedData.avatar)  req.session.avatar   = updatedData.avatar;
-            if (updatedData.username) req.session.username = updatedData.username;
+            if (updatedData.avatar)    req.session.avatar   = updatedData.avatar;
+            if (updatedData.username)  req.session.username = updatedData.username;
         }
 
         res.json({ success: true });
@@ -72,18 +82,3 @@ exports.updateProfile = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-
-
-// function to show all recent activity
-// User reviewController.js as reference
-
-
-// function to show all reviews
-
-
-
-// function to show all comments
-
-
-
-// function to create activity card

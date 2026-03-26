@@ -57,7 +57,7 @@
         rgba(6, 95, 70, 0.55),
         rgba(6, 95, 70, 0.55)
       ),
-      url("../images/header.jpg");
+      url("https://res.cloudinary.com/ddbdnydcd/image/upload/v1774355981/tafteats_ku6k4r.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -555,15 +555,34 @@ body {
     gap: 5px;
 }
 
-.star {
-    transition: color 0.2s;
+.star { 
+	color: #ccc;
+	transition: color 0.2s;
 }
 
-.star { color: #ccc; }
-.star-filled { color: #fbbf24; }
+body.dark-mode .star {
+	color: #444;
+}
+
+.star.star-filled,
+body.dark-mode .star-filled {
+	color: #fbbf24;
+}
 
 .star.half {
     background: linear-gradient(to right, #fbbf24 50%, #ccc 50%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+body.dark-mode .star-rating-container {
+    color: #ffc107;
+}
+
+body.dark-mode .star.half {
+    background: linear-gradient(to right, #ff9800 50%, #444 50%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -890,7 +909,7 @@ body.dark-mode .nav-logout-btn:hover {
 /* Hero Section */
 body.dark-mode .hero {
     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url("../images/header.jpg");
+        url("https://res.cloudinary.com/ddbdnydcd/image/upload/v1774355981/tafteats_ku6k4r.png");
     background-size: cover;
     background-position: center;
 }
@@ -936,7 +955,7 @@ body.dark-mode .search-bar select:focus {
 body.dark-mode .about-card,
 body.dark-mode .establishment-card,
 body.dark-mode .review-card {
-    background-color: #1f1f1f;
+    background: #1f1f1f;
     border: 1px solid #2c2c2c;
     color: #e0e0e0;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
@@ -958,7 +977,7 @@ body.dark-mode p,
 body.dark-mode li,
 body.dark-mode .dev-details p,
 body.dark-mode .contact-info {
-    color: #000000;
+    color: #e0e0e0;
 }
 
 /* Bullets */
@@ -1004,18 +1023,6 @@ body.dark-mode .rating {
 
 body.dark-mode .review-text {
     color: #e0e0e0;
-}
-
-body.dark-mode .star-rating-container {
-    color: #ffc107;
-}
-
-body.dark-mode .star.half {
-    background: linear-gradient(to right, #ff9800 50%, #444 50%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
 }
 
 /* About / Dev Section */
