@@ -977,7 +977,7 @@ body.dark-mode p,
 body.dark-mode li,
 body.dark-mode .dev-details p,
 body.dark-mode .contact-info {
-    color: #2c2c2c;
+    color: #e0e0e0;
 }
 
 /* Bullets */
@@ -987,7 +987,7 @@ body.dark-mode .about-list li::marker {
 
 /* Contact Info */
 body.dark-mode .contact-info {
-    background-color: #e0e0e0;
+    background-color: #2c2c2c;
     border: 1px dashed #ff9800;
 }
 
