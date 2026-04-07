@@ -38,7 +38,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             alert("Account created successfully.");
             window.location.href = "/login";  // redirects to login page
         } else {
-            alert("Failed to create an account.");
+            alert(result.message || "Failed to create an account.");
         }
     } catch (err) {
         console.error(err);
