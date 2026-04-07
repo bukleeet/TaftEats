@@ -19,7 +19,7 @@ Create a `.env` file in the project root with the following keys before starting
 A `.env.example` file is included in the repository with placeholder values.
 
 ```env
-# Although the project uses a live Atlas URI, but localhost works in place of Atlas
+# Although the project uses a live Atlas URI, localhost works in place of Atlas
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxx.mongodb.net/myDatabase?retryWrites=true&w=majority
 SESSION_SECRET=replace_with_any_long_random_string
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
@@ -42,8 +42,8 @@ npm install
 ```
 
 **Important notes on packages:**
-- No bcrypt: password hashing uses Node's built-in `crypto` module (HMAC-SHA256 + random salt + `timingSafeEqual`)
-- No dompurify/jsdom: server-side HTML sanitization uses a regex tag whitelist in `reviewController.js`
+- **No bcrypt**: password hashing uses Node's built-in `crypto` module (HMAC-SHA256 + random salt + `timingSafeEqual`)
+- **No dompurify/jsdom**: server-side HTML sanitization uses a regex tag whitelist in `reviewController.js`
 
 ### 2. Connect to the Database
 Since the application uses a live MongoDB Atlas cluster, you do not need to start a local MongoDB service. Just ensure your `.env` file contains the correct live `MONGO_URI`.
