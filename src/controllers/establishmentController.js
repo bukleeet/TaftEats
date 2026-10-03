@@ -1,6 +1,6 @@
 const Establishment = require('../models/establishments');
 const v = require('../lib/validation');
-const { ratings } = require('../services/reviews');
+const { discover } = require('../services/establishments');
 const { HttpError } = require('../lib/errors');
 exports.getAllEstablishments = async (req, res) => {
   const { page, limit, skip } = v.pagination(req.query);
@@ -13,25 +13,16 @@ exports.getAllEstablishments = async (req, res) => {
       [field]: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' },
     }));
   if (category) filter.category = category;
-  // Rating is computed from source reviews so deletions and concurrent writes cannot leave stale totals.
-  const totals = await ratings();
-  let establishments = await Establishment.find(filter).sort({ name: 1 }).lean();
-  establishments = establishments.map((e) => ({
-    ...e,
-    ...(totals.get(String(e._id)) || { rating: 0, reviewCount: 0 }),
-  }));
-  if (sort === 'rating')
-    establishments.sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name));
-  const count = establishments.length;
+  const { establishments, count, categories } = await discover({ filter, sort, skip, limit });
   res.render('establishments', {
-    establishments: establishments.slice(skip, skip + limit),
+    establishments,
     page,
     pages: Math.ceil(count / limit),
     count,
     q,
     category,
     sort,
-    categories: await Establishment.distinct('category'),
+    categories,
   });
 };
 exports.getEstablishmentById = async (req, res) => {

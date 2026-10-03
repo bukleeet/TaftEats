@@ -32,8 +32,9 @@ function present(review, user) {
   delete output.__v;
   return output;
 }
-async function ratings() {
+async function ratings(establishmentId) {
   const rows = await Review.aggregate([
+    { $match: { establishment: establishmentId } },
     { $group: { _id: '$establishment', rating: { $avg: '$rating' }, reviewCount: { $sum: 1 } } },
   ]);
   return new Map(

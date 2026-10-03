@@ -42,7 +42,10 @@ exports.getReviewsPage = async (req, res) => {
   if (!establishment) throw new HttpError(404, 'Restaurant not found.');
   Object.assign(
     establishment,
-    (await ratings()).get(String(establishment._id)) || { rating: 0, reviewCount: 0 },
+    (await ratings(establishment._id)).get(String(establishment._id)) || {
+      rating: 0,
+      reviewCount: 0,
+    },
   );
   await list(req, res, establishment);
 };

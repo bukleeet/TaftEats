@@ -10,6 +10,7 @@ const Review = require('../src/models/reviews');
 const Establishment = require('../src/models/establishments');
 const media = require('../src/services/media');
 const { migrate } = require('../database/migrate');
+const { discover } = require('../src/services/establishments');
 
 describe('HTTP application against an isolated MongoDB replica set', () => {
   let db, app, alice, bob, owner, userA, userB, ownerUser, restaurant, otherRestaurant, review;
@@ -516,6 +517,70 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
     assert.equal(second.body.posts.length, 2);
     const page = await request(app).get('/establishments?q=.*').expect(200);
     assert.match(page.text, /No places match/);
+  });
+  test('discovery paginates in MongoDB and sorts current rounded ratings across all pages', async () => {
+    const category = 'Pagination regression';
+    const places = await Establishment.insertMany(
+      Array.from({ length: 25 }, (_, i) => ({
+        name: `Catalog ${String(i).padStart(2, '0')}`,
+        description: 'An isolated catalog entry.',
+        category,
+        rating: 5,
+      })),
+    );
+    try {
+      for (const [index, stars] of [
+        [24, 5],
+        [23, 4.5],
+        [22, 4],
+        [22, 4.5],
+        [21, 4.5],
+      ])
+        await Review.create({
+          user: userA._id,
+          username: 'alice',
+          establishment: places[index]._id,
+          title: `Catalog story ${index}`,
+          body: 'Test review',
+          rating: stars,
+        });
+      const input = { filter: { category }, sort: 'name', skip: 0, limit: 12 };
+      const first = await discover(input);
+      const second = await discover({ ...input, skip: 12 });
+      const third = await discover({ ...input, skip: 24 });
+      assert.equal(first.count, 25);
+      assert.equal(first.establishments.length, 12);
+      assert.equal(second.establishments.length, 12);
+      assert.equal(third.establishments.length, 1);
+      assert.deepEqual(
+        [...first.establishments, ...second.establishments, ...third.establishments].map(
+          (p) => p.name,
+        ),
+        places.map((p) => p.name),
+      );
+      assert.equal(first.establishments[0].rating, 0);
+      assert.equal(first.establishments[0].reviewCount, 0);
+      const ranked = await discover({ ...input, sort: 'rating' });
+      assert.deepEqual(
+        ranked.establishments.slice(0, 4).map((p) => p.name),
+        ['Catalog 24', 'Catalog 21', 'Catalog 23', 'Catalog 22'],
+      );
+      assert.equal(ranked.establishments[3].rating, 4.3);
+      assert.equal(ranked.establishments[3].reviewCount, 2);
+      await Review.deleteMany({ establishment: places[24]._id });
+      const changed = await discover({ ...input, sort: 'rating' });
+      assert.equal(changed.establishments[0].name, 'Catalog 21');
+      const page = await request(app)
+        .get('/establishments?category=Pagination%20regression&sort=rating&page=3')
+        .expect(200);
+      assert.equal((page.text.match(/class="restaurant-card"/g) || []).length, 1);
+      const absent = await discover({ ...input, filter: { category: 'Missing category' } });
+      assert.equal(absent.count, 0);
+      assert.deepEqual(absent.establishments, []);
+    } finally {
+      await Review.deleteMany({ establishment: { $in: places.map((p) => p._id) } });
+      await Establishment.deleteMany({ _id: { $in: places.map((p) => p._id) } });
+    }
   });
   test('persistent rate limits are shared by separate application instances', async () => {
     const a = createApp({ sessionSecret: secret });

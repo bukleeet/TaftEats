@@ -26,6 +26,8 @@ The entry point also fails closed on invalid environment configuration. Serverle
 - Reviews contain title, sanitized HTML, rating, media, votes, and a bounded owner/reviewer thread. New messages store an immutable `authorId` alongside their display-name snapshot.
 - Legacy ratings remain in the schema for compatibility, but display values come from review aggregates. An empty set has rating zero and displays “New.”
 
+Discovery filtering, sorting, and pagination run in MongoDB. Name sorting limits the page before looking up review totals; rating sorting computes totals for matching restaurants before selecting the page. Both return at most 12 restaurant documents to the application, with deterministic ID tie-breaking. Restaurant-detail rating queries match that restaurant's indexed ID before grouping.
+
 ## Write semantics
 
 Votes use one MongoDB update pipeline to toggle one vote and remove the opposite vote. The update increments the review version, so a stale edit cannot overwrite votes. Review edits and thread changes use Mongoose optimistic concurrency; clients receive 409 and refresh when a concurrent write wins.
