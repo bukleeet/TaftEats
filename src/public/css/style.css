@@ -248,77 +248,91 @@ small {
   line-height: 1.7;
   color: var(--muted);
 }
-.status-dot {
-  display: inline-block;
-  height: 7px;
-  width: 7px;
-  background: #3d7955;
-  border-radius: 50%;
-  margin-right: 0.55rem;
-}
 .hero {
-  padding-block: 4.6rem 4rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
-  grid-template-columns: 1.13fr 1fr;
-  align-items: center;
-  gap: 3rem;
+  place-items: center;
+  min-height: clamp(24rem, 60svh, 36rem);
+  margin-block: 1.5rem 3rem;
+  padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem);
+  border-radius: 18px;
+  background: #065f46;
+  color: #fff;
+  text-align: center;
+}
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, #033c30cc, #06513dba);
+}
+.hero-copy {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  width: 100%;
 }
 .hero h1 {
-  margin: 1.1rem 0 1.6rem;
+  margin: 0;
+  height: 1.2em;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.75rem, 5.8vw, 5.25rem);
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .hero-description {
   max-width: 410px;
-  color: var(--muted);
+  margin: 0;
+  color: #fff;
   font-size: 1.03rem;
-  margin-bottom: 1.9rem;
 }
-.hero-note {
-  margin-top: 1.5rem;
+.hero-actions {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.hero .button {
+  background: #fff;
+  color: #065f46;
+}
+.hero-animation-toggle {
+  color: #fff;
+  font-weight: 400;
   font-size: 0.8rem;
-  color: var(--muted);
 }
-.tiny-stars {
-  color: #b78a38;
-  padding-right: 0.6rem;
-  letter-spacing: -0.1em;
+.hero-animation-toggle[hidden] {
+  display: none;
 }
-.hero-art {
-  position: relative;
-  border-radius: 16px 16px 100px 16px;
-  background: #edeadb;
-  overflow: hidden;
+.hero :focus-visible {
+  outline-color: #fff;
 }
-.hero-art > img {
-  width: 100%;
-  height: 410px;
-  object-fit: cover;
+.hero-cursor {
+  display: inline-block;
+  height: 0.8em;
+  border-right: 2px solid currentColor;
+  margin-left: 0.08em;
+  animation: hero-blink 0.7s step-end infinite;
 }
-.art-caption {
-  position: absolute;
-  bottom: 1.8rem;
-  left: 1.8rem;
-  background: #fffaf0;
-  color: #203c31;
-  padding: 1.1rem 1.4rem;
-  box-shadow: 4px 5px 0 #a6ae9670;
-  border: 1px solid #dfdccb;
-  transform: rotate(-3deg);
-  border-radius: 2px;
+.animation-paused .hero-cursor {
+  animation: none;
 }
-.art-caption strong {
-  display: block;
-  font:
-    1.25rem Georgia,
-    serif;
-  margin: 0.4rem 0 0.9rem;
-  line-height: 1.15;
-}
-.art-caption .eyebrow {
-  color: #66746b;
-}
-.art-caption > span:last-child {
-  font-size: 0.55rem;
-  letter-spacing: 0.12em;
+@keyframes hero-blink {
+  50% {
+    opacity: 0;
+  }
 }
 .section-heading {
   display: flex;
@@ -961,13 +975,6 @@ fieldset {
     justify-content: center;
     padding-top: 0.5rem;
   }
-  .hero {
-    gap: 2rem;
-    padding-top: 3rem;
-  }
-  .hero-art > img {
-    height: 360px;
-  }
   .restaurant-grid {
     gap: 1rem;
   }
@@ -1001,26 +1008,6 @@ fieldset {
   }
   .profile-link span {
     display: none;
-  }
-  .hero {
-    grid-template-columns: 1fr;
-    padding-block: 2.5rem;
-    gap: 2rem;
-  }
-  .hero h1 {
-    font-size: clamp(2.8rem, 10vw, 4rem);
-  }
-  .hero-art {
-    max-width: 550px;
-    width: 100%;
-  }
-  .hero-art > img {
-    height: 300px;
-  }
-  .art-caption {
-    bottom: 1rem;
-    left: 1rem;
-    padding: 0.8rem 1rem;
   }
   .filter-bar {
     flex-wrap: wrap;
@@ -1130,50 +1117,6 @@ fieldset {
   }
 }
 
-.hero {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  min-height: 65vh;
-  background: #065f46;
-  color: #fff;
-  border-radius: 0 0 18px 18px;
-}
-.hero-copy {
-  width: 100%;
-}
-.hero h1 {
-  min-height: 2.3em;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
-.hero-description {
-  margin-inline: auto;
-  color: #fff;
-}
-.hero .button {
-  background: #fff;
-  color: #065f46;
-}
-.hero-animation-toggle {
-  display: block;
-  margin: 1rem auto 0;
-  color: #fff;
-}
-.hero-animation-toggle[hidden] {
-  display: none;
-}
-.hero-cursor {
-  display: inline-block;
-  height: 0.9em;
-  border-right: 3px solid currentColor;
-  margin-left: 0.1em;
-  animation: hero-blink 0.7s step-end infinite;
-}
-@keyframes hero-blink {
-  50% {
-    opacity: 0;
-  }
-}
 .star-display {
   display: inline-flex;
   gap: 2px;

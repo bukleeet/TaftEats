@@ -4,13 +4,13 @@
   const heroToggle = document.querySelector('.hero-animation-toggle');
   if (heroText && heroToggle) {
     const phrases = [
-      ['Are you hungry?', 'en'],
-      ['Gutom ka na ba?', 'fil'],
-      ['¿Tienes hambre?', 'es'],
-      ['你饿了吗', 'zh'],
-      ['Vous avez faim?', 'fr'],
-      ['Hast du Hunger?', 'de'],
-      ['Hai fame?', 'it'],
+      ['Are you hungry?', 'en', 'hungry?'],
+      ['Gutom ka na ba?', 'fil', 'Gutom'],
+      ['¿Tienes hambre?', 'es', 'hambre?'],
+      ['你饿了吗', 'zh', '饿'],
+      ['Vous avez faim?', 'fr', 'faim?'],
+      ['Hast du Hunger?', 'de', 'Hunger?'],
+      ['Hai fame?', 'it', 'fame?'],
     ];
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let phrase = 0;
@@ -18,12 +18,21 @@
     let erasing = true;
     let paused = false;
     let timer;
+    function renderPhrase() {
+      const [text, language, emphasis] = phrases[phrase];
+      const visible = text.slice(0, length);
+      const start = text.indexOf(emphasis);
+      const end = start + emphasis.length;
+      const italic = document.createElement('em');
+      italic.textContent = visible.slice(start, end);
+      heroText.replaceChildren(visible.slice(0, start), italic, visible.slice(end));
+      heroText.lang = language;
+    }
     function step() {
       if (paused || reducedMotion.matches) return;
-      const [text, language] = phrases[phrase];
+      const [text] = phrases[phrase];
       length += erasing ? -1 : 1;
-      heroText.textContent = text.slice(0, length);
-      heroText.lang = language;
+      renderPhrase();
       let delay = erasing ? 35 : 65;
       if (length === 0) {
         phrase = (phrase + 1) % phrases.length;
@@ -40,12 +49,12 @@
       heroToggle.hidden = reducedMotion.matches;
       heroToggle.textContent = paused ? 'Resume animation' : 'Pause animation';
       heroToggle.setAttribute('aria-pressed', String(paused));
+      heroText.closest('.hero').classList.toggle('animation-paused', paused);
       if (reducedMotion.matches) {
         phrase = 0;
         length = phrases[0][0].length;
         erasing = true;
-        heroText.textContent = phrases[0][0];
-        heroText.lang = 'en';
+        renderPhrase();
       } else if (!paused) timer = setTimeout(step, 2000);
     }
     heroToggle.addEventListener('click', () => {

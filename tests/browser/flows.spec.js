@@ -24,9 +24,18 @@ async function audit(page) {
   });
   expect(violations).toEqual([]);
 }
+async function heroDescriptionOffset(page) {
+  return page.locator('.hero-description').evaluate((description) => {
+    return (
+      description.getBoundingClientRect().top -
+      description.closest('.hero').getBoundingClientRect().top
+    );
+  });
+}
 test('discovery, filtering, keyboard navigation, themes, and responsive layouts', async ({
   page,
 }) => {
+  test.setTimeout(60000);
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
@@ -38,13 +47,20 @@ test('discovery, filtering, keyboard navigation, themes, and responsive layouts'
   });
   await page.reload();
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Are you hungry?');
+  await expect(page.locator('.hero-background')).toBeVisible();
+  expect(
+    await page.locator('.hero-background').evaluate((img) => img.complete && img.naturalWidth > 0),
+  ).toBe(true);
   await expect(page.locator('.restaurant-card .star-display')).toHaveCount(10);
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('#main')).toBeFocused();
+  const initialDescription = await heroDescriptionOffset(page);
   await expect(page.locator('#hero-text')).toHaveAttribute('lang', 'fil', { timeout: 7000 });
   await expect(page.locator('#hero-text')).toHaveText('Gutom ka na ba?', { timeout: 3000 });
+  expect(await heroDescriptionOffset(page)).toBe(initialDescription);
+  await expect(page.locator('#hero-text em')).toHaveText('Gutom');
   await page.getByRole('button', { name: 'Pause animation', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Resume animation', exact: true })).toHaveAttribute(
     'aria-pressed',
@@ -64,18 +80,38 @@ test('discovery, filtering, keyboard navigation, themes, and responsive layouts'
   await page.getByRole('button', { name: 'Explore', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'No places match just yet.' })).toBeVisible();
   await page.getByRole('link', { name: 'Clear filters' }).click();
-  for (const width of [375, 768, 1440]) {
+  for (const width of [320, 375, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
   }
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.reload();
+  const mobileDescription = await heroDescriptionOffset(page);
+  for (const phrase of [
+    'Are you hungry?',
+    'Gutom ka na ba?',
+    '¿Tienes hambre?',
+    '你饿了吗',
+    'Vous avez faim?',
+    'Hast du Hunger?',
+    'Hai fame?',
+  ]) {
+    await expect(page.locator('#hero-text')).toHaveText(phrase, { timeout: 7000 });
+    expect(await heroDescriptionOffset(page)).toBe(mobileDescription);
+    const heading = await page.locator('.hero h1').boundingBox();
+    const hero = await page.locator('.hero').boundingBox();
+    expect(heading.x).toBeGreaterThanOrEqual(hero.x);
+    expect(heading.x + heading.width).toBeLessThanOrEqual(hero.x + hero.width);
+  }
   await page.setViewportSize({ width: 390, height: 844 });
-  await audit(page);
-  await page.screenshot({ path: path.resolve('docs/mobile-preview.png'), fullPage: true });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('#hero-text')).toHaveText('Are you hungry?');
   await expect(page.locator('.hero-animation-toggle')).toBeHidden();
+  await expect(page.locator('#hero-text em')).toHaveText('hungry?');
+  await audit(page);
+  await page.screenshot({ path: path.resolve('docs/mobile-preview.png'), fullPage: true });
   expect(errors).toEqual([]);
 });
 test('registration, sign-in, profile edit, review CRUD, voting, and owner replies', async ({

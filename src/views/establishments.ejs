@@ -1,5 +1,12 @@
 <%- include('head', { title: 'Find your next favorite' }) %>
-<section class="hero container"><div class="hero-copy"><h1 aria-label="Are you hungry?"><span id="hero-text" lang="en" aria-hidden="true">Are you hungry?</span><span class="hero-cursor" aria-hidden="true"></span></h1><p class="hero-description">Discover restaurants around Taft</p><a class="button" href="#discover">Explore Now</a><button class="hero-animation-toggle text-button" type="button" aria-pressed="false" hidden>Pause animation</button></div></section>
+<section class="hero container">
+  <img class="hero-background" src="/images/hero.webp" alt="" width="943" height="620" fetchpriority="high">
+  <div class="hero-copy">
+    <h1 aria-label="Are you hungry?"><span id="hero-text" lang="en" aria-hidden="true">Are you <em>hungry?</em></span><span class="hero-cursor" aria-hidden="true"></span></h1>
+    <p class="hero-description">Discover restaurants around Taft</p>
+    <div class="hero-actions"><a class="button" href="#discover">Explore Now</a><button class="hero-animation-toggle text-button" type="button" aria-pressed="false" hidden>Pause animation</button></div>
+  </div>
+</section>
 <section class="discover container" id="discover">
   <div class="section-heading"><div><p class="eyebrow">YOUR NEXT GO-TO</p><h2>Explore the neighborhood</h2></div><span class="muted"><%= count %> <%= count === 1 ? 'place' : 'places' %> to discover</span></div>
   <form class="filter-bar" method="get" action="/establishments" role="search">
