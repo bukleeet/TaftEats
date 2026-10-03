@@ -1,6 +1,6 @@
 # Release and migration guide
 
-Validate this release against a backed-up staging database before deploying it to production. The revised application has not been applied to the existing production database.
+Validate migrations against a backed-up staging database before deploying them to production. The October 4, 2026 release was validated against a restored staging copy, then applied transactionally to production during maintenance. Postflight preserved all 29 users and 47 reviews; application indexes were created successfully. See `docs/RELEASE.md` for release evidence and remaining operational work.
 
 1. **Rotate exposed secrets.** Follow the historical credential notice in `SECURITY.md`. Changing files alone does not revoke a database credential. Update the production secret manager and local environments; use a new `SESSION_SECRET` to invalidate old sessions.
 2. **Back up and clone the database.** Keep a tested restore path. Use MongoDB 7.0+ with a replica set/Atlas staging database, not the production URI during validation.
@@ -14,9 +14,9 @@ Validate this release against a backed-up staging database before deploying it t
 
 The supplied `vercel.json` keeps the project's serverless entry point and enables `NODE_OPTIONS=--experimental-require-module`. Vercel disables this module-loading feature by default, while the current `sanitize-html` dependency requires it; see [Vercel's Node.js runtime configuration](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#experimental-nodejs-require-of-es-module). Provider request limits also apply to uploads; see the upload limits in `SECURITY.md`. A successful provider build alone is not evidence that the function starts or that staged application flows work.
 
-### Preview verification on October 3, 2026
+### Runtime configuration verification
 
-Authenticated requests to the PR preview reproduced the provider's `ERR_REQUIRE_ESM` startup failure. After enabling the runtime flag, that failure was resolved and the preview reached configuration validation. Its existing `SESSION_SECRET` is missing or shorter than the required 32 characters, so application requests remain unavailable. Set a freshly generated secret in the appropriate Vercel environment and rebuild the preview before testing it. The app rejects invalid configuration with an uncached generic 503 and a safe `configuration_invalid` log event; local startup exits with a failure code. No weak-secret fallback is provided.
+October 3 preview checks reproduced the provider's `ERR_REQUIRE_ESM` startup failure and then rejected the old weak session secret. Enabling the runtime flag and configuring fresh secrets resolved both issues. The October 4 production deployment passed `/health`, `/ready`, discovery rendering, and secure-cookie/header checks. The app rejects invalid configuration with an uncached generic 503 and a safe `configuration_invalid` log event; local startup exits with a failure code. No weak-secret fallback is provided.
 
 ## Compatibility changes
 

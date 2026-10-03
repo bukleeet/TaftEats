@@ -85,4 +85,4 @@ tests/                    Unit, real MongoDB HTTP, and browser regression tests
 
 **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management).
 
-The current release is available for review in a draft PR and Vercel preview. Follow the migration guide before deploying to production. Historical credentials still require rotation; staging migration and media verification remain release prerequisites.
+The production application is available at [tafteats.vercel.app](https://tafteats.vercel.app), deployed from `refactor/tafteats`. The October 4, 2026 release includes verified credential rotation, a backed-up staging and production migration, and a real Cloudinary upload/delete check. See the [release checklist](docs/RELEASE.md) for verification and remaining operational work.

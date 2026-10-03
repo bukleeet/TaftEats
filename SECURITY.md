@@ -20,13 +20,13 @@ TaftEats uses the security boundaries described below. Public deployment require
 
 Password and CSRF design references: [OWASP password storage](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html), [OWASP CSRF prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html), and [Express production security](https://expressjs.com/en/advanced/best-practice-security/).
 
-## Known historical credential exposure — release blocker
+## Historical credential exposure
 
 Commit `54dc2deb10fc18b2941a4bdb05af2c87293b3ab3` contains a MongoDB Atlas credential and the session secret in the deleted file `out.json`. Offline checks found both match the current local environment files at the time of the security review. The exposed values are deliberately omitted from this document.
 
-Rotate or revoke the exposed Atlas database user's credential. Update local and deployment secrets, review database access/network permissions and access logs, and invalidate existing sessions by changing `SESSION_SECRET`. Rotation remains required after history cleanup.
+On October 4, 2026, the Atlas password was rotated, local and Vercel database configuration were updated, and authentication with the exposed password was confirmed rejected. A fresh production `SESSION_SECRET` was saved in Vercel and deployed, invalidating old signed sessions. Preview uses a separate secret. Atlas permissions were narrowed to `readWrite` on the application and staging databases; an unrelated database's listing was denied. Network access and access logs still require operational review.
 
-On October 3, 2026, `out.json` was removed from the affected `main` history and the cleaned branch was pushed with an explicit force-with-lease. The previous head was `577e963c0b34d5fa36293c7ff0d531256334ecde`; the cleaned head is `494a30e5bfb83cf3c61cea2e6f55fcca1d6fae37`. Their current file trees are identical. Other published branches did not contain the file and were preserved. Credential rotation is deferred because the owner's Atlas account currently cannot perform it; the history cleanup does not invalidate the exposed credentials.
+On October 3, 2026, `out.json` was removed from the affected `main` history and the cleaned branch was pushed with an explicit force-with-lease. The previous head was `577e963c0b34d5fa36293c7ff0d531256334ecde`; the cleaned head is `494a30e5bfb83cf3c61cea2e6f55fcca1d6fae37`. Their current file trees are identical. Other published branches did not contain the file and were preserved. Credential rotation was subsequently completed as described above.
 
 `npm run secrets:check` checks current tracked and non-ignored working files without printing credential values. `node scripts/check-secrets.js --history` checks all locally available reachable history. This small scanner is deliberately high-confidence and is not a substitute for a full secret-scanning service. Existing clones and hosting caches may retain the previous objects; see [GitHub's sensitive-data cleanup guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 
@@ -43,7 +43,8 @@ Attachments have a **3 MiB total budget per request**, with up to 10 files. This
 - Search uses escaped, bounded regex. MongoDB sorts and paginates restaurant discovery; only the requested page reaches application memory. Rating sorting computes aggregates over matching restaurants and can spill its sort to database disk. Name sorting calculates ratings only for the selected page. Restaurant-detail totals filter by its indexed ID. Review and activity responses are paginated/bounded. Large-scale search still needs query monitoring and an appropriate search index.
 - IP limits mitigate common abuse; they do not stop distributed attacks. Use provider-level DDoS/WAF protections and alerts. Email verification, password recovery, automated moderation, and MFA are not implemented.
 - Accessibility automation catches a subset of WCAG issues. Manual screen-reader and assistive-technology checks remain useful before a public launch.
-- Real Cloudinary upload/delete operations and the revised production deployment have not been exercised by local tests. Tests use isolated MongoDB and mocked external media operations.
+- Local tests use isolated MongoDB and mocked external media operations. A separate October 4 release check verified real Cloudinary upload, WebP conversion, scoped URLs, and deletion of a new disposable asset. Production readiness, rendering, and cookie/header checks also passed. See `docs/RELEASE.md` for evidence and remaining operational work.
+- The production database URI is scoped to Production and Development. A separate Preview staging URI is awaiting credential entry and a preview rebuild. Do not run hosted mutation tests until that is complete. Application and staging currently share a database user with read/write permissions on those two databases; separate users would strengthen isolation. The Atlas network allowlist permits all IP addresses, and the free cluster has no managed backups; restricted deployment egress and recurring backups remain operational tasks.
 
 ## Reporting
 
