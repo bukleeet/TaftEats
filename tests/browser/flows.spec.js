@@ -44,6 +44,7 @@ test('discovery, filtering, keyboard navigation, themes, and responsive layouts'
   await page.keyboard.press('Enter');
   await expect(page.locator('#main')).toBeFocused();
   await expect(page.locator('#hero-text')).toHaveAttribute('lang', 'fil', { timeout: 7000 });
+  await expect(page.locator('#hero-text')).toHaveText('Gutom ka na ba?', { timeout: 3000 });
   await page.getByRole('button', { name: 'Pause animation', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Resume animation', exact: true })).toHaveAttribute(
     'aria-pressed',
