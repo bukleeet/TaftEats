@@ -8,6 +8,7 @@ const { csrf, currentUser } = require('./middleware/security');
 const { limiter } = require('./middleware/rateLimit');
 const { HttpError, errorHandler } = require('./lib/errors');
 const { safeJson, mediaUrl } = require('./lib/validation');
+const assetUrls = require('./lib/assets');
 
 function createApp({
   sessionSecret,
@@ -28,6 +29,7 @@ function createApp({
   app.locals.production = production;
   app.locals.safeJson = safeJson;
   app.locals.mediaUrl = mediaUrl;
+  app.locals.assetUrls = assetUrls;
   app.locals.formatDate = (value) =>
     new Intl.DateTimeFormat('en-PH', { dateStyle: 'medium', timeZone: 'Asia/Manila' }).format(
       new Date(value),

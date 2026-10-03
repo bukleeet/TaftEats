@@ -19,6 +19,8 @@ flowchart LR
 
 The entry point also fails closed on invalid environment configuration. Serverless requests receive an uncached generic 503; local startup exits with a failure code. The diagnostic event contains no environment values.
 
+Stylesheet, browser script, and hero image URLs include a SHA-256 content version computed once at startup. A changed deployment therefore uses new asset URLs even when an existing browser tab has cached the previous files. HTML remains uncached, while static assets retain their normal cache lifetime.
+
 ## Data ownership
 
 - Users own their profiles and reviews by ObjectId. Usernames are display labels, never an authorization fallback.

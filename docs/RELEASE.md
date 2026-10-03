@@ -36,7 +36,9 @@ Production runs at [tafteats.vercel.app](https://tafteats.vercel.app) from `refa
 
 The hero restores the original food photograph as a local 136 KB WebP, serif typography with italic accents, and consistent spacing through all seven animated phrases. Browser checks verify the image loads, the description stays fixed as languages change, and the heading fits a 320 px viewport. Light/dark theme, pause, reduced-motion, and rendered accessibility checks passed.
 
-New regression tests reproduce review, vote, and reply requests that were authenticated before account deletion. A shared transactional account write now rejects those requests after deletion and compensates uploaded media. Cleanup preserves unrelated review versions. Validation passed: 64 unit/HTTP/runtime tests, 3 browser journeys, lint, formatting, zero working-tree secret findings, and zero dependency audit findings.
+New regression tests reproduce review, vote, and reply requests that were authenticated before account deletion. A shared transactional account write now rejects those requests after deletion and compensates uploaded media. Cleanup preserves unrelated review versions.
+
+An existing Edge tab exposed stale cached CSS and JavaScript after deployment. Content-based versions now change stylesheet, script, and hero image URLs when their bytes change. A regression compares the rendered versions with the actual served assets. Validation passed: 65 unit/HTTP/runtime tests, 3 browser journeys, lint, formatting, zero working-tree secret findings, and zero dependency audit findings.
 
 ## Remaining operational work
 

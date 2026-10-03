@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryReplSet } = require('mongodb-memory-server');
-const { createHmac } = require('node:crypto');
+const { createHmac, createHash } = require('node:crypto');
 const { createApp } = require('../src/app');
 const User = require('../src/models/users');
 const Review = require('../src/models/reviews');
@@ -91,6 +91,21 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
     assert.equal(res.headers['cache-control'], 'no-store');
     assert.match(res.headers['set-cookie'][0], /HttpOnly/);
     assert.match(res.headers['set-cookie'][0], /SameSite=Lax/);
+  });
+  test('rendered asset versions match their served bytes so deployments invalidate cached assets', async () => {
+    const page = await request(app).get('/establishments').expect(200);
+    const assets = [...page.text.matchAll(/(?:src|href)="([^"]+\?v=([a-f0-9]{16}))"/g)];
+    assert.equal(assets.length, 3);
+    for (const [, url, version] of assets) {
+      const asset = await request(app).get(url).expect(200);
+      assert.equal(
+        createHash('sha256')
+          .update(asset.text ?? asset.body)
+          .digest('hex')
+          .slice(0, 16),
+        version,
+      );
+    }
   });
   test('every page renders, including empty states and the former broken restaurant route', async () => {
     for (const path of [
