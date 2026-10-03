@@ -1,10 +1,23 @@
 require('dotenv').config({ quiet: true });
 const { readConfig } = require('./src/config/env');
 const { createRuntime } = require('./src/server');
-const config = readConfig();
-const runtime = createRuntime(config);
-module.exports = runtime.handler;
-if (require.main === module) {
+let config, runtime;
+try {
+  config = readConfig();
+  runtime = createRuntime(config);
+  module.exports = runtime.handler;
+} catch {
+  console.error(JSON.stringify({ event: 'configuration_invalid' }));
+  module.exports = (_req, res) => {
+    res.statusCode = 503;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.end(JSON.stringify({ success: false, message: 'Service temporarily unavailable.' }));
+  };
+  if (require.main === module) process.exitCode = 1;
+}
+if (require.main === module && runtime) {
   runtime
     .initialize()
     .then((app) => {

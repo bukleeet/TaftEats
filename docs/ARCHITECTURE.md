@@ -17,6 +17,8 @@ flowchart LR
 
 `src/app.js` constructs the app with injected session and rate-limit stores. It performs no database connection at import time. `src/server.js` initializes the connection and persistent session store lazily and shares initialization across concurrent requests. The CLI listens only after MongoDB connects and shuts down on termination; the serverless handler returns a generic 503 when initialization fails.
 
+The entry point also fails closed on invalid environment configuration. Serverless requests receive an uncached generic 503; local startup exits with a failure code. The diagnostic event contains no environment values.
+
 ## Data ownership
 
 - Users own their profiles and reviews by ObjectId. Usernames are display labels, never an authorization fallback.

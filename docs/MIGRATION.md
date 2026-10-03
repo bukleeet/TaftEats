@@ -14,6 +14,10 @@ The revival is published in a draft PR with an automatic Vercel preview. Rewriti
 
 The supplied `vercel.json` keeps the project's serverless entry point and enables `NODE_OPTIONS=--experimental-require-module`. Vercel disables this module-loading feature by default, while the current `sanitize-html` dependency requires it; see [Vercel's Node.js runtime configuration](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#experimental-nodejs-require-of-es-module). Provider request limits also apply to uploads; see the upload limits in `SECURITY.md`. A successful provider build alone is not evidence that the function starts or that staged application flows work.
 
+### Preview verification on October 3, 2026
+
+Authenticated requests to the PR preview reproduced the provider's `ERR_REQUIRE_ESM` startup failure. After enabling the runtime flag, that failure was resolved and the preview reached configuration validation. Its existing `SESSION_SECRET` is missing or shorter than the required 32 characters, so application requests remain unavailable. Set a freshly generated secret in the appropriate Vercel environment and rebuild the preview before testing it. The app rejects invalid configuration with an uncached generic 503 and a safe `configuration_invalid` log event; local startup exits with a failure code. No weak-secret fallback is provided.
+
 ## Compatibility changes
 
 - The session cookie changes from `connect.sid` to `tafteats.sid`; users sign in again.
