@@ -24,7 +24,7 @@ Password and CSRF design references: [OWASP password storage](https://cheatsheet
 
 Commit `54dc2deb10fc18b2941a4bdb05af2c87293b3ab3` contains a MongoDB Atlas credential and the session secret in the deleted file `out.json`. Offline checks found both match the current local environment files at the time of this revival. The exposed values are deliberately omitted from this document.
 
-Rotate or revoke the exposed Atlas database user's credential. Update local and deployment secrets, review database access/network permissions and access logs, and invalidate existing sessions by changing `SESSION_SECRET`. Rotation is required even if Git history is later cleaned. History rewriting is a separate coordinated operation; this revival does not rewrite published history.
+Rotate or revoke the exposed Atlas database user's credential. Update local and deployment secrets, review database access/network permissions and access logs, and invalidate existing sessions by changing `SESSION_SECRET`. Rotation remains required after history cleanup.
 
 On October 3, 2026, `out.json` was removed from the affected `main` history and the cleaned branch was pushed with an explicit force-with-lease. The previous head was `577e963c0b34d5fa36293c7ff0d531256334ecde`; the cleaned head is `494a30e5bfb83cf3c61cea2e6f55fcca1d6fae37`. Their current file trees are identical. Other published branches did not contain the file and were preserved. Credential rotation is deferred because the owner's Atlas account currently cannot perform it; the history cleanup does not invalidate the exposed credentials.
 

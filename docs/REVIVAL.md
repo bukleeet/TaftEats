@@ -22,4 +22,4 @@ This work preserves TaftEats' restaurant reviews, voting, owner conversations, a
 - [ ] Verify real Cloudinary operations with staging credentials.
 - [ ] Review and deploy the revision, then verify the production configuration and flows.
 
-No production data or existing deployment will be changed during local development. A release requires a reviewed migration and deployment configuration.
+The revival remains in a draft PR with an automatic Vercel preview. The authorized history cleanup triggered an automatic production rebuild of the unchanged legacy code. A revival release requires a reviewed migration and deployment configuration.

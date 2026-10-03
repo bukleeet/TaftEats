@@ -543,13 +543,90 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
         },
       },
     );
+    const original = await Review.collection.findOne({ _id: review._id });
     const result = await migrate();
     assert.equal(result.applied, false);
+    assert.deepEqual(await Review.collection.findOne({ _id: review._id }), original);
     assert.equal((await Review.findById(review._id)).responseThread[0].authorId, null);
     await migrate({ apply: true });
     const changed = await Review.findById(review._id);
     assert.equal(String(changed.responseThread[0].authorId), String(ownerUser._id));
     assert.doesNotMatch(changed.responseThread[0].body, /<script/);
+    assert.ok(changed.responseThread[0]._id);
+  });
+  test('migration rejects orphan restaurants, invalid fields, and unproven authors without any writes', async () => {
+    const source = await Review.collection.findOne({ _id: review._id });
+    const missing = new mongoose.Types.ObjectId();
+    const cases = [
+      [{ user: missing }, /orphan review/],
+      [{ establishment: missing }, /missing restaurant/],
+      [{ rating: 5.5 }, /invalid legacy fields/],
+      [{ title: 'x'.repeat(121) }, /invalid legacy fields/],
+      [
+        { responseThread: [{ body: 'Hello', author: 'owner', role: 'admin' }] },
+        /invalid legacy fields/,
+      ],
+      [
+        {
+          responseThread: [{ body: 'Hello', author: 'bob', authorId: userB._id, role: 'reviewer' }],
+        },
+        /unproven message author/,
+      ],
+    ];
+    for (const [invalid, reason] of cases) {
+      const invalidId = new mongoose.Types.ObjectId();
+      await Review.collection.insertOne({ ...source, ...invalid, _id: invalidId });
+      const beforeUsers = await User.collection.find().toArray();
+      const beforeReviews = await Review.collection.find().toArray();
+      await assert.rejects(migrate({ apply: true }), reason);
+      assert.deepEqual(await User.collection.find().toArray(), beforeUsers);
+      assert.deepEqual(await Review.collection.find().toArray(), beforeReviews);
+      await Review.collection.deleteOne({ _id: invalidId });
+    }
+  });
+  test('migration refuses normalized identity collisions and missing owner restaurants', async () => {
+    await User.collection.updateOne({ _id: userA._id }, { $set: { username: 'ALICE' } });
+    await User.collection.updateOne({ _id: userB._id }, { $set: { username: 'alice' } });
+    try {
+      const before = await User.collection.find().toArray();
+      await assert.rejects(migrate({ apply: true }), /identities collide/);
+      assert.deepEqual(await User.collection.find().toArray(), before);
+    } finally {
+      await User.collection.updateOne({ _id: userB._id }, { $set: { username: 'bob' } });
+      await User.collection.updateOne({ _id: userA._id }, { $set: { username: 'alice' } });
+    }
+    await User.collection.updateOne(
+      { _id: ownerUser._id },
+      { $set: { ownedEstablishment: new mongoose.Types.ObjectId() } },
+    );
+    try {
+      await assert.rejects(migrate({ apply: true }), /missing restaurant/);
+    } finally {
+      await User.collection.updateOne(
+        { _id: ownerUser._id },
+        { $set: { ownedEstablishment: restaurant._id } },
+      );
+    }
+  });
+  test('migration rolls back earlier writes when a later database write fails', async () => {
+    await User.collection.updateOne({ _id: userA._id }, { $set: { username: 'ALICE' } });
+    const beforeUsers = await User.collection.find().toArray();
+    const beforeReviews = await Review.collection.find().toArray();
+    const updateOne = User.collection.updateOne;
+    let calls = 0;
+    mock.method(User.collection, 'updateOne', async function (...args) {
+      if (++calls === 2) throw new Error('Injected migration write failure');
+      return updateOne.apply(this, args);
+    });
+    try {
+      await assert.rejects(migrate({ apply: true }), /Injected migration write failure/);
+      assert.equal(calls, 2);
+      assert.deepEqual(await User.collection.find().toArray(), beforeUsers);
+      assert.deepEqual(await Review.collection.find().toArray(), beforeReviews);
+    } finally {
+      mock.restoreAll();
+      await User.collection.updateOne({ _id: userA._id }, { $set: { username: 'alice' } });
+    }
   });
   test('deleting an account reauthenticates and atomically removes reviews, votes, and reply content', async () => {
     const user = await User.create({

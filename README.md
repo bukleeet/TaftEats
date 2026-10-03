@@ -87,4 +87,4 @@ Original team: **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stac
 
 A defensible CV description after review: “Revived a collaborative restaurant review app with ID-based authorization, scrypt authentication, CSRF/CSP protections, atomic voting, transaction-backed account deletion, and automated API/browser accessibility checks.”
 
-The existing [legacy deployment](https://taft-eats.vercel.app/) has not been updated by this work. Follow the migration guide before releasing this revision. Historical credentials need rotation; no claim of a secure production deployment is made here.
+The revival is in a draft PR and an automatic Vercel preview. History cleanup caused an automatic production rebuild of the unchanged legacy code; the revival has not been promoted to the [legacy deployment](https://taft-eats.vercel.app/). Follow the migration guide before releasing this revision. Historical credentials need rotation; no claim of a secure production deployment is made here.
