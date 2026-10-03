@@ -8,4 +8,4 @@ Use explicit scalar input validation and bounded queries. Escape text in EJS; on
 
 Add regression tests for changes to security boundaries, concurrency, deletion, and external-service compensation. Run `npm run check`, `npm run secrets:check`, `npm audit`, and the browser suite before proposing a release. Document external checks that were mocked or not exercised.
 
-Use `npm ci` and commit `package-lock.json` with dependency changes. Run `npm run format` for consistent formatting. Keep secrets, local tooling state, and browser traces out of Git. Preserve original team attribution and describe revival contributions accurately.
+Use `npm ci` and commit `package-lock.json` with dependency changes. Run `npm run format` for consistent formatting. Keep secrets, local tooling state, and browser traces out of Git. Preserve team attribution and describe contributions accurately.

@@ -1,6 +1,6 @@
-# Portfolio revival
+# Release checklist
 
-This work preserves TaftEats' restaurant reviews, voting, owner conversations, and profiles while replacing unsafe academic shortcuts with tested application boundaries.
+TaftEats supports restaurant reviews, voting, owner conversations, and profiles with tested application boundaries.
 
 ## Acceptance criteria
 
@@ -11,7 +11,7 @@ This work preserves TaftEats' restaurant reviews, voting, owner conversations, a
 - [x] Local startup, isolated demo data, and deployment configuration are reproducible.
 - [x] Core flows have integration tests, linting, and CI.
 - [x] Responsive pages work with keyboard navigation, clear errors, and empty states.
-- [x] Documentation covers architecture, migration, security, and portfolio attribution.
+- [x] Documentation covers architecture, migration, security, and team attribution.
 
 ## Required release work
 
@@ -22,4 +22,4 @@ This work preserves TaftEats' restaurant reviews, voting, owner conversations, a
 - [ ] Verify real Cloudinary operations with staging credentials.
 - [ ] Review and deploy the revision, then verify the production configuration and flows.
 
-The revival remains in a draft PR with an automatic Vercel preview. The authorized history cleanup triggered an automatic production rebuild of the unchanged legacy code. A revival release requires a reviewed migration and deployment configuration.
+Release requires a reviewed staging migration, verified media operations, and secure deployment configuration.

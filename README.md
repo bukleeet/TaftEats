@@ -2,7 +2,7 @@
 
 A neighborhood food journal for the community around DLSU Taft. Discover restaurants, share rich-text reviews, vote on useful experiences, and talk with restaurant owners.
 
-Originally a collaborative CCAPDEV academic project; this revival focuses on security boundaries, consistent data, accessible interfaces, and reproducible verification.
+Built with Express, EJS, and MongoDB, with accessible interfaces, consistent data, and automated verification.
 
 ![TaftEats discovery page](docs/desktop-preview.png)
 
@@ -50,7 +50,7 @@ npm run test:browser     # Browser journeys, responsive checks, and axe accessib
 
 Browser tests use installed Chrome by default. Alternatively, run `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. Browser tests start their own isolated preview when port 3001 is free. CI checks Node 22 and 24, runs the browser suite, and retains failure traces.
 
-## What the revival changes
+## Security and engineering
 
 - Passwords use asynchronous scrypt (`N=131072`, `r=8`, `p=1`) with a random salt. Valid legacy HMAC logins upgrade automatically.
 - Sessions rotate at login, use HTTP-only SameSite cookies and HTTPS-only production cookies, and live in MongoDB. Every mutation requires a session-bound CSRF token.
@@ -81,10 +81,8 @@ database/                 Isolated demo fixtures and explicit migration
 tests/                    Unit, real MongoDB HTTP, and browser regression tests
 ```
 
-## Portfolio attribution
+## Team
 
-Original team: **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management). Preserve this attribution when describing the project. Separate your revival work from the original collaborative implementation.
+**Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management).
 
-A defensible CV description after review: “Revived a collaborative restaurant review app with ID-based authorization, scrypt authentication, CSRF/CSP protections, atomic voting, transaction-backed account deletion, and automated API/browser accessibility checks.”
-
-The revival is in a draft PR and an automatic Vercel preview. History cleanup caused an automatic production rebuild of the unchanged legacy code; the revival has not been promoted to the [legacy deployment](https://taft-eats.vercel.app/). Follow the migration guide before releasing this revision. Historical credentials need rotation; no claim of a secure production deployment is made here.
+The current release is available for review in a draft PR and Vercel preview. Follow the migration guide before deploying to production. Historical credentials still require rotation; staging migration and media verification remain release prerequisites.

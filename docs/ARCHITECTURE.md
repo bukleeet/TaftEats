@@ -40,4 +40,4 @@ Media upload succeeds before a document references its URL. A failed save delete
 
 Unit tests cover validation, sanitization, password compatibility, scoped media URLs, and configuration. HTTP tests use a real temporary MongoDB replica set and cover authorization, CSRF, concurrent writes, transactions, migration, and shared rate limits. Browser tests exercise form submissions, navigation, profile activity, voting, and owner conversations with the actual CSP enabled, and run axe checks on rendered pages.
 
-The demo fixture preserves the original academic sample stories while replacing credentials with isolated demo passphrases and reserving `.test` addresses. Local SVG artwork provides predictable offline previews. Original team attribution remains in the application and README.
+The demo fixture uses sample restaurant stories, isolated demo passphrases, and reserved `.test` addresses. Local SVG artwork provides predictable offline previews. Team attribution remains in the application and README.

@@ -1,6 +1,6 @@
 # Security model
 
-This is a portfolio application with explicit security boundaries, not a security certification. Treat public deployment as an operated service: secure configuration, patched dependencies, protected database users, backups, and abuse monitoring remain necessary.
+TaftEats uses the security boundaries described below. Public deployment requires ongoing operation: secure configuration, patched dependencies, protected database users, backups, and abuse monitoring remain necessary.
 
 ## Controls
 
@@ -22,7 +22,7 @@ Password and CSRF design references: [OWASP password storage](https://cheatsheet
 
 ## Known historical credential exposure — release blocker
 
-Commit `54dc2deb10fc18b2941a4bdb05af2c87293b3ab3` contains a MongoDB Atlas credential and the session secret in the deleted file `out.json`. Offline checks found both match the current local environment files at the time of this revival. The exposed values are deliberately omitted from this document.
+Commit `54dc2deb10fc18b2941a4bdb05af2c87293b3ab3` contains a MongoDB Atlas credential and the session secret in the deleted file `out.json`. Offline checks found both match the current local environment files at the time of the security review. The exposed values are deliberately omitted from this document.
 
 Rotate or revoke the exposed Atlas database user's credential. Update local and deployment secrets, review database access/network permissions and access logs, and invalidate existing sessions by changing `SESSION_SECRET`. Rotation remains required after history cleanup.
 

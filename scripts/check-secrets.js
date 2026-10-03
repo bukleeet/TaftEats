@@ -5,7 +5,7 @@ const patterns = [
   ['MongoDB credential URI', /mongodb(?:\+srv)?:\/\/[^\s/:<>]+:[^\s/@<>]+@/],
   ['GitHub token', /\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{60,})\b/],
   ['Private key', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
-  ['OpenAI key', /\bsk-(?:proj-)?[A-Za-z0-9_-]{40,}\b/],
+  ['API credential', /\bsk-(?:proj-)?[A-Za-z0-9_-]{40,}\b/],
 ];
 const git = (...args) =>
   execFileSync('git', args, { encoding: 'utf8', maxBuffer: 20 * 1024 * 1024 });

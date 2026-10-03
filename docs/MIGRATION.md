@@ -1,6 +1,6 @@
-# Releasing the revival
+# Release and migration guide
 
-The revival is published in a draft PR with an automatic Vercel preview. Rewriting `main` to remove the historical credential log also triggered Vercel to rebuild the unchanged legacy file tree. The revival has not been promoted to production or applied to the existing database. Review this release against a staging clone before changing the legacy deployment.
+Validate this release against a backed-up staging database before deploying it to production. The revised application has not been applied to the existing production database.
 
 1. **Rotate exposed secrets.** Follow the historical credential notice in `SECURITY.md`. Changing files alone does not revoke a database credential. Update the production secret manager and local environments; use a new `SESSION_SECRET` to invalidate old sessions.
 2. **Back up and clone the database.** Keep a tested restore path. Use MongoDB 7.0+ with a replica set/Atlas staging database, not the production URI during validation.
