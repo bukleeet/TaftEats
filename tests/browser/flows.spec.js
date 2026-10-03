@@ -37,13 +37,18 @@ test('discovery, filtering, keyboard navigation, themes, and responsive layouts'
     localStorage.setItem('theme', 'light');
   });
   await page.reload();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Great meals.Even better stories.',
-  );
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Are you hungry?');
+  await expect(page.locator('.restaurant-card .star-display')).toHaveCount(10);
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('#main')).toBeFocused();
+  await expect(page.locator('#hero-text')).toHaveAttribute('lang', 'fil', { timeout: 7000 });
+  await page.getByRole('button', { name: 'Pause animation', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Resume animation', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await audit(page);
   await page.screenshot({ path: path.resolve('docs/desktop-preview.png'), fullPage: true });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
@@ -67,6 +72,9 @@ test('discovery, filtering, keyboard navigation, themes, and responsive layouts'
   await page.setViewportSize({ width: 390, height: 844 });
   await audit(page);
   await page.screenshot({ path: path.resolve('docs/mobile-preview.png'), fullPage: true });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('#hero-text')).toHaveText('Are you hungry?');
+  await expect(page.locator('.hero-animation-toggle')).toBeHidden();
   expect(errors).toEqual([]);
 });
 test('registration, sign-in, profile edit, review CRUD, voting, and owner replies', async ({

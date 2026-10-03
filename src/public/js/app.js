@@ -1,5 +1,60 @@
 (() => {
   'use strict';
+  const heroText = document.getElementById('hero-text');
+  const heroToggle = document.querySelector('.hero-animation-toggle');
+  if (heroText && heroToggle) {
+    const phrases = [
+      ['Are you hungry?', 'en'],
+      ['Gutom ka na ba?', 'fil'],
+      ['¿Tienes hambre?', 'es'],
+      ['你饿了吗', 'zh'],
+      ['Vous avez faim?', 'fr'],
+      ['Hast du Hunger?', 'de'],
+      ['Hai fame?', 'it'],
+    ];
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let phrase = 0;
+    let length = phrases[0][0].length;
+    let erasing = true;
+    let paused = false;
+    let timer;
+    function step() {
+      if (paused || reducedMotion.matches) return;
+      const [text, language] = phrases[phrase];
+      length += erasing ? -1 : 1;
+      heroText.textContent = text.slice(0, length);
+      heroText.lang = language;
+      let delay = erasing ? 35 : 65;
+      if (length === 0) {
+        phrase = (phrase + 1) % phrases.length;
+        erasing = false;
+        delay = 300;
+      } else if (length === text.length && !erasing) {
+        erasing = true;
+        delay = 2000;
+      }
+      timer = setTimeout(step, delay);
+    }
+    function syncAnimation() {
+      clearTimeout(timer);
+      heroToggle.hidden = reducedMotion.matches;
+      heroToggle.textContent = paused ? 'Resume animation' : 'Pause animation';
+      heroToggle.setAttribute('aria-pressed', String(paused));
+      if (reducedMotion.matches) {
+        phrase = 0;
+        length = phrases[0][0].length;
+        erasing = true;
+        heroText.textContent = phrases[0][0];
+        heroText.lang = 'en';
+      } else if (!paused) timer = setTimeout(step, 2000);
+    }
+    heroToggle.addEventListener('click', () => {
+      paused = !paused;
+      syncAnimation();
+    });
+    reducedMotion.addEventListener('change', syncAnimation);
+    syncAnimation();
+  }
   const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
   let toastTimer;
   function notify(message) {

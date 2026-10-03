@@ -1,11 +1,11 @@
 :root {
   color-scheme: light;
-  --bg: #fbf9f3;
+  --bg: #f7fdf7;
   --paper: #ffffff;
-  --ink: #203c31;
+  --ink: #1f2933;
   --muted: #66746b;
-  --green: #174d38;
-  --green-soft: #eaf0e8;
+  --green: #065f46;
+  --green-soft: #d1fae5;
   --line: #dde1d6;
   --accent: #e9ba58;
   --danger: #a52d2d;
@@ -1127,5 +1127,68 @@ fieldset {
   *::after {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  min-height: 65vh;
+  background: #065f46;
+  color: #fff;
+  border-radius: 0 0 18px 18px;
+}
+.hero-copy {
+  width: 100%;
+}
+.hero h1 {
+  min-height: 2.3em;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.hero-description {
+  margin-inline: auto;
+  color: #fff;
+}
+.hero .button {
+  background: #fff;
+  color: #065f46;
+}
+.hero-animation-toggle {
+  display: block;
+  margin: 1rem auto 0;
+  color: #fff;
+}
+.hero-animation-toggle[hidden] {
+  display: none;
+}
+.hero-cursor {
+  display: inline-block;
+  height: 0.9em;
+  border-right: 3px solid currentColor;
+  margin-left: 0.1em;
+  animation: hero-blink 0.7s step-end infinite;
+}
+@keyframes hero-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.star-display {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+  color: #936300;
+  white-space: nowrap;
+}
+[data-theme='dark'] .star-display {
+  color: #e9ba58;
+}
+.star-fill {
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cursor {
+    animation: none;
   }
 }
