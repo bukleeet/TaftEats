@@ -32,6 +32,12 @@ Production runs at [tafteats.vercel.app](https://tafteats.vercel.app) from `refa
 - The production build of `2b1ed48` reached Ready. `/health` and `/ready` returned 200. Discovery displays the existing restaurants and ratings; sign-in serves a CSRF token, a Secure/HttpOnly session cookie, restrictive CSP, and `Cache-Control: no-store`.
 - Application CI passed on Node 22 and 24: 61 unit/HTTP/runtime tests and 3 browser journeys, including responsive and automated accessibility checks. Real Cloudinary verification created and removed only its new disposable test asset.
 
+## Follow-up validation: October 4, 2026
+
+The hero restores the original food photograph as a local 136 KB WebP, serif typography with italic accents, and consistent spacing through all seven animated phrases. Browser checks verify the image loads, the description stays fixed as languages change, and the heading fits a 320 px viewport. Light/dark theme, pause, reduced-motion, and rendered accessibility checks passed.
+
+New regression tests reproduce review, vote, and reply requests that were authenticated before account deletion. A shared transactional account write now rejects those requests after deletion and compensates uploaded media. Cleanup preserves unrelated review versions. Validation passed: 64 unit/HTTP/runtime tests, 3 browser journeys, lint, formatting, zero working-tree secret findings, and zero dependency audit findings.
+
 ## Remaining operational work
 
 - The production database URI is scoped to Production and Development. A Preview-only staging URI is awaiting credential entry; rebuild previews after saving it before testing hosted mutations. Use the isolated local demo meanwhile.

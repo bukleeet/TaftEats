@@ -19,8 +19,8 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
   function token(response) {
     return response.text.match(/name="csrf-token" content="([a-f0-9]+)"/)?.[1];
   }
-  async function login(username, pass = password) {
-    const agent = request.agent(app);
+  async function login(username, pass = password, target = app) {
+    const agent = request.agent(target);
     const page = await agent.get('/login').expect(200);
     await agent
       .post('/login')
@@ -171,6 +171,94 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
     assert.ok(await Review.findById(owned._id));
     assert.equal((await Review.findById(review._id)).helpfulVotes.length, 1);
   });
+  test('account deletion rejects an in-flight review upload and removes its new media', async () => {
+    const user = await User.create({
+      username: 'upload_race',
+      email: 'upload_race@example.test',
+      password,
+    });
+    const actor = await login(
+      user.username,
+      password,
+      createApp({ sessionSecret: secret, persistentRateLimits: false }),
+    );
+    const started = Promise.withResolvers();
+    const resume = Promise.withResolvers();
+    const url = 'https://res.cloudinary.com/test/image/upload/tafteats/in-flight.jpg';
+    const removed = [];
+    mock.method(media, 'uploadFiles', async () => {
+      started.resolve();
+      await resume.promise;
+      return [url];
+    });
+    mock.method(media, 'deleteFiles', async (urls) => removed.push(...urls));
+    const pending = write(actor, 'post', '/reviews', {
+      title: 'In-flight review',
+      body: 'Food',
+      rating: 4,
+      establishment: String(restaurant._id),
+    }).then((response) => response);
+    try {
+      await started.promise;
+      await write(actor, 'delete', `/profile/${user._id}/delete`, { password }).expect(200);
+    } finally {
+      resume.resolve();
+    }
+    assert.equal((await pending).status, 401);
+    assert.equal(await Review.countDocuments({ user: user._id }), 0);
+    assert.ok(removed.includes(url));
+  });
+  for (const action of ['vote', 'owner-response']) {
+    test(`account deletion rejects an already authenticated ${action} request`, async () => {
+      const username = action === 'vote' ? 'vote_race' : 'reply_race';
+      const user = await User.create({
+        username,
+        email: `${username}@example.test`,
+        password,
+        role: 'owner',
+        ownedEstablishment: restaurant._id,
+      });
+      const actor = await login(
+        username,
+        password,
+        createApp({ sessionSecret: secret, persistentRateLimits: false }),
+      );
+      const loaded = Promise.withResolvers();
+      const resume = Promise.withResolvers();
+      const findById = User.findById;
+      let paused = false;
+      mock.method(User, 'findById', function (...args) {
+        const query = findById.apply(this, args);
+        if (!paused && String(args[0]) === String(user._id)) {
+          paused = true;
+          const execute = query.exec.bind(query);
+          query.exec = async () => {
+            const result = await execute();
+            loaded.resolve();
+            await resume.promise;
+            return result;
+          };
+        }
+        return query;
+      });
+      const pending = write(
+        actor,
+        'post',
+        `/reviews/${review._id}/${action}`,
+        action === 'vote' ? { voteType: 'helpful' } : { body: 'In-flight reply' },
+      ).then((response) => response);
+      try {
+        await loaded.promise;
+        await write(actor, 'delete', `/profile/${user._id}/delete`, { password }).expect(200);
+      } finally {
+        resume.resolve();
+      }
+      assert.equal((await pending).status, 401);
+      const remaining = await Review.findById(review._id);
+      assert.equal(remaining.helpfulVotes.length, 0);
+      assert.equal(remaining.responseThread.length, 0);
+    });
+  }
   test('profile activity omits voter identities and returns only the requested user’s replies', async () => {
     await write(owner, 'post', `/reviews/${review._id}/owner-response`, {
       body: 'Owner reply',
@@ -700,6 +788,14 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
       password,
     });
     const actor = await login('temporary');
+    const unrelated = await Review.create({
+      user: userA._id,
+      username: 'alice',
+      establishment: restaurant._id,
+      title: 'Unrelated review',
+      body: 'Keep this unchanged',
+      rating: 4,
+    });
     await Review.create({
       user: user._id,
       username: 'temporary',
@@ -733,5 +829,6 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
     assert.equal(remaining.helpfulVotes.length, 0);
     assert.equal(remaining.responseThread[0].author, 'Deleted account');
     assert.doesNotMatch(remaining.responseThread[0].body, /Personal content/);
+    assert.equal((await Review.findById(unrelated._id)).__v, unrelated.__v);
   });
 });

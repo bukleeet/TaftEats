@@ -6,6 +6,7 @@ const v = require('../lib/validation');
 const { HttpError } = require('../lib/errors');
 const { isReviewer, isOwner, present, ratings } = require('../services/reviews');
 const media = require('../services/media');
+const { withActiveAccount } = require('../services/accounts');
 
 async function getReview(req) {
   if (req.review) return req.review;
@@ -70,11 +71,16 @@ exports.createReview = async (req, res) => {
   const urls = await media.uploadFiles(req.files);
   let review;
   try {
-    review = await Review.create({
-      ...data,
-      user: req.user._id,
-      username: req.user.username,
-      media: urls,
+    review = await withActiveAccount(req.user._id, async (user, session) => {
+      if (!(await Establishment.exists({ _id: data.establishment }).session(session)))
+        throw new HttpError(404, 'Restaurant not found.');
+      if (String(user.ownedEstablishment) === data.establishment)
+        throw new HttpError(403, 'Owners cannot review their own restaurant.');
+      const [created] = await Review.create(
+        [{ ...data, user: user._id, username: user.username, media: urls }],
+        { session },
+      );
+      return created;
     });
   } catch (err) {
     await media.deleteFiles(urls);
@@ -130,30 +136,33 @@ exports.voteReview = async (req, res) => {
   const userId = new mongoose.Types.ObjectId(req.user._id);
   const selected = `${req.body.voteType}Votes`;
   const other = req.body.voteType === 'helpful' ? 'unhelpfulVotes' : 'helpfulVotes';
-  const review = await Review.findOneAndUpdate(
-    { _id: v.objectId(req.params.reviewId), user: { $ne: userId } },
-    [
-      {
-        $set: {
-          [selected]: {
-            $cond: [
-              { $in: [userId, { $ifNull: [`$${selected}`, []] }] },
-              { $setDifference: [`$${selected}`, [userId]] },
-              { $setUnion: [{ $ifNull: [`$${selected}`, []] }, [userId]] },
-            ],
+  const review = await withActiveAccount(req.user._id, async (_user, session) => {
+    const updated = await Review.findOneAndUpdate(
+      { _id: v.objectId(req.params.reviewId), user: { $ne: userId } },
+      [
+        {
+          $set: {
+            [selected]: {
+              $cond: [
+                { $in: [userId, { $ifNull: [`$${selected}`, []] }] },
+                { $setDifference: [`$${selected}`, [userId]] },
+                { $setUnion: [{ $ifNull: [`$${selected}`, []] }, [userId]] },
+              ],
+            },
+            [other]: { $setDifference: [{ $ifNull: [`$${other}`, []] }, [userId]] },
+            __v: { $add: [{ $ifNull: ['$__v', 0] }, 1] },
           },
-          [other]: { $setDifference: [{ $ifNull: [`$${other}`, []] }, [userId]] },
-          __v: { $add: [{ $ifNull: ['$__v', 0] }, 1] },
         },
-      },
-    ],
-    { new: true },
-  );
-  if (!review) {
-    if (await Review.exists({ _id: req.params.reviewId }))
-      throw new HttpError(403, 'You cannot vote on your own review.');
-    throw new HttpError(404, 'Review not found.');
-  }
+      ],
+      { new: true, session },
+    );
+    if (!updated) {
+      if (await Review.exists({ _id: req.params.reviewId }).session(session))
+        throw new HttpError(403, 'You cannot vote on your own review.');
+      throw new HttpError(404, 'Review not found.');
+    }
+    return updated;
+  });
   const r = present(review, req.user);
   res.json({
     success: true,
@@ -164,19 +173,23 @@ exports.voteReview = async (req, res) => {
 };
 async function respond(req, res, role) {
   const body = v.richText(req.body.body);
-  const review = await getReview(req);
-  if (role === 'owner' ? !isOwner(review, req.user) : !isReviewer(review, req.user))
-    throw new HttpError(403, 'You cannot reply to this conversation.');
-  const last = review.responseThread.at(-1);
-  if (
-    (role === 'owner' && last?.role === 'owner') ||
-    (role === 'reviewer' && last?.role !== 'owner')
-  )
-    throw new HttpError(409, 'Wait for the other participant to reply.');
-  if (review.responseThread.length >= 100)
-    throw new HttpError(400, 'This conversation has reached its message limit.');
-  review.responseThread.push({ body, author: req.user.username, authorId: req.user._id, role });
-  await review.save();
+  const review = await withActiveAccount(req.user._id, async (user, session) => {
+    const current = await Review.findById(v.objectId(req.params.reviewId)).session(session);
+    if (!current) throw new HttpError(404, 'Review not found.');
+    if (role === 'owner' ? !isOwner(current, user) : !isReviewer(current, user))
+      throw new HttpError(403, 'You cannot reply to this conversation.');
+    const last = current.responseThread.at(-1);
+    if (
+      (role === 'owner' && last?.role === 'owner') ||
+      (role === 'reviewer' && last?.role !== 'owner')
+    )
+      throw new HttpError(409, 'Wait for the other participant to reply.');
+    if (current.responseThread.length >= 100)
+      throw new HttpError(400, 'This conversation has reached its message limit.');
+    current.responseThread.push({ body, author: user.username, authorId: user._id, role });
+    await current.save({ session });
+    return current;
+  });
   res.json({ success: true, responseThread: present(review, req.user).responseThread });
 }
 exports.ownerRespond = (req, res) => respond(req, res, 'owner');

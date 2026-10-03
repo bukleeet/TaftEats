@@ -8,7 +8,7 @@ Built with Express, EJS, and MongoDB, with accessible interfaces, consistent dat
 
 ## Run locally
 
-Use Node.js **22.13+ or 24+**, npm, and MongoDB **7.0+ running as a replica set**. MongoDB Atlas supports the transactions used for account deletion and migration. A standalone MongoDB instance does not.
+Use Node.js **22.13+ or 24+**, npm, and MongoDB **7.0+ running as a replica set**. MongoDB Atlas supports the transactions used for reviews, votes, conversations, account deletion, and migration. A standalone MongoDB instance does not.
 
 ```sh
 npm ci

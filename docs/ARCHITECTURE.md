@@ -34,10 +34,12 @@ Votes use one MongoDB update pipeline to toggle one vote and remove the opposite
 
 Account deletion rechecks the current password, removes authored reviews, removes votes, anonymizes reply content on other reviews, and deletes the user in a transaction. Other sessions become unusable because each request reloads the account. External media is deleted after commit; its failures are logged without rolling back the account state.
 
+Creating reviews, voting, and replying also use a transaction that first writes the current user's version. This shared account write serializes new references with deletion; an existence read alone would permit a stale snapshot to add references after deletion. Transaction retries reload identity and ownership, and contain only database operations. Uploads happen beforehand and are compensated if the account disappears. Vote cleanup during deletion touches only reviews containing that user's votes.
+
 Media upload succeeds before a document references its URL. A failed save deletes newly uploaded assets; removed media is deleted after a successful save. Deletion verifies the configured cloud, folder, resource type, and review membership. This is compensation, not a distributed transaction.
 
 ## Test boundaries
 
 Unit tests cover validation, sanitization, password compatibility, scoped media URLs, and configuration. HTTP tests use a real temporary MongoDB replica set and cover authorization, CSRF, concurrent writes, transactions, migration, and shared rate limits. Browser tests exercise form submissions, navigation, profile activity, voting, and owner conversations with the actual CSP enabled, and run axe checks on rendered pages.
 
-The demo fixture uses sample restaurant stories, isolated demo passphrases, and reserved `.test` addresses. Local SVG artwork provides predictable offline previews. Team attribution remains in the application and README.
+The demo fixture uses sample restaurant stories, isolated demo passphrases, and reserved `.test` addresses. Local artwork provides predictable offline previews. The hero uses an optimized local copy of the project's original food photograph; its seven-language animation supports pausing and reduced motion. Team attribution remains in the application and README.

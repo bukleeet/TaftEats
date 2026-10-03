@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
 const { promisify } = require('node:util');
 const User = require('../models/users');
 const Review = require('../models/reviews');
 const v = require('../lib/validation');
 const { HttpError } = require('../lib/errors');
 const media = require('../services/media');
+const { withActiveAccount } = require('../services/accounts');
 exports.getProfilePage = async (req, res) => {
   const user = await User.findById(v.objectId(req.params.userId))
     .select('username avatar description role createdAt')
@@ -38,12 +38,12 @@ exports.deleteAccount = async (req, res) => {
   if (!user || !(await user.comparePassword(password)))
     throw new HttpError(403, 'Enter your current password to delete this account.');
   let urls;
-  await mongoose.connection.transaction(async (session) => {
-    const reviews = await Review.find({ user: user._id }).session(session).lean();
-    urls = [user.avatar, ...reviews.flatMap((r) => r.media)];
+  await withActiveAccount(user._id, async (current, session) => {
+    const reviews = await Review.find({ user: current._id }).session(session).lean();
+    urls = [current.avatar, ...reviews.flatMap((r) => r.media)];
     await Review.deleteMany({ user: user._id }, { session });
     await Review.updateMany(
-      {},
+      { $or: [{ helpfulVotes: user._id }, { unhelpfulVotes: user._id }] },
       { $pull: { helpfulVotes: user._id, unhelpfulVotes: user._id }, $inc: { __v: 1 } },
       { session },
     );
