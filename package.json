@@ -1,11 +1,22 @@
 {
   "name": "ccapdev-resto-review-app",
-  "version": "1.0.0",
-  "description": "A restaurant review application",
+  "version": "2.0.0",
+  "description": "TaftEats: a secure, accessible restaurant review community around DLSU Taft",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "npx nodemon app.js"
+    "dev": "node --watch app.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "test:coverage": "node --experimental-test-coverage --test --test-concurrency=1 tests/*.test.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test",
+    "seed:demo": "node database/seed.js",
+    "migrate": "node database/migrate.js",
+    "preview:demo": "node scripts/demo-server.js",
+    "test:browser": "playwright test",
+    "secrets:check": "node scripts/check-secrets.js"
   },
   "keywords": [
     "restaurant",
@@ -13,18 +24,31 @@
   ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
   "dependencies": {
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.0.0",
     "connect-mongo": "^5.0.0",
     "dotenv": "^17.3.1",
     "ejs": "^3.1.8",
-    "express": "^4.18.2",
+    "express": "^5.0.0",
+    "express-rate-limit": "^8.0.0",
     "express-session": "^1.19.0",
-    "mongoose": "^7.0.0",
-    "multer": "^2.1.1",
-    "streamifier": "^0.1.1"
+    "file-type": "^21.0.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.0.0",
+    "multer": "^2.3.0",
+    "sanitize-html": "^2.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "@eslint/js": "^10.0.0",
+    "@playwright/test": "^1.0.0",
+    "axe-core": "^4.0.0",
+    "eslint": "^10.0.0",
+    "globals": "^16.0.0",
+    "mongodb-memory-server": "^10.0.0",
+    "prettier": "^3.0.0",
+    "supertest": "^7.0.0"
   }
 }

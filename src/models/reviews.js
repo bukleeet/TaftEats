@@ -1,78 +1,38 @@
 const mongoose = require('mongoose');
-
-const threadMessageSchema = new mongoose.Schema({
-  body:      { type: String, required: true },
-  author:    { type: String, required: true },
-  role:      { type: String, enum: ['owner', 'reviewer'], required: true },
-  edited:    { type: Boolean, default: false },
+const { sanitize } = require('../lib/validation');
+const threadSchema = new mongoose.Schema({
+  body: { type: String, required: true, maxlength: 10000, set: sanitize },
+  author: { type: String, required: true, maxlength: 30 },
+  authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  role: { type: String, enum: ['owner', 'reviewer'], required: true },
+  edited: { type: Boolean, default: false },
   updatedAt: { type: Date, default: null },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
-
-const reviewSchema = new mongoose.Schema({
-  establishment: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Establishment',
-    required: true
+const schema = new mongoose.Schema(
+  {
+    establishment: { type: mongoose.Schema.Types.ObjectId, ref: 'Establishment', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    username: { type: String, required: true, maxlength: 30 },
+    title: { type: String, required: true, trim: true, maxlength: 120 },
+    body: { type: String, required: true, maxlength: 10000, set: sanitize },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+      validate: (v) => Number.isFinite(v) && v * 2 === Math.trunc(v * 2),
+    },
+    helpfulVotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    unhelpfulVotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    media: { type: [String], default: [], validate: (v) => v.length <= 10 },
+    edited: { type: Boolean, default: false },
+    responseThread: { type: [threadSchema], default: [], validate: (v) => v.length <= 100 },
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  username: {
-    type: String,
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  // Stored as sanitized HTML from the rich-text editor
-  body: {
-    type: String,
-    required: true
-  },
-  rating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
-  helpfulVotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  unhelpfulVotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  // Filenames of uploaded images/videos, served from /uploads/ (up to 10)
-  media: {
-    type: [String],
-    default: []
-  },
-  edited: {
-    type: Boolean,
-    default: false
-  },
-  // Thread of alternating owner/reviewer messages.
-  // First message must be from owner, then reviewer, then owner, etc.
-  responseThread: {
-    type: [threadMessageSchema],
-    default: []
-  }
-}, { timestamps: true });
-
-reviewSchema.virtual('helpfulCount').get(function () {
-  return this.helpfulVotes.length;
-});
-
-reviewSchema.virtual('unhelpfulCount').get(function () {
-  return this.unhelpfulVotes.length;
-});
-
-reviewSchema.set('toObject', { virtuals: true });
-reviewSchema.set('toJSON',   { virtuals: true });
-
-module.exports = mongoose.model('Review', reviewSchema);
+  { timestamps: true, optimisticConcurrency: true },
+);
+schema.index({ establishment: 1, createdAt: -1, _id: -1 });
+schema.index({ user: 1, createdAt: -1 });
+schema.index({ 'responseThread.authorId': 1 });
+schema.index({ createdAt: -1, _id: -1 });
+module.exports = mongoose.model('Review', schema);

@@ -1,26 +1,19 @@
-<%
-  const user = typeof sessionUser !== 'undefined' ? sessionUser : null;
-%>
-<nav class="navbar">
-  <div class="nav-left">
-    <a href="/establishments" style="text-decoration:none;"><h2 class="logo">TaftEats</h2></a>
-  </div>
-  <div class="nav-right">
-    <a href="/establishments" class="nav-link">Home</a>
-    <a href="/about" class="nav-link">About</a>
-    <a href="/reviews" class="nav-link">Reviews</a>
-    <% if (user) { %>
-      <a href="/profile/<%= user._id %>" class="nav-user-pill">
-        <img src="<%= user.avatar || 'https://res.cloudinary.com/ddbdnydcd/image/upload/v1774355965/defaultprofile_aldk8t.webp' %>" alt="avatar" class="nav-avatar">
-        <span><%= user.username %></span>
-      </a>
-      <form action="/logout" method="POST" style="display:inline;">
-        <button type="submit" class="nav-btn login nav-logout-btn">Logout</button>
-      </form>
-    <% } else { %>
-      <a href="/login" class="nav-btn login">Login</a>
-      <a href="/register" class="nav-btn register">Register</a>
-    <% } %>
-    <button id="themeToggle" class="theme-btn">🌙</button>
-  </div>
-</nav>
+<header class="site-header">
+  <nav class="nav container" aria-label="Main navigation">
+    <a class="brand" href="/establishments"><span class="brand-mark" aria-hidden="true">t.</span>TaftEats<span class="brand-dot">/</span></a>
+    <div class="nav-links">
+      <a href="/establishments">Discover</a>
+      <a href="/reviews">Community</a>
+      <a href="/about">Our story</a>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false">◐</button>
+      <% if (sessionUser) { %>
+        <a class="profile-link" href="/profile/<%= sessionUser._id %>"><img class="avatar small" src="<%= mediaUrl(sessionUser.avatar, '/images/avatar.svg') %>" alt=""><span><%= sessionUser.username %></span></a>
+        <form action="/logout" method="post"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-button" type="submit">Sign out</button></form>
+      <% } else { %>
+        <a class="text-button" href="/login">Sign in</a><a class="button compact" href="/register">Join the table <span aria-hidden="true">↗</span></a>
+      <% } %>
+    </div>
+  </nav>
+</header>

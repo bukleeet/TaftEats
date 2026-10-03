@@ -1,234 +1,90 @@
-# TaftEats – Restaurant Review Web App
+# TaftEats
 
-A Node.js/Express/MongoDB web application for reviewing restaurants around the DLSU Taft campus.
+A neighborhood food journal for the community around DLSU Taft. Discover restaurants, share rich-text reviews, vote on useful experiences, and talk with restaurant owners.
 
-> **Live deployment:** The app is already [live and fully functional](https://taft-eats.vercel.app/) on Vercel. The setup instructions below are for running a local copy.
+Originally a collaborative CCAPDEV academic project; this revival focuses on security boundaries, consistent data, accessible interfaces, and reproducible verification.
 
----
+![TaftEats discovery page](docs/desktop-preview.png)
 
-## Prerequisites
+## Run locally
 
-- Node.js v18 or later
-- A MongoDB connection (The live Vercel deployment and default environment variables use a live **MongoDB Atlas** cloud cluster)
+Use Node.js **22.13+ or 24+**, npm, and a MongoDB **replica set**. MongoDB Atlas supports the transactions used for account deletion and migration. A standalone MongoDB instance does not.
 
----
-
-## Environment Variables
-
-Create a `.env` file in the project root with the following keys before starting the server. 
-A `.env.example` file is included in the repository with placeholder values.
-
-```env
-# Although the project uses a live Atlas URI, localhost works in place of Atlas
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxx.mongodb.net/myDatabase?retryWrites=true&w=majority
-SESSION_SECRET=replace_with_any_long_random_string
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```sh
+npm ci
+cp .env.example .env
+# Fill in MONGO_URI and a random SESSION_SECRET.
+npm start
 ```
 
-> **Note:** The live Vercel deployment uses real credentials configured as Vercel environment variables.
-> For local development, a free [Cloudinary](https://cloudinary.com/) account is sufficient.
-> Profile pictures and review images are uploaded there instead of being stored on disk.
+On PowerShell, use `Copy-Item .env.example .env`. Generate a secret with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`. Never reuse a published or demo secret.
 
----
+The normal app listens at [localhost:3000](http://localhost:3000). Cloudinary is optional; without all three Cloudinary variables, reviews and registration work without attachments. Do not connect a development copy to a production database.
 
-## Setup & Installation
+## Try the isolated demo
 
-### 1. Install dependencies
-
-```bash
-npm install
+```sh
+npm run preview:demo
 ```
 
-**Important notes on packages:**
-- **No bcrypt**: password hashing uses Node's built-in `crypto` module (HMAC-SHA256 + random salt + `timingSafeEqual`)
-- **No dompurify/jsdom**: server-side HTML sanitization uses a regex tag whitelist in `reviewController.js`
+Open [127.0.0.1:3001](http://127.0.0.1:3001). This creates an ephemeral MongoDB replica set with **22 fictional accounts, 10 sample restaurants, and 30 sample reviews**. It never reads `.env` or connects to the configured application database. The first run downloads a MongoDB binary. Stop the process to discard its database.
 
-### 2. Connect to the Database
-Since the application uses a live MongoDB Atlas cluster, you do not need to start a local MongoDB service. Just ensure your `.env` file contains the correct live `MONGO_URI`.
+| Demo role     | Username        | Password                    |
+| ------------- | --------------- | --------------------------- |
+| Reviewer      | `jane_d`        | `TaftEats demo passphrase!` |
+| Prelude owner | `owner_prelude` | `TaftEats demo passphrase!` |
 
-### 3. Create the Database (If starting from scratch)
-Open MongoDB Compass, paste your live Atlas connection string (from your `.env`), and create a database named `myDatabase` with an initial collection named `establishments`.
+These credentials are only for isolated demo data. The demo uses illustrative restaurant images, not photographs or verified business listings.
 
-### 4. Seed user accounts
+For a persistent demo, set `DEMO_MONGO_URI` to an **empty** database named `tafteats_demo` or `tafteats_demo_<suffix>` and run `npm run seed:demo`. The script refuses production mode and existing data; it never falls back to `MONGO_URI` or deletes collections.
 
-Run this from the project root **first**, before seeding establishments and reviews:
+## Quality checks
 
-```bash
-node database/seedUsers.js
+```sh
+npm run check             # ESLint, formatting, unit and HTTP integration tests
+npm run test:coverage     # Node's coverage report
+npm audit                # Full dependency tree, including development tooling
+npm run secrets:check    # High-confidence working-tree credential checks
+npm run test:browser     # Browser journeys, responsive checks, and axe accessibility checks
 ```
 
-This prints all available login credentials to the console.
+Browser tests use installed Chrome by default. Alternatively, run `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL=chromium`. Browser tests start their own isolated preview when port 3001 is free. CI checks Node 22 and 24, runs the browser suite, and retains failure traces.
 
-### 5. Seed establishments and reviews
+## What the revival changes
 
-> **Optional but recommended:** To populate the app with sample establishments and reviews, you can use MongoDB Compass connected to your Atlas cluster.
->
-> 1. Open MongoDB Compass and connect using your Atlas URI (the same `MONGO_URI` from your `.env`)
-> 2. Select the `myDatabase` database
-> 3. Open the **Compass shell** (the `>_` button at the bottom of the sidebar)
-> 4. Paste and run the full contents of `database/seed.js`
->
-> This must be run **after step 4** because the reviews reference user ObjectIds created by the user seed. Skip this step if you prefer to start with an empty database.
+- Passwords use asynchronous scrypt (`N=131072`, `r=8`, `p=1`) with a random salt. Valid legacy HMAC logins upgrade automatically.
+- Sessions rotate at login, use HTTP-only SameSite cookies and HTTPS-only production cookies, and live in MongoDB. Every mutation requires a session-bound CSRF token.
+- Database-backed authorization uses immutable IDs and reloads account roles on every request. Owners cannot review their own restaurant, and authors cannot vote on their own reviews.
+- Rich text uses a parser-based allowlist on writes and reads, including legacy records. Browser activity cards use DOM text nodes. CSP blocks inline handlers, external scripts, framing, and arbitrary media origins.
+- Shared MongoDB rate limits protect authentication, uploads, and application requests. Uploads check file signatures, restrict formats, bound fields/files, cap concurrent requests, and clean up newly uploaded assets when a database save fails.
+- Votes update atomically. Optimistic concurrency prevents edits and replies from silently overwriting each other. Ratings come from review data, including the zero-review case. Account deletion uses a transaction and requires the current password.
+- Discovery has server-side literal search, category filters, sorting, and pagination. Reviews and profile activity are bounded. Mobile layouts, reduced-motion support, keyboard controls, and light/dark themes are verified in the browser.
 
----
+See [architecture](docs/ARCHITECTURE.md), [security](SECURITY.md), and the [migration guide](docs/MIGRATION.md) for the operational boundaries and deployment requirements.
 
-### 6. Start the server
+## Project structure
 
-```bash
-node app.js
+```text
+app.js                    Local/serverless entry point
+src/app.js                Express app factory; middleware and rendering
+src/server.js             Lazy connection, persistent sessions, runtime lifecycle
+src/config/               Validated environment and Cloudinary configuration
+src/controllers/          HTTP use cases
+src/middleware/           Authentication, CSRF, rate limits, bounded uploads
+src/lib/                  Input validation, HTML sanitization, errors, passwords
+src/services/             Review presentation, derived ratings, media lifecycle
+src/models/               Mongoose schemas, indexes, optimistic concurrency
+src/routes/               Route wiring and authorization before controllers
+src/views/                EJS pages and shared partials
+src/public/               Styles, browser behavior, local SVG artwork
+database/                 Isolated demo fixtures and explicit migration
+tests/                    Unit, real MongoDB HTTP, and browser regression tests
 ```
 
-Or with auto-reload on file changes (requires nodemon):
+## Portfolio attribution
 
-```bash
-npm run dev
-# or directly:
-npx nodemon app.js
-```
+Original team: **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management). Preserve this attribution when describing the project. Separate your revival work from the original collaborative implementation.
 
-App runs at http://localhost:3000
+A defensible CV description after review: “Revived a collaborative restaurant review app with ID-based authorization, scrypt authentication, CSRF/CSP protections, atomic voting, transaction-backed account deletion, and automated API/browser accessibility checks.”
 
----
-
-## Login Credentials
-
-### Student Accounts
-
-| Username   | Password      | Email                    |
-|------------|---------------|--------------------------|
-| `jane_d`   | `password123` | jane.d@dlsu.edu.ph       |
-| `marky`    | `password123` | marky@dlsu.edu.ph        |
-| `ella_s`   | `password123` | ella.s@dlsu.edu.ph       |
-| `miggy`    | `password123` | miggy@dlsu.edu.ph        |
-| `kiks_m`   | `password123` | kiks.m@dlsu.edu.ph       |
-| `sophia`   | `password123` | sophia@dlsu.edu.ph       |
-| `daniella` | `password123` | daniella@dlsu.edu.ph     |
-| `carlos_r` | `password123` | carlos.r@dlsu.edu.ph     |
-| `bea_t`    | `password123` | bea.t@dlsu.edu.ph        |
-| `lance_v`  | `password123` | lance.v@dlsu.edu.ph      |
-| `trisha_m` | `password123` | trisha.m@dlsu.edu.ph     |
-| `pau_g`    | `password123` | pau.g@dlsu.edu.ph        |
-
-### Owner Accounts
-
-| Username           | Password            | Email                     | Establishment     |
-|--------------------|---------------------|---------------------------|-------------------|
-| `owner_prelude`    | `OwnerPrelude#1`    | owner@prelude.com         | Prelude           |
-| `owner_barn`       | `OwnerBarn#1`       | owner@barnbyborro.com     | Barn by Borro     |
-| `owner_callecafe`  | `OwnerCalle#1`      | owner@callecafe.com       | Calle Cafe        |
-| `owner_angrydobo`  | `OwnerAngry#1`      | owner@angrydobo.com       | Angrydobo         |
-| `owner_laelotes`   | `OwnerLaElotes#1`   | owner@laelotes.com        | La Elotes         |
-| `owner_asterisko`  | `OwnerAsterisko#1`  | owner@asterisko.com       | Asterisko         |
-| `owner_kuhmeal`    | `OwnerKuhMeal#1`    | owner@kuhmeal.com         | KuhMeal           |
-| `owner_ganggang`   | `OwnerGangGang#1`   | owner@ganggangchicken.com | Gang Gang Chicken |
-| `owner_illo`       | `OwnerIllo#1`       | owner@illo.com            | Illo              |
-| `owner_dapithapon` | `OwnerDapit#1`      | owner@dapithapon.com      | Dapit-Hapon Cafe  |
-
-Owner accounts are tied to their respective establishments. They can only respond to reviews on their own establishment.
-
----
-
-## Notable Features Implemented
-
-### Login / Logout
-- `POST /login` — authenticates via crypto-based password verification, creates a session
-- "Remember Me" extends the session cookie to 3 weeks; unchecked = session-only cookie cleared on browser close
-- `POST /logout` — destroys session and clears cookie
-
-### Create a Review
-- Only logged-in users can post reviews
-- Required fields: title, body (rich text), star rating (1–5)
-- Optional: media attachment (image or video, up to 20 MB)
-- Body is sanitized server-side with a regex tag whitelist to prevent XSS
-- Both front-end (JS alerts + `required` attributes) and back-end (controller-level checks) validation are implemented
-- Route: `POST /reviews`
-
-### Edit / Delete a Review (CRUD requirement)
-- Only the review's author can edit or delete their own review
-- Edited reviews display an "(edited)" label
-- Routes: `PUT /reviews/:reviewId`, `DELETE /reviews/:reviewId`
-
-### Mark as Helpful / Unhelpful
-- Logged-in users can vote once per review
-- Voting the same type again removes the vote
-- Voting the opposite type switches the vote automatically
-- Route: `POST /reviews/:reviewId/vote`
-
-### Establishment Owner Response
-- Owner accounts are created via `database/seedUsers.js`
-- Each owner is tied to one establishment via `ownedEstablishment`
-- Owners can respond to reviews only on their own establishment
-- Owner response is sanitized and displayed publicly below the review
-- Owners can delete their own response
-- Routes: `POST /reviews/:reviewId/owner-response`, `DELETE /reviews/:reviewId/owner-response`
-
-### User Profiles
-- All users have a profile page showing their recent activity, reviews, and replies
-- Profile owners can edit their username, description, and avatar
-- Account deletion removes the user and all associated reviews
-
----
-
-## Project Structure
-
-```
-app.js                              ← Entry point; express-session, connect-mongo,
-                                      res.locals.sessionUser middleware, route mounting
-sampleEnv.txt                       ← Placeholder env vars — copy to .env and fill in values
-database/
-  seedUsers.js                      ← Seeds 12 student + 10 owner accounts with hashed passwords;
-                                      run with: node database/seedUsers.js
-  seed.js                           ← Seeds establishments and reviews with correct schema;
-                                      paste into Compass shell (select myDatabase first)
-src/
-  controllers/
-    authController.js               ← GET /login, POST /login (remember-me logic), POST /logout
-    reviewController.js             ← Full review CRUD + helpful/unhelpful vote toggle +
-                                      owner respond/delete; includes regex HTML sanitizer +
-                                      back-end field validation
-    establishmentController.js      ← Establishment listing and detail
-    profileController.js            ← Profile view, edit (with Cloudinary upload), delete account
-    registerController.js           ← Registration with back-end field + email validation
-    aboutController.js              ← About page
-  models/
-    users.js                        ← User schema: student | owner roles, ownedEstablishment ref,
-                                      HMAC-SHA256 password hashing via pre-save hook
-    reviews.js                      ← Review schema: helpfulVotes[], unhelpfulVotes[],
-                                      responseThread subdoc, media URLs, virtual counts
-    establishments.js               ← Establishment schema
-    about.js                        ← About schema
-  routes/
-    authRoutes.js                   ← GET /login, POST /login, POST /logout
-    reviewRoutes.js                 ← All review endpoints; multer memory storage → Cloudinary
-    establishmentRoutes.js          ← Establishment routes
-    profileRoutes.js                ← Profile routes with multer upload handling
-    registerRoutes.js               ← Registration route with multer upload handling
-    aboutRoutes.js                  ← About routes
-  views/
-    login.ejs                       ← Login form with remember-me checkbox; shows session errors
-    register.ejs                    ← Multi-step registration form with profile image modal
-    reviews.ejs                     ← Review list per establishment; create/edit/delete modals;
-                                      helpful/unhelpful buttons; owner respond UI; search filter
-    reviewDetail.ejs                ← Single review full view with edit modal, vote buttons,
-                                      owner response section
-    viewProfile.ejs                 ← Profile page with tabbed activity feed
-    editProfile.ejs                 ← Profile edit form with avatar upload
-    navbar.ejs                      ← Session-aware navbar; shows username + logout when logged in,
-                                      login + register buttons when logged out
-    establishments.ejs              ← Establishment listing
-    about.ejs                       ← About page
-  public/
-    css/
-      style.css                     ← Main stylesheet
-      alert.css                     ← Alert/error banner styles
-      profileEdit-style.css
-      profileView-style.css
-      register-page-style.css
-    js/
-      theme-toggle.js               ← Dark/light mode toggle (persisted via localStorage)
-      profileEdit-script.js         ← Profile edit form handling + image preview
-      profileView-script.js         ← Tabbed activity feed + review/reply card rendering
-      register-script.js            ← Registration form + modal + front-end validation
-```
+The existing [legacy deployment](https://taft-eats.vercel.app/) has not been updated by this work. Follow the migration guide before releasing this revision. Historical credentials need rotation; no claim of a secure production deployment is made here.

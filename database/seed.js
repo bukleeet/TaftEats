@@ -1,386 +1,43 @@
-// Run seedUsers.js first. Paste this into the Compass shell with myDatabase selected.
+const mongoose = require('mongoose');
+const User = require('../src/models/users');
+const Establishment = require('../src/models/establishments');
+const Review = require('../src/models/reviews');
+const demo = require('./demo.json');
+const DEMO_PASSWORD = 'TaftEats demo passphrase!';
 
-db.establishments.deleteMany({});
-db.establishments.insertMany([
-  { _id: ObjectId('69a95a4dabf2603b58236914'), name: 'Prelude',                   rating: 3.5, description: 'A cozy café perfect for studying, known for its coffee and pastries.',                             image: 'prelude.jpg' },
-  { _id: ObjectId('69a95a4dabf2603b58236915'), name: 'Barn by Borro',             rating: 4.7, description: "LaSallian's favorite! Offers affordable meals with generous servings.",                            image: 'barn.jpeg' },
-  { _id: ObjectId('69a95a4dabf2603b58236916'), name: 'Asterisko',                 rating: 3.9, description: 'Good hangout spot with friends. Offers board games and refreshing drinks.',                       image: 'asterisko.png' },
-  { _id: ObjectId('69a95a4dabf2603b58236917'), name: 'KuhMeal',                   rating: 3.8, description: 'Chicken and Fries served with special sauce.',                                                    image: 'kuhmeal.png' },
-  { _id: ObjectId('69a95a4dabf2603b58236918'), name: 'La Elotes',                 rating: 4.6, description: 'Known for comfort food and affordable meals.',                                                     image: 'laelotes.png' },
-  { _id: ObjectId('69a95a4dabf2603b58236919'), name: 'Gang Gang Chicken',         rating: 4.1, description: 'Small but cozy place perfect for quick meals.',                                                    image: 'ganggangchicken.png' },
-  { _id: ObjectId('69a95a4dabf2603b5823691a'), name: 'Calle Cafe',                rating: 4.8, description: 'Trendy hangout spot with aesthetic interiors.',                                                    image: 'callecafe.png' },
-  { _id: ObjectId('69a95a4dabf2603b5823691b'), name: 'Illo',                      rating: 4.0, description: 'Budget-friendly meals for students on the go.',                                                   image: 'illo.jpeg' },
-  { _id: ObjectId('69a95a4dabf2603b5823691c'), name: 'Angrydobo',                 rating: 4.4, description: 'A Filipino restaurant specializing in elevated, comfort-style adobo and classic dishes.',         image: 'angrydobo.jpeg' },
-  { _id: ObjectId('69a95a4dabf2603b5823691d'), name: 'Dapit-Hapon Cafe & Bistro', rating: 4.2, description: 'Chill café with drinks and light meals.',                                                         image: 'dapithapon.jpeg' }
-]);
-
-// Fetch all user IDs
-const jane     = db.users.findOne({ username: 'jane_d' })._id;
-const marky    = db.users.findOne({ username: 'marky' })._id;
-const ella     = db.users.findOne({ username: 'ella_s' })._id;
-const miggy    = db.users.findOne({ username: 'miggy' })._id;
-const kiks     = db.users.findOne({ username: 'kiks_m' })._id;
-const sophia   = db.users.findOne({ username: 'sophia' })._id;
-const daniella = db.users.findOne({ username: 'daniella' })._id;
-const carlos   = db.users.findOne({ username: 'carlos_r' })._id;
-const bea      = db.users.findOne({ username: 'bea_t' })._id;
-const lance    = db.users.findOne({ username: 'lance_v' })._id;
-const trisha   = db.users.findOne({ username: 'trisha_m' })._id;
-const pau      = db.users.findOne({ username: 'pau_g' })._id;
-
-db.reviews.deleteMany({});
-db.reviews.insertMany([
-
-  // Prelude
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236914'),
-    user: jane, username: 'jane_d',
-    title: 'Perfect study spot',
-    rating: 5,
-    body: '<p>The atmosphere is calm and the coffee is amazing. WiFi is stable too!</p>',
-    helpfulVotes: [miggy, carlos, bea, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you so much, Jane! We work hard to keep the vibe study-friendly. See you next time! ☕</p>', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-01-17T10:00:00') }],
-    createdAt: new Date('2025-01-15T09:30:00'), updatedAt: new Date('2025-01-15T09:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236914'),
-    user: marky, username: 'marky',
-    title: 'Good but crowded',
-    rating: 3.5,
-    body: '<p>Love the drinks, but it gets really full during afternoons. Hard to find a seat after 1pm.</p>',
-    helpfulVotes: [sophia, trisha], unhelpfulVotes: [daniella],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thanks for the feedback, Marky! We know afternoons get busy — try coming in before 12 or after 3pm for a quieter experience ☕</p>', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-02-05T09:00:00') }],
-    createdAt: new Date('2025-02-03T14:15:00'), updatedAt: new Date('2025-02-03T14:15:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236914'),
-    user: sophia, username: 'sophia',
-    title: 'Nice drinks, slow service',
-    rating: 3,
-    body: '<p>The matcha latte is great but I waited almost 20 minutes during peak hours.</p>',
-    helpfulVotes: [pau, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Hi Sophia, we apologize for the wait! We are working on speeding up service during busy hours. Thanks for the feedback.</p>', author: 'owner_prelude', role: 'owner', createdAt: new Date('2025-03-22T09:00:00') }],
-    createdAt: new Date('2025-03-20T11:00:00'), updatedAt: new Date('2025-03-20T11:00:00')
-  },
-
-  // Barn by Borro
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236915'),
-    user: ella, username: 'ella_s',
-    title: 'Affordable and tasty',
-    rating: 5,
-    body: '<p>Generous servings and super affordable. Perfect for lunch between classes!</p>',
-    helpfulVotes: [jane, miggy, kiks, carlos, trisha, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you, Ella! Keeping meals affordable for students is our mission. Come back anytime! 🍱</p>', author: 'owner_barn', role: 'owner', createdAt: new Date('2025-01-24T08:30:00') }],
-    createdAt: new Date('2025-01-22T12:00:00'), updatedAt: new Date('2025-01-22T12:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236915'),
-    user: miggy, username: 'miggy',
-    title: 'Noisy at peak hours',
-    rating: 3.5,
-    body: '<p>Food is great but the place can be really noisy at peak hours. Bring earphones.</p>',
-    helpfulVotes: [bea, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: "<p>Haha we know peak hours can get loud! We're exploring ways to expand our space. Thanks for sticking with us, Miggy!</p>", author: 'owner_barn', role: 'owner', createdAt: new Date('2025-02-12T09:00:00') }],
-    createdAt: new Date('2025-02-10T13:45:00'), updatedAt: new Date('2025-02-10T13:45:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236915'),
-    user: daniella, username: 'daniella',
-    title: 'My go-to lunch spot',
-    rating: 4.5,
-    body: '<p>Consistently good food and the rice meals are filling. Staff is friendly too.</p>',
-    helpfulVotes: [sophia, trisha, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Always happy to see you, Daniella! Our staff appreciates the kind words. See you again soon! 🍱</p>', author: 'owner_barn', role: 'owner', createdAt: new Date('2025-04-07T08:00:00') }],
-    createdAt: new Date('2025-04-05T12:30:00'), updatedAt: new Date('2025-04-05T12:30:00')
-  },
-
-  // Asterisko
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236916'),
-    user: kiks, username: 'kiks_m',
-    title: 'Fun hangout spot',
-    rating: 5,
-    body: '<p>Board games and drinks are amazing! Great place to chill with friends after class.</p>',
-    helpfulVotes: [jane, ella, carlos, bea, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Org bondings are our specialty! Thanks for bringing the squad, Kiks. Come back for game night every Friday 🎲</p>', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-01-30T10:00:00') }],
-    createdAt: new Date('2025-01-28T17:00:00'), updatedAt: new Date('2025-01-28T17:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236916'),
-    user: sophia, username: 'sophia',
-    title: 'Good drinks but limited seating',
-    rating: 3.5,
-    body: '<p>The drinks are refreshing but seating is a bit limited. Best to come early.</p>',
-    helpfulVotes: [miggy, trisha], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Hi Sophia! We are working on expanding seating — stay tuned for updates. In the meantime, weekday mornings are usually less crowded! 🕹️</p>', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-03-03T09:00:00') }],
-    createdAt: new Date('2025-03-01T16:30:00'), updatedAt: new Date('2025-03-01T16:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236916'),
-    user: jane, username: 'jane_d',
-    title: 'Great for org bondings',
-    rating: 4,
-    body: '<p>Brought my org here and everyone had a great time. The board game selection is solid.</p>',
-    helpfulVotes: [daniella, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>So glad the board game selection hit! We keep adding new titles every month. Which game was the favorite? 😄</p>', author: 'owner_asterisko', role: 'owner', createdAt: new Date('2025-04-14T09:00:00') }],
-    createdAt: new Date('2025-04-12T18:00:00'), updatedAt: new Date('2025-04-12T18:00:00')
-  },
-
-  // KuhMeal
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236917'),
-    user: daniella, username: 'daniella',
-    title: 'Tasty chicken',
-    rating: 4,
-    body: '<p>Chicken and fries are yummy, perfect for a quick snack between classes!</p>',
-    helpfulVotes: [lance, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you Daniella! The special sauce is our secret weapon 😄 Hope to see you again soon!</p>', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-02-16T10:00:00') }],
-    createdAt: new Date('2025-02-14T15:00:00'), updatedAt: new Date('2025-02-14T15:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236917'),
-    user: miggy, username: 'miggy',
-    title: 'Fast service',
-    rating: 4.5,
-    body: '<p>Service is quick and friendly, definitely coming back. The sauce is addictive.</p>',
-    helpfulVotes: [jane, kiks, carlos], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Speed is our promise! Thanks for noticing, Miggy. Our team works hard to keep wait times short 💪</p>', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-03-10T10:00:00') }],
-    createdAt: new Date('2025-03-08T14:00:00'), updatedAt: new Date('2025-03-08T14:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236917'),
-    user: marky, username: 'marky',
-    title: 'Decent but nothing special',
-    rating: 3,
-    body: '<p>It is what it is. Fills you up for a reasonable price. Not something I would go out of my way for.</p>',
-    helpfulVotes: [trisha], unhelpfulVotes: [ella],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Fair enough, Marky! We hope you give us another shot — we have some new items coming to the menu soon that might change your mind 😊</p>', author: 'owner_kuhmeal', role: 'owner', createdAt: new Date('2025-04-20T09:00:00') }],
-    createdAt: new Date('2025-04-18T13:00:00'), updatedAt: new Date('2025-04-18T13:00:00')
-  },
-
-  // La Elotes
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236918'),
-    user: ella, username: 'ella_s',
-    title: 'Comfort food heaven',
-    rating: 5,
-    body: '<p>Affordable and really tasty meals. Perfect for students on a budget.</p>',
-    helpfulVotes: [jane, marky, miggy, daniella, carlos, bea], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Means the world to us, Ella! Comfort food for students is exactly what we are about. 💚</p>', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-01-12T11:00:00') }],
-    createdAt: new Date('2025-01-10T12:00:00'), updatedAt: new Date('2025-01-10T12:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236918'),
-    user: jane, username: 'jane_d',
-    title: 'Loved the place',
-    rating: 4,
-    body: '<p>Cozy vibe and great food, though it gets crowded sometimes.</p>',
-    helpfulVotes: [sophia, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you Jane! The crowd is a sign that people love us 😄 We are working on adding more seating. Come early to grab a good spot!</p>', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-02-22T09:00:00') }],
-    createdAt: new Date('2025-02-20T11:30:00'), updatedAt: new Date('2025-02-20T11:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236918'),
-    user: kiks, username: 'kiks_m',
-    title: 'Hidden gem near campus',
-    rating: 4.5,
-    body: '<p>Not many people know about this place but the food is consistently good. Elotes are a must.</p>',
-    helpfulVotes: [lance, trisha, carlos], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thanks for spreading the word, Kiks! The elotes are our pride. Hope to see you again soon! 🌽</p>', author: 'owner_laelotes', role: 'owner', createdAt: new Date('2025-03-17T10:00:00') }],
-    createdAt: new Date('2025-03-15T12:45:00'), updatedAt: new Date('2025-03-15T12:45:00')
-  },
-
-  // Gang Gang Chicken
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236919'),
-    user: kiks, username: 'kiks_m',
-    title: 'Good quick meals',
-    rating: 4,
-    body: '<p>Perfect for a quick bite, loved the chicken.</p>',
-    helpfulVotes: [bea, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thanks Kiks! Quick and delicious — that is exactly what we are going for. See you next time! 🍗</p>', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-02-01T10:00:00') }],
-    createdAt: new Date('2025-01-30T13:00:00'), updatedAt: new Date('2025-01-30T13:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236919'),
-    user: sophia, username: 'sophia',
-    title: 'Nice spot',
-    rating: 3.5,
-    body: '<p>Small but cozy. Staff are friendly too! Wish they had more seating.</p>',
-    helpfulVotes: [marky, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Hi Sophia! We appreciate the kind words about our staff ❤️ More seating is in our plans — watch this space!</p>', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-02-27T09:00:00') }],
-    createdAt: new Date('2025-02-25T14:30:00'), updatedAt: new Date('2025-02-25T14:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b58236919'),
-    user: ella, username: 'ella_s',
-    title: 'Great for a quick lunch',
-    rating: 4.5,
-    body: '<p>Always come here when I need something fast. Never disappointed.</p>',
-    helpfulVotes: [jane, miggy, trisha], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Never disappointed is all we ask for, Ella! Come back anytime and bring friends 🐔</p>', author: 'owner_ganggang', role: 'owner', createdAt: new Date('2025-04-04T09:00:00') }],
-    createdAt: new Date('2025-04-02T12:15:00'), updatedAt: new Date('2025-04-02T12:15:00')
-  },
-
-  // Calle Cafe
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691a'),
-    user: daniella, username: 'daniella',
-    title: 'Aesthetic spot',
-    rating: 5,
-    body: '<p>Great interiors, perfect for photos. Drinks are amazing and the playlist is good.</p>',
-    helpfulVotes: [jane, kiks, sophia, carlos, bea, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you so much Daniella! We put a lot of love into the atmosphere here. Tag us in your photos! 📸</p>', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-01-07T11:00:00') }],
-    createdAt: new Date('2025-01-05T16:00:00'), updatedAt: new Date('2025-01-05T16:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691a'),
-    user: miggy, username: 'miggy',
-    title: 'Trendy but pricey',
-    rating: 3.5,
-    body: '<p>Love the vibe, but meals are a bit expensive for students. Worth it for special occasions.</p>',
-    helpfulVotes: [marky, trisha, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>We hear you, Miggy! We do have student-friendly options on the menu — ask our staff about our value picks next time. 🙏</p>', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-02-20T09:30:00') }],
-    createdAt: new Date('2025-02-18T15:30:00'), updatedAt: new Date('2025-02-18T15:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691a'),
-    user: jane, username: 'jane_d',
-    title: 'Best coffee on Taft',
-    rating: 5,
-    body: '<p>The cold brew here is unmatched. I come here every Friday as a treat to myself.</p>',
-    helpfulVotes: [ella, daniella, pau, bea], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Friday treat well deserved, Jane! The cold brew is brewed fresh daily just for regulars like you ☕ See you this Friday!</p>', author: 'owner_callecafe', role: 'owner', createdAt: new Date('2025-03-30T09:00:00') }],
-    createdAt: new Date('2025-03-28T10:00:00'), updatedAt: new Date('2025-03-28T10:00:00')
-  },
-
-  // Illo
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691b'),
-    user: ella, username: 'ella_s',
-    title: 'Budget-friendly',
-    rating: 4,
-    body: '<p>Good food at a reasonable price. Quick service too.</p>',
-    helpfulVotes: [carlos, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thank you, Ella! Budget-friendly is our commitment. Come back anytime! 🙏</p>', author: 'owner_illo', role: 'owner', createdAt: new Date('2025-01-20T10:00:00') }],
-    createdAt: new Date('2025-01-18T12:00:00'), updatedAt: new Date('2025-01-18T12:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691b'),
-    user: jane, username: 'jane_d',
-    title: 'Great for students',
-    rating: 4,
-    body: '<p>Easy to grab meals before class. Tasty sandwiches!</p>',
-    helpfulVotes: [trisha, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Sandwiches before class — the perfect fuel! Thanks for the love, Jane 😊</p>', author: 'owner_illo', role: 'owner', createdAt: new Date('2025-03-02T09:00:00') }],
-    createdAt: new Date('2025-02-28T11:00:00'), updatedAt: new Date('2025-02-28T11:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691b'),
-    user: marky, username: 'marky',
-    title: 'Underrated',
-    rating: 4.5,
-    body: '<p>People sleep on this place. The silog meals are solid and you get a lot for the price.</p>',
-    helpfulVotes: [miggy, kiks, sophia, bea], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: "<p>Ha! We are glad you found us, Marky. Tell your barkada — the silog secret is out 🍳</p>", author: 'owner_illo', role: 'owner', createdAt: new Date('2025-04-12T09:00:00') }],
-    createdAt: new Date('2025-04-10T08:30:00'), updatedAt: new Date('2025-04-10T08:30:00')
-  },
-
-  // Angrydobo
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691c'),
-    user: kiks, username: 'kiks_m',
-    title: 'Delicious adobo',
-    rating: 5,
-    body: '<p>Classic Filipino dishes done right. The adobo has the perfect balance of sour and savory.</p>',
-    helpfulVotes: [jane, ella, daniella, carlos, trisha, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Your kind words mean everything to us, Kiks! The adobo recipe has been in the family for years. 🙏🇵🇭</p>', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-01-27T09:00:00') }],
-    createdAt: new Date('2025-01-25T12:30:00'), updatedAt: new Date('2025-01-25T12:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691c'),
-    user: sophia, username: 'sophia',
-    title: 'Cozy vibes',
-    rating: 4,
-    body: '<p>Loved the adobo, place is small but comfy. Service could be faster.</p>',
-    helpfulVotes: [miggy, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Thanks for the honest feedback, Sophia! We are training more staff to get orders out faster. Hope to see you again!</p>', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-03-07T10:00:00') }],
-    createdAt: new Date('2025-03-05T13:00:00'), updatedAt: new Date('2025-03-05T13:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691c'),
-    user: miggy, username: 'miggy',
-    title: 'Authentic Filipino comfort food',
-    rating: 4.5,
-    body: '<p>Reminds me of home cooking. The pork adobo is phenomenal and the rice is always hot.</p>',
-    helpfulVotes: [marky, bea, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Home cooking is exactly the feeling we want to give! The pork adobo is made fresh every morning. Thanks, Miggy! 🇵🇭</p>', author: 'owner_angrydobo', role: 'owner', createdAt: new Date('2025-04-22T09:00:00') }],
-    createdAt: new Date('2025-04-20T12:00:00'), updatedAt: new Date('2025-04-20T12:00:00')
-  },
-
-  // Dapit-Hapon
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691d'),
-    user: daniella, username: 'daniella',
-    title: 'Chill café',
-    rating: 4,
-    body: '<p>Perfect place to relax with friends. Drinks are great and the sunset view is nice.</p>',
-    helpfulVotes: [sophia, trisha, lance], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>Relaxing with friends is what Dapit-Hapon was made for! Come back for the sunset again soon 🌇</p>', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-02-09T09:00:00') }],
-    createdAt: new Date('2025-02-07T17:30:00'), updatedAt: new Date('2025-02-07T17:30:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691d'),
-    user: miggy, username: 'miggy',
-    title: 'Nice menu',
-    rating: 4.5,
-    body: '<p>Lots of options and very tasty meals. The pasta dishes are standout.</p>',
-    helpfulVotes: [jane, ella, pau], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>The pasta is chef-made daily, Miggy! Glad the menu had something for everyone. Hope to see you back soon 🍝</p>', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-03-14T09:00:00') }],
-    createdAt: new Date('2025-03-12T18:00:00'), updatedAt: new Date('2025-03-12T18:00:00')
-  },
-  {
-    establishment: ObjectId('69a95a4dabf2603b5823691d'),
-    user: marky, username: 'marky',
-    title: 'Great afternoon hangout',
-    rating: 4,
-    body: '<p>The name says it all — best visited in the afternoon. Good coffee and the ambiance is relaxing.</p>',
-    helpfulVotes: [daniella, bea, carlos], unhelpfulVotes: [],
-    media: [], edited: false,
-    responseThread: [{ body: '<p>The afternoon light here really is something special! Thanks for capturing the vibe perfectly, Marky ☀️</p>', author: 'owner_dapithapon', role: 'owner', createdAt: new Date('2025-04-24T09:00:00') }],
-    createdAt: new Date('2025-04-22T16:45:00'), updatedAt: new Date('2025-04-22T16:45:00')
+function assertDemoDatabase(uri, env = process.env) {
+  if (env.NODE_ENV === 'production') throw new Error('Demo seeding is disabled in production.');
+  if (typeof uri !== 'string') throw new Error('Set DEMO_MONGO_URI to an isolated demo database.');
+  const name = new URL(uri).pathname.slice(1);
+  if (!/^tafteats_demo(?:_[a-z0-9]+)?$/.test(name))
+    throw new Error('Demo database name must be tafteats_demo or tafteats_demo_<suffix>.');
+}
+async function seedDemo() {
+  // Never fall back to MONGO_URI: that may point at real application data.
+  assertDemoDatabase(process.env.DEMO_MONGO_URI);
+  await mongoose.connect(process.env.DEMO_MONGO_URI);
+  if (
+    (await User.countDocuments()) ||
+    (await Review.countDocuments()) ||
+    (await Establishment.countDocuments())
+  ) {
+    throw new Error('Demo database must be empty. No existing data has been changed.');
   }
-
-]);
-
-print('Seed complete: ' + db.reviews.countDocuments() + ' reviews, ' + db.establishments.countDocuments() + ' establishments.');
+  await Promise.all([User.init(), Review.init(), Establishment.init()]);
+  // Model saves enforce validation and password hashing; insertMany bypasses save hooks.
+  for (const data of demo.users) await User.create({ ...data, password: DEMO_PASSWORD });
+  for (const data of demo.establishments) await Establishment.create(data);
+  for (const data of demo.reviews) await Review.create(data);
+  console.log('Isolated demo ready: jane_d (reviewer), owner_prelude (owner).');
+  console.log(`Local demo password: ${DEMO_PASSWORD}`);
+}
+if (require.main === module) {
+  require('dotenv').config({ quiet: true });
+  seedDemo()
+    .catch((err) => {
+      console.error(err.message);
+      process.exitCode = 1;
+    })
+    .finally(() => mongoose.disconnect());
+}
+module.exports = { assertDemoDatabase, seedDemo, DEMO_PASSWORD };

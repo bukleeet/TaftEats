@@ -1,53 +1,40 @@
+const { randomBytes } = require('node:crypto');
+const { promisify } = require('node:util');
 const User = require('../models/users');
+const v = require('../lib/validation');
+const { verifyPassword, hashPassword } = require('../lib/passwords');
 
-// GET /login
-exports.getLoginPage = (req, res) => {
-  if (req.session.userId) return res.redirect('/establishments');
-  res.render('login', { error: null });
-};
-
-// POST /login
+let dummyHash;
+exports.getLoginPage = (req, res) =>
+  req.user ? res.redirect('/establishments') : res.render('login', { error: null });
 exports.postLogin = async (req, res) => {
-  try {
-    const { username, password, rememberMe } = req.body;
-
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.render('login', { error: 'Invalid username or password.' });
-    }
-
-    const isMatch = user.comparePassword(password);
-    if (!isMatch) {
-      return res.render('login', { error: 'Invalid username or password.' });
-    }
-
-    req.session.userId             = user._id.toString();
-    req.session.username           = user.username;
-    req.session.role               = user.role;
-    req.session.avatar             = user.avatar || 'defaultprofile.png';
-    req.session.ownedEstablishment = user.ownedEstablishment
-      ? user.ownedEstablishment.toString()
-      : null;
-
-    // Remember me extends the cookie to 3 weeks on this login and every
-    // subsequent visit that touches the session (connect-mongo re-saves automatically)
-    if (rememberMe) {
-      req.session.cookie.maxAge = 3 * 7 * 24 * 60 * 60 * 1000;
-    } else {
-      req.session.cookie.expires = false; // session cookie, cleared on browser close
-    }
-
-    res.redirect('/establishments');
-  } catch (err) {
-    console.error(err);
-    res.render('login', { error: 'Something went wrong. Please try again.' });
+  const username = v.username(req.body.username);
+  const password = v.password(req.body.password, { login: true });
+  const user = await User.findOne({ username }).select('+password');
+  // Unknown usernames still pay the scrypt cost, reducing account enumeration by timing.
+  dummyHash ||= hashPassword(randomBytes(32).toString('hex'));
+  const valid = await verifyPassword(password, user?.password || (await dummyHash));
+  if (!user || !valid)
+    return res.status(401).render('login', { error: 'Invalid username or password.' });
+  if (!user.password.startsWith('scrypt$')) {
+    user.password = password;
+    await user.save();
   }
+  await promisify(req.session.regenerate).call(req.session);
+  req.session.userId = String(user._id);
+  req.session.csrfToken = randomBytes(32).toString('hex');
+  req.session.cookie.maxAge =
+    req.body.rememberMe === '1' ? 21 * 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
+  await promisify(req.session.save).call(req.session);
+  res.redirect('/establishments');
 };
-
-// POST /logout
-exports.postLogout = (req, res) => {
-  req.session.destroy(() => {
-    res.clearCookie('connect.sid');
-    res.redirect('/establishments');
+exports.postLogout = async (req, res) => {
+  await promisify(req.session.destroy).call(req.session);
+  res.clearCookie('tafteats.sid', {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: req.app.locals.production,
   });
+  res.redirect('/establishments');
 };

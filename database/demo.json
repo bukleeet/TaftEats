@@ -1,0 +1,1079 @@
+{
+  "establishments": [
+    {
+      "_id": "69a95a4dabf2603b58236914",
+      "name": "Prelude",
+      "rating": 0,
+      "description": "A cozy café perfect for studying, known for its coffee and pastries.",
+      "image": "/images/restaurant.svg",
+      "category": "Coffee & company"
+    },
+    {
+      "_id": "69a95a4dabf2603b58236915",
+      "name": "Barn by Borro",
+      "rating": 0,
+      "description": "LaSallian's favorite! Offers affordable meals with generous servings.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b58236916",
+      "name": "Asterisko",
+      "rating": 0,
+      "description": "Good hangout spot with friends. Offers board games and refreshing drinks.",
+      "image": "/images/restaurant.svg",
+      "category": "Coffee & company"
+    },
+    {
+      "_id": "69a95a4dabf2603b58236917",
+      "name": "KuhMeal",
+      "rating": 0,
+      "description": "Chicken and Fries served with special sauce.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b58236918",
+      "name": "La Elotes",
+      "rating": 0,
+      "description": "Known for comfort food and affordable meals.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b58236919",
+      "name": "Gang Gang Chicken",
+      "rating": 0,
+      "description": "Small but cozy place perfect for quick meals.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b5823691a",
+      "name": "Calle Cafe",
+      "rating": 0,
+      "description": "Trendy hangout spot with aesthetic interiors.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b5823691b",
+      "name": "Illo",
+      "rating": 0,
+      "description": "Budget-friendly meals for students on the go.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b5823691c",
+      "name": "Angrydobo",
+      "rating": 0,
+      "description": "A Filipino restaurant specializing in elevated, comfort-style adobo and classic dishes.",
+      "image": "/images/restaurant.svg",
+      "category": "Comfort food"
+    },
+    {
+      "_id": "69a95a4dabf2603b5823691d",
+      "name": "Dapit-Hapon Cafe & Bistro",
+      "rating": 0,
+      "description": "Chill café with drinks and light meals.",
+      "image": "/images/restaurant.svg",
+      "category": "Coffee & company"
+    }
+  ],
+  "reviews": [
+    {
+      "establishment": "69a95a4dabf2603b58236914",
+      "user": "000000000000000000000001",
+      "username": "jane_d",
+      "title": "Perfect study spot",
+      "rating": 5,
+      "body": "<p>The atmosphere is calm and the coffee is amazing. WiFi is stable too!</p>",
+      "helpfulVotes": [
+        "000000000000000000000004",
+        "000000000000000000000008",
+        "000000000000000000000009",
+        "00000000000000000000000a"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you so much, Jane! We work hard to keep the vibe study-friendly. See you next time! ☕</p>",
+          "author": "owner_prelude",
+          "role": "owner",
+          "createdAt": "2025-01-17T02:00:00.000Z",
+          "authorId": "000000000000000000000070"
+        }
+      ],
+      "createdAt": "2025-01-15T01:30:00.000Z",
+      "updatedAt": "2025-01-15T01:30:00.000Z",
+      "_id": "0000000000000000000003e8"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236914",
+      "user": "000000000000000000000002",
+      "username": "marky",
+      "title": "Good but crowded",
+      "rating": 3.5,
+      "body": "<p>Love the drinks, but it gets really full during afternoons. Hard to find a seat after 1pm.</p>",
+      "helpfulVotes": ["000000000000000000000006", "00000000000000000000000b"],
+      "unhelpfulVotes": ["000000000000000000000007"],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thanks for the feedback, Marky! We know afternoons get busy — try coming in before 12 or after 3pm for a quieter experience ☕</p>",
+          "author": "owner_prelude",
+          "role": "owner",
+          "createdAt": "2025-02-05T01:00:00.000Z",
+          "authorId": "000000000000000000000070"
+        }
+      ],
+      "createdAt": "2025-02-03T06:15:00.000Z",
+      "updatedAt": "2025-02-03T06:15:00.000Z",
+      "_id": "0000000000000000000003e9"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236914",
+      "user": "000000000000000000000006",
+      "username": "sophia",
+      "title": "Nice drinks, slow service",
+      "rating": 3,
+      "body": "<p>The matcha latte is great but I waited almost 20 minutes during peak hours.</p>",
+      "helpfulVotes": ["00000000000000000000000c", "00000000000000000000000a"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Hi Sophia, we apologize for the wait! We are working on speeding up service during busy hours. Thanks for the feedback.</p>",
+          "author": "owner_prelude",
+          "role": "owner",
+          "createdAt": "2025-03-22T01:00:00.000Z",
+          "authorId": "000000000000000000000070"
+        }
+      ],
+      "createdAt": "2025-03-20T03:00:00.000Z",
+      "updatedAt": "2025-03-20T03:00:00.000Z",
+      "_id": "0000000000000000000003ea"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236915",
+      "user": "000000000000000000000003",
+      "username": "ella_s",
+      "title": "Affordable and tasty",
+      "rating": 5,
+      "body": "<p>Generous servings and super affordable. Perfect for lunch between classes!</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000004",
+        "000000000000000000000005",
+        "000000000000000000000008",
+        "00000000000000000000000b",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you, Ella! Keeping meals affordable for students is our mission. Come back anytime! 🍱</p>",
+          "author": "owner_barn",
+          "role": "owner",
+          "createdAt": "2025-01-24T00:30:00.000Z",
+          "authorId": "000000000000000000000071"
+        }
+      ],
+      "createdAt": "2025-01-22T04:00:00.000Z",
+      "updatedAt": "2025-01-22T04:00:00.000Z",
+      "_id": "0000000000000000000003eb"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236915",
+      "user": "000000000000000000000004",
+      "username": "miggy",
+      "title": "Noisy at peak hours",
+      "rating": 3.5,
+      "body": "<p>Food is great but the place can be really noisy at peak hours. Bring earphones.</p>",
+      "helpfulVotes": ["000000000000000000000009", "00000000000000000000000a"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Haha we know peak hours can get loud! We're exploring ways to expand our space. Thanks for sticking with us, Miggy!</p>",
+          "author": "owner_barn",
+          "role": "owner",
+          "createdAt": "2025-02-12T01:00:00.000Z",
+          "authorId": "000000000000000000000071"
+        }
+      ],
+      "createdAt": "2025-02-10T05:45:00.000Z",
+      "updatedAt": "2025-02-10T05:45:00.000Z",
+      "_id": "0000000000000000000003ec"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236915",
+      "user": "000000000000000000000007",
+      "username": "daniella",
+      "title": "My go-to lunch spot",
+      "rating": 4.5,
+      "body": "<p>Consistently good food and the rice meals are filling. Staff is friendly too.</p>",
+      "helpfulVotes": [
+        "000000000000000000000006",
+        "00000000000000000000000b",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Always happy to see you, Daniella! Our staff appreciates the kind words. See you again soon! 🍱</p>",
+          "author": "owner_barn",
+          "role": "owner",
+          "createdAt": "2025-04-07T00:00:00.000Z",
+          "authorId": "000000000000000000000071"
+        }
+      ],
+      "createdAt": "2025-04-05T04:30:00.000Z",
+      "updatedAt": "2025-04-05T04:30:00.000Z",
+      "_id": "0000000000000000000003ed"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236916",
+      "user": "000000000000000000000005",
+      "username": "kiks_m",
+      "title": "Fun hangout spot",
+      "rating": 5,
+      "body": "<p>Board games and drinks are amazing! Great place to chill with friends after class.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000003",
+        "000000000000000000000008",
+        "000000000000000000000009",
+        "00000000000000000000000a"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Org bondings are our specialty! Thanks for bringing the squad, Kiks. Come back for game night every Friday 🎲</p>",
+          "author": "owner_asterisko",
+          "role": "owner",
+          "createdAt": "2025-01-30T02:00:00.000Z",
+          "authorId": "000000000000000000000075"
+        }
+      ],
+      "createdAt": "2025-01-28T09:00:00.000Z",
+      "updatedAt": "2025-01-28T09:00:00.000Z",
+      "_id": "0000000000000000000003ee"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236916",
+      "user": "000000000000000000000006",
+      "username": "sophia",
+      "title": "Good drinks but limited seating",
+      "rating": 3.5,
+      "body": "<p>The drinks are refreshing but seating is a bit limited. Best to come early.</p>",
+      "helpfulVotes": ["000000000000000000000004", "00000000000000000000000b"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Hi Sophia! We are working on expanding seating — stay tuned for updates. In the meantime, weekday mornings are usually less crowded! 🕹️</p>",
+          "author": "owner_asterisko",
+          "role": "owner",
+          "createdAt": "2025-03-03T01:00:00.000Z",
+          "authorId": "000000000000000000000075"
+        }
+      ],
+      "createdAt": "2025-03-01T08:30:00.000Z",
+      "updatedAt": "2025-03-01T08:30:00.000Z",
+      "_id": "0000000000000000000003ef"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236916",
+      "user": "000000000000000000000001",
+      "username": "jane_d",
+      "title": "Great for org bondings",
+      "rating": 4,
+      "body": "<p>Brought my org here and everyone had a great time. The board game selection is solid.</p>",
+      "helpfulVotes": ["000000000000000000000007", "00000000000000000000000c"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>So glad the board game selection hit! We keep adding new titles every month. Which game was the favorite? 😄</p>",
+          "author": "owner_asterisko",
+          "role": "owner",
+          "createdAt": "2025-04-14T01:00:00.000Z",
+          "authorId": "000000000000000000000075"
+        }
+      ],
+      "createdAt": "2025-04-12T10:00:00.000Z",
+      "updatedAt": "2025-04-12T10:00:00.000Z",
+      "_id": "0000000000000000000003f0"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236917",
+      "user": "000000000000000000000007",
+      "username": "daniella",
+      "title": "Tasty chicken",
+      "rating": 4,
+      "body": "<p>Chicken and fries are yummy, perfect for a quick snack between classes!</p>",
+      "helpfulVotes": ["00000000000000000000000a", "00000000000000000000000c"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you Daniella! The special sauce is our secret weapon 😄 Hope to see you again soon!</p>",
+          "author": "owner_kuhmeal",
+          "role": "owner",
+          "createdAt": "2025-02-16T02:00:00.000Z",
+          "authorId": "000000000000000000000076"
+        }
+      ],
+      "createdAt": "2025-02-14T07:00:00.000Z",
+      "updatedAt": "2025-02-14T07:00:00.000Z",
+      "_id": "0000000000000000000003f1"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236917",
+      "user": "000000000000000000000004",
+      "username": "miggy",
+      "title": "Fast service",
+      "rating": 4.5,
+      "body": "<p>Service is quick and friendly, definitely coming back. The sauce is addictive.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000005",
+        "000000000000000000000008"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Speed is our promise! Thanks for noticing, Miggy. Our team works hard to keep wait times short 💪</p>",
+          "author": "owner_kuhmeal",
+          "role": "owner",
+          "createdAt": "2025-03-10T02:00:00.000Z",
+          "authorId": "000000000000000000000076"
+        }
+      ],
+      "createdAt": "2025-03-08T06:00:00.000Z",
+      "updatedAt": "2025-03-08T06:00:00.000Z",
+      "_id": "0000000000000000000003f2"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236917",
+      "user": "000000000000000000000002",
+      "username": "marky",
+      "title": "Decent but nothing special",
+      "rating": 3,
+      "body": "<p>It is what it is. Fills you up for a reasonable price. Not something I would go out of my way for.</p>",
+      "helpfulVotes": ["00000000000000000000000b"],
+      "unhelpfulVotes": ["000000000000000000000003"],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Fair enough, Marky! We hope you give us another shot — we have some new items coming to the menu soon that might change your mind 😊</p>",
+          "author": "owner_kuhmeal",
+          "role": "owner",
+          "createdAt": "2025-04-20T01:00:00.000Z",
+          "authorId": "000000000000000000000076"
+        }
+      ],
+      "createdAt": "2025-04-18T05:00:00.000Z",
+      "updatedAt": "2025-04-18T05:00:00.000Z",
+      "_id": "0000000000000000000003f3"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236918",
+      "user": "000000000000000000000003",
+      "username": "ella_s",
+      "title": "Comfort food heaven",
+      "rating": 5,
+      "body": "<p>Affordable and really tasty meals. Perfect for students on a budget.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000002",
+        "000000000000000000000004",
+        "000000000000000000000007",
+        "000000000000000000000008",
+        "000000000000000000000009"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Means the world to us, Ella! Comfort food for students is exactly what we are about. 💚</p>",
+          "author": "owner_laelotes",
+          "role": "owner",
+          "createdAt": "2025-01-12T03:00:00.000Z",
+          "authorId": "000000000000000000000074"
+        }
+      ],
+      "createdAt": "2025-01-10T04:00:00.000Z",
+      "updatedAt": "2025-01-10T04:00:00.000Z",
+      "_id": "0000000000000000000003f4"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236918",
+      "user": "000000000000000000000001",
+      "username": "jane_d",
+      "title": "Loved the place",
+      "rating": 4,
+      "body": "<p>Cozy vibe and great food, though it gets crowded sometimes.</p>",
+      "helpfulVotes": ["000000000000000000000006", "00000000000000000000000c"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you Jane! The crowd is a sign that people love us 😄 We are working on adding more seating. Come early to grab a good spot!</p>",
+          "author": "owner_laelotes",
+          "role": "owner",
+          "createdAt": "2025-02-22T01:00:00.000Z",
+          "authorId": "000000000000000000000074"
+        }
+      ],
+      "createdAt": "2025-02-20T03:30:00.000Z",
+      "updatedAt": "2025-02-20T03:30:00.000Z",
+      "_id": "0000000000000000000003f5"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236918",
+      "user": "000000000000000000000005",
+      "username": "kiks_m",
+      "title": "Hidden gem near campus",
+      "rating": 4.5,
+      "body": "<p>Not many people know about this place but the food is consistently good. Elotes are a must.</p>",
+      "helpfulVotes": [
+        "00000000000000000000000a",
+        "00000000000000000000000b",
+        "000000000000000000000008"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thanks for spreading the word, Kiks! The elotes are our pride. Hope to see you again soon! 🌽</p>",
+          "author": "owner_laelotes",
+          "role": "owner",
+          "createdAt": "2025-03-17T02:00:00.000Z",
+          "authorId": "000000000000000000000074"
+        }
+      ],
+      "createdAt": "2025-03-15T04:45:00.000Z",
+      "updatedAt": "2025-03-15T04:45:00.000Z",
+      "_id": "0000000000000000000003f6"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236919",
+      "user": "000000000000000000000005",
+      "username": "kiks_m",
+      "title": "Good quick meals",
+      "rating": 4,
+      "body": "<p>Perfect for a quick bite, loved the chicken.</p>",
+      "helpfulVotes": ["000000000000000000000009", "00000000000000000000000c"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thanks Kiks! Quick and delicious — that is exactly what we are going for. See you next time! 🍗</p>",
+          "author": "owner_ganggang",
+          "role": "owner",
+          "createdAt": "2025-02-01T02:00:00.000Z",
+          "authorId": "000000000000000000000077"
+        }
+      ],
+      "createdAt": "2025-01-30T05:00:00.000Z",
+      "updatedAt": "2025-01-30T05:00:00.000Z",
+      "_id": "0000000000000000000003f7"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236919",
+      "user": "000000000000000000000006",
+      "username": "sophia",
+      "title": "Nice spot",
+      "rating": 3.5,
+      "body": "<p>Small but cozy. Staff are friendly too! Wish they had more seating.</p>",
+      "helpfulVotes": ["000000000000000000000002", "00000000000000000000000a"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Hi Sophia! We appreciate the kind words about our staff ❤️ More seating is in our plans — watch this space!</p>",
+          "author": "owner_ganggang",
+          "role": "owner",
+          "createdAt": "2025-02-27T01:00:00.000Z",
+          "authorId": "000000000000000000000077"
+        }
+      ],
+      "createdAt": "2025-02-25T06:30:00.000Z",
+      "updatedAt": "2025-02-25T06:30:00.000Z",
+      "_id": "0000000000000000000003f8"
+    },
+    {
+      "establishment": "69a95a4dabf2603b58236919",
+      "user": "000000000000000000000003",
+      "username": "ella_s",
+      "title": "Great for a quick lunch",
+      "rating": 4.5,
+      "body": "<p>Always come here when I need something fast. Never disappointed.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000004",
+        "00000000000000000000000b"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Never disappointed is all we ask for, Ella! Come back anytime and bring friends 🐔</p>",
+          "author": "owner_ganggang",
+          "role": "owner",
+          "createdAt": "2025-04-04T01:00:00.000Z",
+          "authorId": "000000000000000000000077"
+        }
+      ],
+      "createdAt": "2025-04-02T04:15:00.000Z",
+      "updatedAt": "2025-04-02T04:15:00.000Z",
+      "_id": "0000000000000000000003f9"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691a",
+      "user": "000000000000000000000007",
+      "username": "daniella",
+      "title": "Aesthetic spot",
+      "rating": 5,
+      "body": "<p>Great interiors, perfect for photos. Drinks are amazing and the playlist is good.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000005",
+        "000000000000000000000006",
+        "000000000000000000000008",
+        "000000000000000000000009",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you so much Daniella! We put a lot of love into the atmosphere here. Tag us in your photos! 📸</p>",
+          "author": "owner_callecafe",
+          "role": "owner",
+          "createdAt": "2025-01-07T03:00:00.000Z",
+          "authorId": "000000000000000000000072"
+        }
+      ],
+      "createdAt": "2025-01-05T08:00:00.000Z",
+      "updatedAt": "2025-01-05T08:00:00.000Z",
+      "_id": "0000000000000000000003fa"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691a",
+      "user": "000000000000000000000004",
+      "username": "miggy",
+      "title": "Trendy but pricey",
+      "rating": 3.5,
+      "body": "<p>Love the vibe, but meals are a bit expensive for students. Worth it for special occasions.</p>",
+      "helpfulVotes": [
+        "000000000000000000000002",
+        "00000000000000000000000b",
+        "00000000000000000000000a"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>We hear you, Miggy! We do have student-friendly options on the menu — ask our staff about our value picks next time. 🙏</p>",
+          "author": "owner_callecafe",
+          "role": "owner",
+          "createdAt": "2025-02-20T01:30:00.000Z",
+          "authorId": "000000000000000000000072"
+        }
+      ],
+      "createdAt": "2025-02-18T07:30:00.000Z",
+      "updatedAt": "2025-02-18T07:30:00.000Z",
+      "_id": "0000000000000000000003fb"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691a",
+      "user": "000000000000000000000001",
+      "username": "jane_d",
+      "title": "Best coffee on Taft",
+      "rating": 5,
+      "body": "<p>The cold brew here is unmatched. I come here every Friday as a treat to myself.</p>",
+      "helpfulVotes": [
+        "000000000000000000000003",
+        "000000000000000000000007",
+        "00000000000000000000000c",
+        "000000000000000000000009"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Friday treat well deserved, Jane! The cold brew is brewed fresh daily just for regulars like you ☕ See you this Friday!</p>",
+          "author": "owner_callecafe",
+          "role": "owner",
+          "createdAt": "2025-03-30T01:00:00.000Z",
+          "authorId": "000000000000000000000072"
+        }
+      ],
+      "createdAt": "2025-03-28T02:00:00.000Z",
+      "updatedAt": "2025-03-28T02:00:00.000Z",
+      "_id": "0000000000000000000003fc"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691b",
+      "user": "000000000000000000000003",
+      "username": "ella_s",
+      "title": "Budget-friendly",
+      "rating": 4,
+      "body": "<p>Good food at a reasonable price. Quick service too.</p>",
+      "helpfulVotes": ["000000000000000000000008", "00000000000000000000000a"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thank you, Ella! Budget-friendly is our commitment. Come back anytime! 🙏</p>",
+          "author": "owner_illo",
+          "role": "owner",
+          "createdAt": "2025-01-20T02:00:00.000Z",
+          "authorId": "000000000000000000000078"
+        }
+      ],
+      "createdAt": "2025-01-18T04:00:00.000Z",
+      "updatedAt": "2025-01-18T04:00:00.000Z",
+      "_id": "0000000000000000000003fd"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691b",
+      "user": "000000000000000000000001",
+      "username": "jane_d",
+      "title": "Great for students",
+      "rating": 4,
+      "body": "<p>Easy to grab meals before class. Tasty sandwiches!</p>",
+      "helpfulVotes": ["00000000000000000000000b", "00000000000000000000000c"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Sandwiches before class — the perfect fuel! Thanks for the love, Jane 😊</p>",
+          "author": "owner_illo",
+          "role": "owner",
+          "createdAt": "2025-03-02T01:00:00.000Z",
+          "authorId": "000000000000000000000078"
+        }
+      ],
+      "createdAt": "2025-02-28T03:00:00.000Z",
+      "updatedAt": "2025-02-28T03:00:00.000Z",
+      "_id": "0000000000000000000003fe"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691b",
+      "user": "000000000000000000000002",
+      "username": "marky",
+      "title": "Underrated",
+      "rating": 4.5,
+      "body": "<p>People sleep on this place. The silog meals are solid and you get a lot for the price.</p>",
+      "helpfulVotes": [
+        "000000000000000000000004",
+        "000000000000000000000005",
+        "000000000000000000000006",
+        "000000000000000000000009"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Ha! We are glad you found us, Marky. Tell your barkada — the silog secret is out 🍳</p>",
+          "author": "owner_illo",
+          "role": "owner",
+          "createdAt": "2025-04-12T01:00:00.000Z",
+          "authorId": "000000000000000000000078"
+        }
+      ],
+      "createdAt": "2025-04-10T00:30:00.000Z",
+      "updatedAt": "2025-04-10T00:30:00.000Z",
+      "_id": "0000000000000000000003ff"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691c",
+      "user": "000000000000000000000005",
+      "username": "kiks_m",
+      "title": "Delicious adobo",
+      "rating": 5,
+      "body": "<p>Classic Filipino dishes done right. The adobo has the perfect balance of sour and savory.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000003",
+        "000000000000000000000007",
+        "000000000000000000000008",
+        "00000000000000000000000b",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Your kind words mean everything to us, Kiks! The adobo recipe has been in the family for years. 🙏🇵🇭</p>",
+          "author": "owner_angrydobo",
+          "role": "owner",
+          "createdAt": "2025-01-27T01:00:00.000Z",
+          "authorId": "000000000000000000000073"
+        }
+      ],
+      "createdAt": "2025-01-25T04:30:00.000Z",
+      "updatedAt": "2025-01-25T04:30:00.000Z",
+      "_id": "000000000000000000000400"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691c",
+      "user": "000000000000000000000006",
+      "username": "sophia",
+      "title": "Cozy vibes",
+      "rating": 4,
+      "body": "<p>Loved the adobo, place is small but comfy. Service could be faster.</p>",
+      "helpfulVotes": ["000000000000000000000004", "00000000000000000000000a"],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Thanks for the honest feedback, Sophia! We are training more staff to get orders out faster. Hope to see you again!</p>",
+          "author": "owner_angrydobo",
+          "role": "owner",
+          "createdAt": "2025-03-07T02:00:00.000Z",
+          "authorId": "000000000000000000000073"
+        }
+      ],
+      "createdAt": "2025-03-05T05:00:00.000Z",
+      "updatedAt": "2025-03-05T05:00:00.000Z",
+      "_id": "000000000000000000000401"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691c",
+      "user": "000000000000000000000004",
+      "username": "miggy",
+      "title": "Authentic Filipino comfort food",
+      "rating": 4.5,
+      "body": "<p>Reminds me of home cooking. The pork adobo is phenomenal and the rice is always hot.</p>",
+      "helpfulVotes": [
+        "000000000000000000000002",
+        "000000000000000000000009",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Home cooking is exactly the feeling we want to give! The pork adobo is made fresh every morning. Thanks, Miggy! 🇵🇭</p>",
+          "author": "owner_angrydobo",
+          "role": "owner",
+          "createdAt": "2025-04-22T01:00:00.000Z",
+          "authorId": "000000000000000000000073"
+        }
+      ],
+      "createdAt": "2025-04-20T04:00:00.000Z",
+      "updatedAt": "2025-04-20T04:00:00.000Z",
+      "_id": "000000000000000000000402"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691d",
+      "user": "000000000000000000000007",
+      "username": "daniella",
+      "title": "Chill café",
+      "rating": 4,
+      "body": "<p>Perfect place to relax with friends. Drinks are great and the sunset view is nice.</p>",
+      "helpfulVotes": [
+        "000000000000000000000006",
+        "00000000000000000000000b",
+        "00000000000000000000000a"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>Relaxing with friends is what Dapit-Hapon was made for! Come back for the sunset again soon 🌇</p>",
+          "author": "owner_dapithapon",
+          "role": "owner",
+          "createdAt": "2025-02-09T01:00:00.000Z",
+          "authorId": "000000000000000000000079"
+        }
+      ],
+      "createdAt": "2025-02-07T09:30:00.000Z",
+      "updatedAt": "2025-02-07T09:30:00.000Z",
+      "_id": "000000000000000000000403"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691d",
+      "user": "000000000000000000000004",
+      "username": "miggy",
+      "title": "Nice menu",
+      "rating": 4.5,
+      "body": "<p>Lots of options and very tasty meals. The pasta dishes are standout.</p>",
+      "helpfulVotes": [
+        "000000000000000000000001",
+        "000000000000000000000003",
+        "00000000000000000000000c"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>The pasta is chef-made daily, Miggy! Glad the menu had something for everyone. Hope to see you back soon 🍝</p>",
+          "author": "owner_dapithapon",
+          "role": "owner",
+          "createdAt": "2025-03-14T01:00:00.000Z",
+          "authorId": "000000000000000000000079"
+        }
+      ],
+      "createdAt": "2025-03-12T10:00:00.000Z",
+      "updatedAt": "2025-03-12T10:00:00.000Z",
+      "_id": "000000000000000000000404"
+    },
+    {
+      "establishment": "69a95a4dabf2603b5823691d",
+      "user": "000000000000000000000002",
+      "username": "marky",
+      "title": "Great afternoon hangout",
+      "rating": 4,
+      "body": "<p>The name says it all — best visited in the afternoon. Good coffee and the ambiance is relaxing.</p>",
+      "helpfulVotes": [
+        "000000000000000000000007",
+        "000000000000000000000009",
+        "000000000000000000000008"
+      ],
+      "unhelpfulVotes": [],
+      "media": [],
+      "edited": false,
+      "responseThread": [
+        {
+          "body": "<p>The afternoon light here really is something special! Thanks for capturing the vibe perfectly, Marky ☀️</p>",
+          "author": "owner_dapithapon",
+          "role": "owner",
+          "createdAt": "2025-04-24T01:00:00.000Z",
+          "authorId": "000000000000000000000079"
+        }
+      ],
+      "createdAt": "2025-04-22T08:45:00.000Z",
+      "updatedAt": "2025-04-22T08:45:00.000Z",
+      "_id": "000000000000000000000405"
+    }
+  ],
+  "users": [
+    {
+      "username": "jane_d",
+      "email": "jane_d@example.test",
+      "description": "DLSU student who loves trying new places around Taft.",
+      "role": "student",
+      "_id": "000000000000000000000001",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "marky",
+      "email": "marky@example.test",
+      "description": "Food explorer and coffee lover.",
+      "role": "student",
+      "_id": "000000000000000000000002",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "ella_s",
+      "email": "ella_s@example.test",
+      "description": "Always on the hunt for affordable eats near campus.",
+      "role": "student",
+      "_id": "000000000000000000000003",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "miggy",
+      "email": "miggy@example.test",
+      "description": "ITMGT senior. Reviews on the go.",
+      "role": "student",
+      "_id": "000000000000000000000004",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "kiks_m",
+      "email": "kiks_m@example.test",
+      "description": "Foodie and board game enthusiast.",
+      "role": "student",
+      "_id": "000000000000000000000005",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "sophia",
+      "email": "sophia@example.test",
+      "description": "Looking for the best drinks along Taft.",
+      "role": "student",
+      "_id": "000000000000000000000006",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "daniella",
+      "email": "daniella@example.test",
+      "description": "Aesthetic café hunter.",
+      "role": "student",
+      "_id": "000000000000000000000007",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "carlos_r",
+      "email": "carlos_r@example.test",
+      "description": "CS student, fueled by coffee and deadlines.",
+      "role": "student",
+      "_id": "000000000000000000000008",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "bea_t",
+      "email": "bea_t@example.test",
+      "description": "Bio major who rates everything like a thesis.",
+      "role": "student",
+      "_id": "000000000000000000000009",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "lance_v",
+      "email": "lance_v@example.test",
+      "description": "Engineering student. Eats fast, reviews faster.",
+      "role": "student",
+      "_id": "00000000000000000000000a",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "trisha_m",
+      "email": "trisha_m@example.test",
+      "description": "Comms student and aspiring food blogger.",
+      "role": "student",
+      "_id": "00000000000000000000000b",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "pau_g",
+      "email": "pau_g@example.test",
+      "description": "Psychology major. Reads menus like personality tests.",
+      "role": "student",
+      "_id": "00000000000000000000000c",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_prelude",
+      "email": "owner_prelude@example.test",
+      "description": "Official Prelude account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236914",
+      "_id": "000000000000000000000070",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_barn",
+      "email": "owner_barn@example.test",
+      "description": "Official Barn by Borro account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236915",
+      "_id": "000000000000000000000071",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_callecafe",
+      "email": "owner_callecafe@example.test",
+      "description": "Official Calle Cafe account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b5823691a",
+      "_id": "000000000000000000000072",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_angrydobo",
+      "email": "owner_angrydobo@example.test",
+      "description": "Official Angrydobo account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b5823691c",
+      "_id": "000000000000000000000073",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_laelotes",
+      "email": "owner_laelotes@example.test",
+      "description": "Official La Elotes account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236918",
+      "_id": "000000000000000000000074",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_asterisko",
+      "email": "owner_asterisko@example.test",
+      "description": "Official Asterisko account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236916",
+      "_id": "000000000000000000000075",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_kuhmeal",
+      "email": "owner_kuhmeal@example.test",
+      "description": "Official KuhMeal account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236917",
+      "_id": "000000000000000000000076",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_ganggang",
+      "email": "owner_ganggang@example.test",
+      "description": "Official Gang Gang Chicken account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b58236919",
+      "_id": "000000000000000000000077",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_illo",
+      "email": "owner_illo@example.test",
+      "description": "Official Illo account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b5823691b",
+      "_id": "000000000000000000000078",
+      "avatar": "/images/avatar.svg"
+    },
+    {
+      "username": "owner_dapithapon",
+      "email": "owner_dapithapon@example.test",
+      "description": "Official Dapit-Hapon Cafe account.",
+      "role": "owner",
+      "ownedEstablishment": "69a95a4dabf2603b5823691d",
+      "_id": "000000000000000000000079",
+      "avatar": "/images/avatar.svg"
+    }
+  ]
+}

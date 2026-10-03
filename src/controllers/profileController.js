@@ -1,161 +1,73 @@
+const mongoose = require('mongoose');
+const { promisify } = require('node:util');
 const User = require('../models/users');
-const cloudinary = require('../config/cloudinary');
-const streamifier = require('streamifier');
 const Review = require('../models/reviews');
-const Establishment = require('../models/establishments');
-
-// wraps streamifier in a promise so the route handler can await the cloudinary url return
-const uploadToCloudinary = (fileBuffer) => {
-    return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-            { folder: 'tafteats' },
-            (error, result) => {
-                if (result) resolve(result);
-                else reject(error);
-            }
-        );
-        streamifier.createReadStream(fileBuffer).pipe(stream);
-    });
-};
-
-const deleteFromCloudinary = async (url) => {
-    if (!url || url.includes('defaultprofile')) return; 
-    try {
-        const parts = url.split('/tafteats/');
-        if (parts.length === 2) {
-            const filename = parts[1].split('.')[0];
-            const publicId = `tafteats/${filename}`;
-            await cloudinary.uploader.destroy(publicId);
-        }
-    } catch (err) {
-        console.error('Cloudinary delete error:', err);
-    }
-};
-
+const v = require('../lib/validation');
+const { HttpError } = require('../lib/errors');
+const media = require('../services/media');
 exports.getProfilePage = async (req, res) => {
-    try {
-        const userID = req.params.userId;
-        const user = await User.findById(userID).lean();
-
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-        
-        res.render('viewProfile', {
-            user: user,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
+  const user = await User.findById(v.objectId(req.params.userId))
+    .select('username avatar description role createdAt')
+    .lean();
+  if (!user) throw new HttpError(404, 'Profile not found.');
+  res.render('viewProfile', { user });
 };
-
-exports.getEditPage = async (req, res) => {
-    try {
-        const userID = req.params.userId;
-        const user = await User.findById(userID).lean();
-
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-        
-        res.render('editProfile', {
-            user: user,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-};
-
+exports.getEditPage = (req, res) => res.render('editProfile', { user: req.user });
 exports.updateProfile = async (req, res) => {
-    try {
-        const userID = req.params.userId;
-        const { username, description } = req.body;
-
-        // Back-end validation
-        if (!username || !username.trim()) {
-            return res.status(400).json({ success: false, message: 'Username cannot be empty.' });
-        }
-        if (!description || !description.trim()) {
-            return res.status(400).json({ success: false, message: 'Description cannot be empty.' });
-        }
-        // End validation
-
-        const user = await User.findById(userID);
-        if (!user) return res.status(404).send("User not found");
-
-        const updatedData = {
-            username: username.trim(),
-            description: description.trim()
-        };
-
-        // checks if a new file buffer exists and overwrites avatar with the new cloudinary link
-        if (req.file) {
-            const result = await uploadToCloudinary(req.file.buffer);
-            updatedData.avatar = result.secure_url;
-            
-            await deleteFromCloudinary(user.avatar);
-        }
-
-        await User.findByIdAndUpdate(userID, updatedData);
-
-        // keeps the session storage synced so the header updates instantly without relogging
-        if (req.session.userId === userID) {
-            if (updatedData.avatar)    req.session.avatar   = updatedData.avatar;
-            if (updatedData.username)  req.session.username = updatedData.username;
-        }
-
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
+  const username = v.username(req.body.username);
+  const description = v.text(req.body.description, 'Bio', 500, { optional: true });
+  const existing = await User.exists({ username, _id: { $ne: req.user._id } });
+  if (existing) throw new HttpError(409, 'Username already taken.');
+  const urls = await media.uploadFiles(req.file ? [req.file] : [], { avatar: true });
+  const oldAvatar = req.user.avatar;
+  try {
+    req.user.username = username;
+    req.user.description = description;
+    if (urls[0]) req.user.avatar = urls[0];
+    await req.user.save();
+  } catch (err) {
+    await media.deleteFiles(urls);
+    throw err;
+  }
+  if (urls[0]) await media.deleteFiles([oldAvatar]);
+  res.json({ success: true, redirect: `/profile/${req.user._id}` });
 };
-
 exports.deleteAccount = async (req, res) => {
-    try {
-        const userID = req.params.userId;
-
-        if (req.session.userId !== userID) {
-            return res.status(403).json({ success: false, message: 'Unauthorized.' });
-        }
-
-        const user = await User.findById(userID);
-        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
-
-        await deleteFromCloudinary(user.avatar);
-
-        const userReviews = await Review.find({ user: userID });
-        const affectedEstablishmentIds = new Set();
-
-        for (const review of userReviews) {
-            affectedEstablishmentIds.add(review.establishment.toString());
-            
-            if (review.media && review.media.length > 0) {
-                for (const url of review.media) {
-                    await deleteFromCloudinary(url);
-                }
-            }
-            await review.deleteOne();
-        }
-
-        for (const estId of affectedEstablishmentIds) {
-            const remainingReviews = await Review.find({ establishment: estId }, 'rating');
-            let rounded = 0;
-            if (remainingReviews.length > 0) {
-                const mean = remainingReviews.reduce((sum, r) => sum + r.rating, 0) / remainingReviews.length;
-                rounded = Math.round(mean * 2) / 2;
-            }
-            await Establishment.findByIdAndUpdate(estId, { rating: rounded });
-        }
-
-        await User.findByIdAndDelete(userID);
-        req.session.destroy();
-
-        res.json({ success: true, message: 'Account and all associated data permanently deleted.' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error during account deletion.' });
-    }
+  const password = v.password(req.body.password, { login: true });
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user || !(await user.comparePassword(password)))
+    throw new HttpError(403, 'Enter your current password to delete this account.');
+  let urls;
+  await mongoose.connection.transaction(async (session) => {
+    const reviews = await Review.find({ user: user._id }).session(session).lean();
+    urls = [user.avatar, ...reviews.flatMap((r) => r.media)];
+    await Review.deleteMany({ user: user._id }, { session });
+    await Review.updateMany(
+      {},
+      { $pull: { helpfulVotes: user._id, unhelpfulVotes: user._id }, $inc: { __v: 1 } },
+      { session },
+    );
+    await Review.updateMany(
+      { 'responseThread.authorId': user._id },
+      {
+        $set: {
+          'responseThread.$[msg].author': 'Deleted account',
+          'responseThread.$[msg].authorId': null,
+          'responseThread.$[msg].body': '<p>Message removed after account deletion.</p>',
+        },
+        $inc: { __v: 1 },
+      },
+      { session, arrayFilters: [{ 'msg.authorId': user._id }] },
+    );
+    await User.deleteOne({ _id: user._id }, { session });
+  });
+  await promisify(req.session.destroy).call(req.session);
+  res.clearCookie('tafteats.sid', {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: req.app.locals.production,
+  });
+  await media.deleteFiles(urls);
+  res.json({ success: true, redirect: '/establishments' });
 };

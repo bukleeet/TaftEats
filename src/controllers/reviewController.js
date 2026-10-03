@@ -1,568 +1,261 @@
-const Review        = require('../models/reviews');
+const mongoose = require('mongoose');
+const Review = require('../models/reviews');
+const User = require('../models/users');
 const Establishment = require('../models/establishments');
-const cloudinary    = require('../config/cloudinary');
-const streamifier   = require('streamifier');
+const v = require('../lib/validation');
+const { HttpError } = require('../lib/errors');
+const { isReviewer, isOwner, present, ratings } = require('../services/reviews');
+const media = require('../services/media');
 
-// strips invalid html tags to prevent xss without needing heavy external packages
-const ALLOWED_TAGS = /^\/?(?:b|i|u|s|strong|em|br|p|div|ul|ol|li)$/i;
-
-function sanitize(html) {
-  if (!html) return '';
-  let clean = html.replace(/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, '<$1>');
-  clean = clean.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tag) => {
-    return ALLOWED_TAGS.test(tag) ? match : '';
+async function getReview(req) {
+  if (req.review) return req.review;
+  const review = await Review.findById(v.objectId(req.params.reviewId));
+  if (!review) throw new HttpError(404, 'Review not found.');
+  return review;
+}
+function requireReviewer(review, user) {
+  if (!isReviewer(review, user))
+    throw new HttpError(403, 'Only the original reviewer can change this review.');
+}
+async function list(req, res, establishment = null) {
+  const { page, limit, skip } = v.pagination(req.query);
+  const filter = establishment ? { establishment: establishment._id } : {};
+  const count = await Review.countDocuments(filter);
+  const reviews = await Review.find(filter)
+    .select('-responseThread')
+    .populate('establishment', 'name')
+    .sort({ createdAt: -1, _id: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+  res.render('reviews', {
+    reviews: reviews.map((r) => present(r, req.user)),
+    establishment,
+    page,
+    pages: Math.ceil(count / limit),
+    count,
   });
-  const entities = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
-  clean = clean.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, e => entities[e.toLowerCase()] || '');
-  return clean;
 }
-
-async function recalcEstablishmentRating(establishmentId) {
-  const reviews = await Review.find({ establishment: establishmentId }, 'rating');
-  if (!reviews.length) return;
-  const mean = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-  const rounded = Math.round(mean * 2) / 2;
-  await Establishment.findByIdAndUpdate(establishmentId, { rating: rounded });
-}
-
-// checks if the session user owns this review. we check both objectid and username because seeded database records might have mismatched objectids if the db was rebuilt
-function isReviewer(review, session) {
-  if (!session.userId) return false;
-  const byId       = review.user.toString() === session.userId;
-  const byUsername = review.username === session.username;
-  return byId || byUsername;
-}
-
-// wraps the upload stream in a promise so we can await the result before saving the db record
-const uploadToCloudinary = (fileBuffer) => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: 'tafteats' },
-      (error, result) => {
-        if (result) resolve(result);
-        else reject(error);
-      }
-    );
-    streamifier.createReadStream(fileBuffer).pipe(stream);
-  });
-};
-
+exports.getAllReviewsPage = (req, res) => list(req, res);
 exports.getReviewsPage = async (req, res) => {
-  try {
-    const estId = req.params.id;
-    const establishment = await Establishment.findById(estId).lean();
-    if (!establishment) return res.status(404).send('Establishment not found');
-
-    const reviews = await Review.find({ establishment: estId })
-      .sort({ createdAt: -1 })
-      .lean({ virtuals: true });
-
-    const userId = req.session.userId || null;
-    const reviewsWithVote = reviews.map(r => ({
-      ...r,
-      helpfulCount:   r.helpfulVotes.length,
-      unhelpfulCount: r.unhelpfulVotes.length,
-      userVote: userId
-        ? r.helpfulVotes.some(id => id.toString() === userId)
-          ? 'helpful'
-          : r.unhelpfulVotes.some(id => id.toString() === userId)
-            ? 'unhelpful'
-            : null
-        : null,
-      isReviewer: isReviewer(r, req.session)
-    }));
-
-    res.render('reviews', {
-      establishment,
-      reviews: reviewsWithVote,
-      user: userId
-        ? {
-            _id:                userId,
-            username:           req.session.username,
-            role:               req.session.role,
-            ownedEstablishment: req.session.ownedEstablishment
-          }
-        : null
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
+  const establishment = await Establishment.findById(v.objectId(req.params.id)).lean();
+  if (!establishment) throw new HttpError(404, 'Restaurant not found.');
+  Object.assign(
+    establishment,
+    (await ratings()).get(String(establishment._id)) || { rating: 0, reviewCount: 0 },
+  );
+  await list(req, res, establishment);
 };
-
-exports.getAllReviewsPage = async (req, res) => {
-  try {
-    const reviews = await Review.find()
-      .populate('establishment')
-      .sort({ createdAt: -1 })
-      .lean({ virtuals: true });
-
-    const userId = req.session.userId || null;
-
-    res.render('reviews', {
-      reviews: reviews.map(r => ({
-        ...r,
-        helpfulCount:   r.helpfulVotes.length,
-        unhelpfulCount: r.unhelpfulVotes.length,
-        isReviewer: isReviewer(r, req.session)
-      })),
-      establishment: null,
-      user: userId
-        ? {
-            _id:      userId,
-            username: req.session.username,
-            role:     req.session.role
-          }
-        : null
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-};
-
-exports.createReview = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
-    }
-
-    const { title, body, rating, establishment } = req.body;
-
-    // Back-end validation
-    if (!title || !title.trim()) {
-      return res.status(400).json({ success: false, message: 'Review title is required.' });
-    }
-    if (!body || !body.trim()) {
-      return res.status(400).json({ success: false, message: 'Review body is required.' });
-    }
-    if (!rating) {
-      return res.status(400).json({ success: false, message: 'A star rating is required.' });
-    }
-    const ratingNum = Number(rating);
-    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-      return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5.' });
-    }
-    if (!establishment) {
-      return res.status(400).json({ success: false, message: 'Establishment is required.' });
-    }
-    // End validation
-
-    let mediaUrls = [];
-    
-    // iterate through the memory buffers and push the returned cloudinary urls to our array
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
-        mediaUrls.push(result.secure_url);
-      }
-    }
-
-    const review = await Review.create({
-      title:         title.trim(),
-      body:          sanitize(body || ''),
-      rating:        ratingNum,
-      establishment,
-      user:          req.session.userId,
-      username:      req.session.username,
-      media:         mediaUrls 
-    });
-
-    await recalcEstablishmentRating(establishment);
-    res.status(201).json({ success: true, review });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to create review.' });
-  }
-};
-
 exports.getReviewDetail = async (req, res) => {
+  const review = await Review.findById(v.objectId(req.params.reviewId))
+    .populate('establishment', 'name')
+    .lean();
+  if (!review || !review.establishment) throw new HttpError(404, 'Review not found.');
+  res.render('reviewDetail', { review: present(review, req.user) });
+};
+exports.createReview = async (req, res) => {
+  const data = {
+    title: v.text(req.body.title, 'Title', 120),
+    body: v.richText(req.body.body),
+    rating: v.rating(req.body.rating),
+    establishment: v.objectId(req.body.establishment),
+  };
+  if (!(await Establishment.exists({ _id: data.establishment })))
+    throw new HttpError(404, 'Restaurant not found.');
+  if (String(req.user.ownedEstablishment) === data.establishment)
+    throw new HttpError(403, 'Owners cannot review their own restaurant.');
+  const urls = await media.uploadFiles(req.files);
+  let review;
   try {
-    const review = await Review.findById(req.params.reviewId)
-      .populate('establishment')
-      .lean({ virtuals: true });
-
-    if (!review) return res.status(404).send('Review not found');
-
-    const userId = req.session.userId || null;
-    const userVote = userId
-      ? review.helpfulVotes.some(id => id.toString() === userId)
-        ? 'helpful'
-        : review.unhelpfulVotes.some(id => id.toString() === userId)
-          ? 'unhelpful'
-          : null
-      : null;
-
-    const reviewerFlag = isReviewer(review, req.session);
-
-    res.render('reviewDetail', {
-      review: {
-        ...review,
-        userVote,
-        helpfulCount:    review.helpfulVotes.length,
-        unhelpfulCount:  review.unhelpfulVotes.length,
-        establishmentId: review.establishment._id.toString(),
-        reviewerId:      review.user.toString(),
-        isReviewer:      reviewerFlag
-      },
-      user: userId
-        ? {
-            _id:                userId,
-            username:           req.session.username,
-            role:               req.session.role,
-            ownedEstablishment: req.session.ownedEstablishment
-          }
-        : null
+    review = await Review.create({
+      ...data,
+      user: req.user._id,
+      username: req.user.username,
+      media: urls,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+    await media.deleteFiles(urls);
+    throw err;
   }
+  res
+    .status(201)
+    .json({ success: true, review: present(review, req.user), redirect: `/reviews/${review._id}` });
 };
-
 exports.editReview = async (req, res) => {
-    try {
-        if (!req.session.userId) return res.status(401).json({ success: false, message: 'Must be logged in.' });
-
-        const review = await Review.findById(req.params.reviewId);
-        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-        if (!isReviewer(review, req.session)) return res.status(403).json({ success: false, message: 'Not authorized.' });
-
-        const { title, body, rating, deleteMedia } = req.body;
-
-        // Back-end validation
-        if (title !== undefined && !title.trim()) {
-          return res.status(400).json({ success: false, message: 'Review title cannot be empty.' });
-        }
-        if (body !== undefined && !body.trim()) {
-          return res.status(400).json({ success: false, message: 'Review body cannot be empty.' });
-        }
-        if (rating !== undefined) {
-          const ratingNum = Number(rating);
-          if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-            return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5.' });
-          }
-        }
-        // End validation
-
-        if (title)  review.title  = title.trim();
-        if (body)   review.body   = sanitize(body);
-        if (rating) review.rating = Number(rating);
-        review.edited = true;
-
-        if (deleteMedia) {
-            const toDelete = Array.isArray(deleteMedia) ? deleteMedia : [deleteMedia];
-            
-            for (const url of toDelete) {
-                await deleteFromCloudinary(url);
-            }
-            
-            review.media = review.media.filter(url => !toDelete.includes(url));
-        }
-
-        if (req.files && req.files.length > 0) {
-            for (const file of req.files) {
-                const result = await uploadToCloudinary(file.buffer);
-                review.media.push(result.secure_url);
-            }
-            review.media = review.media.slice(0, 10);
-        }
-
-        await review.save();
-        await recalcEstablishmentRating(review.establishment);
-        res.json({ success: true, review });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Failed to edit review.' });
-    }
+  const review = await getReview(req);
+  requireReviewer(review, req.user);
+  if (req.body.title !== undefined) review.title = v.text(req.body.title, 'Title', 120);
+  if (req.body.body !== undefined) review.body = v.richText(req.body.body);
+  if (req.body.rating !== undefined) review.rating = v.rating(req.body.rating);
+  const removals =
+    req.body.deleteMedia === undefined
+      ? []
+      : Array.isArray(req.body.deleteMedia)
+        ? req.body.deleteMedia
+        : [req.body.deleteMedia];
+  if (
+    removals.length > 10 ||
+    removals.some((url) => typeof url !== 'string' || !review.media.includes(url))
+  )
+    throw new HttpError(400, 'You can only remove media attached to this review.');
+  const kept = review.media.filter((url) => !removals.includes(url));
+  if (kept.length + (req.files?.length || 0) > 10)
+    throw new HttpError(400, 'A review can have up to 10 attachments.');
+  const urls = await media.uploadFiles(req.files);
+  review.media = [...kept, ...urls];
+  review.edited = true;
+  try {
+    await review.save();
+  } catch (err) {
+    await media.deleteFiles(urls);
+    throw err;
+  }
+  await media.deleteFiles(removals);
+  res.json({ success: true, review: present(review, req.user) });
 };
-
 exports.deleteReview = async (req, res) => {
-    try {
-        if (!req.session.userId) return res.status(401).json({ success: false, message: 'Must be logged in.' });
-
-        const review = await Review.findById(req.params.reviewId);
-        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-        if (!isReviewer(review, req.session)) return res.status(403).json({ success: false, message: 'Not authorized.' });
-
-        if (review.media && review.media.length > 0) {
-            for (const url of review.media) {
-                await deleteFromCloudinary(url);
-            }
-        }
-
-        const estId = review.establishment;
-        await review.deleteOne();
-        await recalcEstablishmentRating(estId);
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Failed to delete review.' });
-    }
+  const review = await getReview(req);
+  requireReviewer(review, req.user);
+  const deleted = await Review.deleteOne({ _id: review._id, user: req.user._id, __v: review.__v });
+  if (!deleted.deletedCount) throw new HttpError(409, 'Review changed. Refresh and try again.');
+  await media.deleteFiles(review.media);
+  res.json({ success: true, redirect: `/establishments/${review.establishment}/reviews` });
 };
-
 exports.voteReview = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
-    }
-
-    const { voteType } = req.body;
-    if (!['helpful', 'unhelpful'].includes(voteType)) {
-      return res.status(400).json({ success: false, message: 'Invalid vote type.' });
-    }
-
-    const review = await Review.findById(req.params.reviewId);
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    const userId           = req.session.userId;
-    const alreadyHelpful   = review.helpfulVotes.some(id => id.toString() === userId);
-    const alreadyUnhelpful = review.unhelpfulVotes.some(id => id.toString() === userId);
-
-    if (voteType === 'helpful') {
-      if (alreadyHelpful) {
-        review.helpfulVotes = review.helpfulVotes.filter(id => id.toString() !== userId);
-      } else {
-        review.helpfulVotes.push(userId);
-        review.unhelpfulVotes = review.unhelpfulVotes.filter(id => id.toString() !== userId);
-      }
-    } else {
-      if (alreadyUnhelpful) {
-        review.unhelpfulVotes = review.unhelpfulVotes.filter(id => id.toString() !== userId);
-      } else {
-        review.unhelpfulVotes.push(userId);
-        review.helpfulVotes = review.helpfulVotes.filter(id => id.toString() !== userId);
-      }
-    }
-
-    await review.save();
-
-    res.json({
-      success:        true,
-      helpfulCount:   review.helpfulVotes.length,
-      unhelpfulCount: review.unhelpfulVotes.length,
-      userVote: review.helpfulVotes.some(id => id.toString() === userId)
-        ? 'helpful'
-        : review.unhelpfulVotes.some(id => id.toString() === userId)
-          ? 'unhelpful'
-          : null
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error.' });
+  if (!['helpful', 'unhelpful'].includes(req.body.voteType))
+    throw new HttpError(400, 'Invalid vote type.');
+  const userId = new mongoose.Types.ObjectId(req.user._id);
+  const selected = `${req.body.voteType}Votes`;
+  const other = req.body.voteType === 'helpful' ? 'unhelpfulVotes' : 'helpfulVotes';
+  const review = await Review.findOneAndUpdate(
+    { _id: v.objectId(req.params.reviewId), user: { $ne: userId } },
+    [
+      {
+        $set: {
+          [selected]: {
+            $cond: [
+              { $in: [userId, { $ifNull: [`$${selected}`, []] }] },
+              { $setDifference: [`$${selected}`, [userId]] },
+              { $setUnion: [{ $ifNull: [`$${selected}`, []] }, [userId]] },
+            ],
+          },
+          [other]: { $setDifference: [{ $ifNull: [`$${other}`, []] }, [userId]] },
+          __v: { $add: [{ $ifNull: ['$__v', 0] }, 1] },
+        },
+      },
+    ],
+    { new: true },
+  );
+  if (!review) {
+    if (await Review.exists({ _id: req.params.reviewId }))
+      throw new HttpError(403, 'You cannot vote on your own review.');
+    throw new HttpError(404, 'Review not found.');
   }
+  const r = present(review, req.user);
+  res.json({
+    success: true,
+    helpfulCount: r.helpfulCount,
+    unhelpfulCount: r.unhelpfulCount,
+    userVote: r.userVote,
+  });
 };
-
-exports.ownerRespond = async (req, res) => {
-  try {
-    if (!req.session.userId || req.session.role !== 'owner') {
-      return res.status(403).json({ success: false, message: 'Only establishment owners can respond.' });
-    }
-
-    // Back-end validation
-    if (!req.body.body || !req.body.body.trim()) {
-      return res.status(400).json({ success: false, message: 'Response cannot be empty.' });
-    }
-    // End validation
-
-    const review = await Review.findById(req.params.reviewId).populate('establishment');
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    if (review.establishment._id.toString() !== req.session.ownedEstablishment) {
-      return res.status(403).json({ success: false, message: 'You can only respond to reviews on your establishment.' });
-    }
-
-    const thread = review.responseThread;
-    const lastMsg = thread[thread.length - 1];
-
-    if (lastMsg && lastMsg.role === 'owner') {
-      return res.status(400).json({ success: false, message: 'You already responded. Wait for the reviewer to reply first.' });
-    }
-
-    thread.push({
-      body:   sanitize(req.body.body || ''),
-      author: req.session.username,
-      role:   'owner'
-    });
-
-    await review.save();
-    res.json({ success: true, responseThread: review.responseThread });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to post response.' });
-  }
-};
-
-exports.reviewerReply = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
-    }
-
-    // Back-end validation
-    if (!req.body.body || !req.body.body.trim()) {
-      return res.status(400).json({ success: false, message: 'Reply cannot be empty.' });
-    }
-    // End validation
-
-    const review = await Review.findById(req.params.reviewId);
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    if (!isReviewer(review, req.session)) {
-      return res.status(403).json({ success: false, message: 'Only the original reviewer can reply here.' });
-    }
-
-    const thread = review.responseThread;
-    const lastMsg = thread[thread.length - 1];
-
-    if (!lastMsg || lastMsg.role !== 'owner') {
-      return res.status(400).json({ success: false, message: 'You can only reply after the owner responds.' });
-    }
-
-    thread.push({
-      body:   sanitize(req.body.body || ''),
-      author: req.session.username,
-      role:   'reviewer'
-    });
-
-    await review.save();
-    res.json({ success: true, responseThread: review.responseThread });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to post reply.' });
-  }
-};
-
+async function respond(req, res, role) {
+  const body = v.richText(req.body.body);
+  const review = await getReview(req);
+  if (role === 'owner' ? !isOwner(review, req.user) : !isReviewer(review, req.user))
+    throw new HttpError(403, 'You cannot reply to this conversation.');
+  const last = review.responseThread.at(-1);
+  if (
+    (role === 'owner' && last?.role === 'owner') ||
+    (role === 'reviewer' && last?.role !== 'owner')
+  )
+    throw new HttpError(409, 'Wait for the other participant to reply.');
+  if (review.responseThread.length >= 100)
+    throw new HttpError(400, 'This conversation has reached its message limit.');
+  review.responseThread.push({ body, author: req.user.username, authorId: req.user._id, role });
+  await review.save();
+  res.json({ success: true, responseThread: present(review, req.user).responseThread });
+}
+exports.ownerRespond = (req, res) => respond(req, res, 'owner');
+exports.reviewerReply = (req, res) => respond(req, res, 'reviewer');
+function ownsMessage(msg, review, user) {
+  // Legacy messages without an immutable author ID must be migrated before editing.
+  return (
+    msg.authorId &&
+    String(msg.authorId) === String(user._id) &&
+    (msg.role === 'owner' ? isOwner(review, user) : isReviewer(review, user))
+  );
+}
 exports.deleteLastThreadMessage = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
-    }
-
-    const review = await Review.findById(req.params.reviewId).populate('establishment');
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    const thread = review.responseThread;
-    if (!thread.length) {
-      return res.status(400).json({ success: false, message: 'Nothing to delete.' });
-    }
-
-    const lastMsg    = thread[thread.length - 1];
-    const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
-    const reviewerOk = isReviewer(review, req.session);
-
-    if (lastMsg.role === 'owner' && !isOwner) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-    if (lastMsg.role === 'reviewer' && !reviewerOk) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-
-    review.responseThread.pop();
-    await review.save();
-    res.json({ success: true, responseThread: review.responseThread });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to delete message.' });
-  }
+  const review = await getReview(req);
+  const msg = review.responseThread.at(-1);
+  if (!msg) throw new HttpError(404, 'Message not found.');
+  if (!ownsMessage(msg, review, req.user))
+    throw new HttpError(403, 'Only the author can remove their last message.');
+  review.responseThread.pop();
+  await review.save();
+  res.json({ success: true });
 };
-
 exports.editThreadMessage = async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: 'Must be logged in.' });
-    }
-
-    // Back-end validation
-    if (!req.body.body || !req.body.body.trim()) {
-      return res.status(400).json({ success: false, message: 'Message cannot be empty.' });
-    }
-    // End validation
-
-    const { messageIndex } = req.params;
-    const review = await Review.findById(req.params.reviewId).populate('establishment');
-    if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-
-    const idx = parseInt(messageIndex);
-    const msg = review.responseThread[idx];
-    if (!msg) return res.status(404).json({ success: false, message: 'Message not found.' });
-
-    const isOwner    = req.session.role === 'owner' && review.establishment._id.toString() === req.session.ownedEstablishment;
-    const reviewerOk = isReviewer(review, req.session);
-
-    if (msg.role === 'owner' && !isOwner) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-    if (msg.role === 'reviewer' && !reviewerOk) {
-      return res.status(403).json({ success: false, message: 'Not authorized.' });
-    }
-
-    msg.body      = sanitize(req.body.body || '');
-    msg.edited    = true;
-    msg.updatedAt = new Date();
-
-    await review.save();
-    res.json({ success: true, responseThread: review.responseThread });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to edit message.' });
-  }
+  if (!/^\d{1,3}$/.test(req.params.messageIndex))
+    throw new HttpError(400, 'Invalid message index.');
+  const review = await getReview(req);
+  const msg = review.responseThread[Number(req.params.messageIndex)];
+  if (!msg) throw new HttpError(404, 'Message not found.');
+  if (!ownsMessage(msg, review, req.user))
+    throw new HttpError(403, 'Only the author can edit this message.');
+  msg.body = v.richText(req.body.body);
+  msg.edited = true;
+  msg.updatedAt = new Date();
+  await review.save();
+  res.json({ success: true });
 };
-
 exports.getUserProfileActivity = async (req, res) => {
-  try {
-    // allows fetching activity for a specific user via query string, otherwise defaults to the logged-in user
-    const userId   = req.query.userId || req.session.userId;
-    const username = req.query.userId
-      ? (await require('../models/users').findById(req.query.userId).select('username').lean())?.username
-      : req.session.username;
-
-    if (!userId) return res.status(401).json({ success: false, message: 'Not logged in' });
-
-    const posts = await Review.find({ user: userId })
-      .populate('establishment', 'name _id')
-      .sort({ createdAt: -1 })
-      .lean();
-
-    const reviewsWithReplies = await Review.find({ 'responseThread.author': username })
-      .populate('establishment', 'name _id')
-      .lean();
-
-    const replies = [];
-    reviewsWithReplies.forEach(rev => {
-      rev.responseThread.forEach(msg => {
-        if (msg.author === username) {
-          replies.push({
-            establishmentName: rev.establishment ? rev.establishment.name : 'Unknown',
-            reviewTitle:       rev.title,
-            body:              msg.body,
-            createdAt:         msg.createdAt,
-            reviewId:          rev._id
-          });
-        }
-      });
-    });
-    replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    res.json({ success: true, posts, replies });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-};
-
-const deleteFromCloudinary = async (url) => {
-    if (!url || url.includes('defaultprofile')) return; 
-    try {
-        const parts = url.split('/tafteats/');
-        if (parts.length === 2) {
-            const filename = parts[1].split('.')[0];
-            const publicId = `tafteats/${filename}`;
-            await cloudinary.uploader.destroy(publicId);
-        }
-    } catch (err) {
-        console.error('Cloudinary delete error:', err);
-    }
+  const userId = v.objectId(req.query.userId || String(req.user?._id || ''));
+  if (!(await User.exists({ _id: userId }))) throw new HttpError(404, 'Profile not found.');
+  const { page, limit, skip } = v.pagination(req.query);
+  const count = await Review.countDocuments({ user: userId });
+  const posts = await Review.find({ user: userId })
+    .select('-responseThread')
+    .populate('establishment', 'name')
+    .sort({ createdAt: -1, _id: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+  const id = new mongoose.Types.ObjectId(userId);
+  const recentReplies = await Review.aggregate([
+    { $match: { 'responseThread.authorId': id } },
+    { $unwind: '$responseThread' },
+    { $match: { 'responseThread.authorId': id } },
+    { $sort: { 'responseThread.createdAt': -1, 'responseThread._id': -1 } },
+    { $limit: 30 },
+    {
+      $lookup: {
+        from: Establishment.collection.name,
+        localField: 'establishment',
+        foreignField: '_id',
+        as: 'place',
+      },
+    },
+    {
+      $project: {
+        body: '$responseThread.body',
+        createdAt: '$responseThread.createdAt',
+        reviewTitle: '$title',
+        reviewId: '$_id',
+        establishmentName: {
+          $ifNull: [{ $arrayElemAt: ['$place.name', 0] }, 'Removed restaurant'],
+        },
+      },
+    },
+  ]);
+  const replies = recentReplies.map((reply) => ({ ...reply, body: v.sanitize(reply.body) }));
+  res.json({
+    success: true,
+    posts: posts.map((r) => present(r, req.user)),
+    replies,
+    page,
+    pages: Math.ceil(count / limit),
+    count,
+  });
 };
