@@ -762,6 +762,54 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
       await Establishment.deleteMany({ _id: { $in: places.map((p) => p._id) } });
     }
   });
+  test('rate-limit storage failure blocks requests without exposing diagnostics and recovers', async () => {
+    const { Bucket } = require('../src/middleware/rateLimit');
+    const target = createApp({ sessionSecret: secret });
+    const blocked = mock.method(Bucket, 'findOneAndUpdate', async () => {
+      throw new Error('Private rate-limit database diagnostic');
+    });
+    const response = await request(target)
+      .get('/login')
+      .set('Accept', 'application/json')
+      .expect(500);
+    assert.equal(response.body.success, false);
+    assert.equal(response.headers['cache-control'], 'no-store');
+    assert.equal(response.headers['set-cookie'], undefined);
+    assert.doesNotMatch(response.text, /Private rate-limit|database diagnostic/);
+    blocked.mock.restore();
+    await request(target).get('/login').expect(200);
+  });
+  test('a rate-limit insert race preserves previous attempts instead of starting a new counter', async () => {
+    const express = require('express');
+    const { Bucket, limiter } = require('../src/middleware/rateLimit');
+    const target = express();
+    target.use(limiter('insert-race', 2));
+    let admitted = false;
+    target.get('/', (_req, res) => {
+      admitted = true;
+      res.send('admitted');
+    });
+    const original = Bucket.findOneAndUpdate;
+    let calls = 0;
+    mock.method(Bucket, 'findOneAndUpdate', async function (filter, update, options) {
+      if (++calls === 1) {
+        await Bucket.collection.insertOne({
+          ...filter,
+          totalHits: 2,
+          resetTime: update.$setOnInsert.resetTime,
+        });
+        const error = new Error('Concurrent insert');
+        error.code = 11000;
+        throw error;
+      }
+      return original.call(this, filter, update, options);
+    });
+    await request(target).get('/').expect(429);
+    assert.equal(calls, 2);
+    assert.equal(admitted, false);
+    const bucket = await Bucket.findOne({ _id: /^insert-race:/ });
+    assert.equal(bucket.totalHits, 3);
+  });
   test('persistent rate limits are shared by separate application instances', async () => {
     const a = createApp({ sessionSecret: secret });
     const b = createApp({ sessionSecret: secret });
