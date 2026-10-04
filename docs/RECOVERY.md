@@ -50,6 +50,6 @@ After a successful drill, run migration preflight and application tests against 
 
 ## Retention and scheduling
 
-Take a backup before migrations and substantial data changes. Maintain a separate encrypted off-device copy and rehearse recovery periodically. The repository does not configure a recurring job or delete old backups automatically; choose a schedule and retention policy suitable for the deployment, and verify jobs actually succeed. The Atlas free cluster currently has no managed backups.
+This portfolio deployment uses manual encrypted snapshots stored on the operator's PC. Take a backup before migrations and substantial data changes, preserve earlier snapshots, and rehearse recovery periodically. Off-device copies and a recurring job are not configured. Local-only storage cannot recover from loss of the PC; keep the encryption passphrase available separately from the backup files. The repository does not delete old backups automatically, and the Atlas free cluster currently has no managed backups.
 
 Private plaintext release snapshots from earlier maintenance are recovery material too. Keep them private until their retention period ends. Do not publish them, the local recovery keys, or the ignored Git recovery bundles.
