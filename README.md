@@ -60,7 +60,7 @@ Browser tests use installed Chrome by default. Alternatively, run `npx playwrigh
 - Votes update atomically. Optimistic concurrency prevents edits and replies from silently overwriting each other. Ratings come from review data, including the zero-review case. Account deletion uses a transaction and requires the current password.
 - Discovery has server-side literal search, category filters, sorting, and pagination. Reviews and profile activity are bounded. Mobile layouts, reduced-motion support, keyboard controls, and light/dark themes are verified in the browser.
 
-See [architecture](docs/ARCHITECTURE.md), [security](SECURITY.md), the [migration guide](docs/MIGRATION.md), and [database recovery](docs/RECOVERY.md) for operational boundaries and deployment requirements.
+See [architecture](docs/ARCHITECTURE.md), [security](SECURITY.md), the [migration guide](docs/MIGRATION.md), [database recovery](docs/RECOVERY.md), and [media recovery](docs/MEDIA.md) for operational boundaries and deployment requirements.
 
 ## Project structure
 

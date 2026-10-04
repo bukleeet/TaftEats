@@ -66,14 +66,14 @@ async function uploadFiles(files = [], options) {
   }
 }
 
-function assetFromUrl(value) {
+function assetFromUrl(value, cloudName = process.env.CLOUDINARY_CLOUD_NAME) {
   try {
     const url = new URL(value);
     if (url.protocol !== 'https:' || url.hostname !== 'res.cloudinary.com') return null;
     const match = url.pathname.match(
       /^\/([^/]+)\/(image|video)\/upload\/(?:v\d+\/)?(tafteats\/[a-zA-Z0-9_/-]+)\.[a-zA-Z0-9]+$/,
     );
-    if (!match || match[1] !== process.env.CLOUDINARY_CLOUD_NAME) return null;
+    if (!match || match[1] !== cloudName) return null;
     return { publicId: match[3], resourceType: match[2] };
   } catch {
     return null;
