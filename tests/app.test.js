@@ -602,6 +602,48 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
     }).expect(500);
     assert.deepEqual(removed, [url]);
   });
+  test('failed registration compensates its new avatar without creating an account', async () => {
+    const actor = await login(
+      'bob',
+      password,
+      createApp({ sessionSecret: secret, persistentRateLimits: false }),
+    );
+    const url = 'https://res.cloudinary.com/test/image/upload/tafteats/new-avatar.webp';
+    const removed = [];
+    mock.method(media, 'uploadFiles', async () => [url]);
+    mock.method(media, 'deleteFiles', async (urls) => removed.push(...urls));
+    mock.method(User, 'create', async () => {
+      throw new Error('Injected registration save failure');
+    });
+    await write(actor, 'post', '/register', {
+      username: 'failed_avatar',
+      email: 'failed_avatar@example.test',
+      password,
+    }).expect(500);
+    assert.deepEqual(removed, [url]);
+    assert.equal(await User.exists({ username: 'failed_avatar' }), null);
+  });
+  test('failed profile save compensates only its new avatar and preserves the stored account', async () => {
+    const actor = await login(
+      'alice',
+      password,
+      createApp({ sessionSecret: secret, persistentRateLimits: false }),
+    );
+    const before = await User.findById(userA._id).lean();
+    const url = 'https://res.cloudinary.com/test/image/upload/tafteats/replacement-avatar.webp';
+    const removed = [];
+    mock.method(media, 'uploadFiles', async () => [url]);
+    mock.method(media, 'deleteFiles', async (urls) => removed.push(...urls));
+    mock.method(User.prototype, 'save', async () => {
+      throw new Error('Injected profile save failure');
+    });
+    await write(actor, 'post', `/profile/${userA._id}/edit`, {
+      username: 'changed_avatar',
+      description: 'Should not be saved.',
+    }).expect(500);
+    assert.deepEqual(removed, [url]);
+    assert.deepEqual(await User.findById(userA._id).lean(), before);
+  });
   test('public profile endpoints never disclose email or password', async () => {
     const res = await request(app).get(`/profile/${userA._id}`).expect(200);
     assert.doesNotMatch(res.text, /alice@example.test|scrypt\$/);
