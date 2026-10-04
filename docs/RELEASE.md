@@ -28,6 +28,8 @@ The updated application runs at [tafteats.vercel.app](https://tafteats.vercel.ap
 
 The original application's pre-migration snapshot was restored document-for-document into `tafteats_original` on the existing Atlas cluster: 29 users, 47 reviews, and 10 restaurants. Session and rate-limit data were excluded. The updated application retains `myDatabase`, and the two deployments use separate session secrets. The original production rebuild used `494a30e`; both discovery pages and original sign-in returned 200, and updated readiness returned 200 after the domain transfer.
 
+The original application's 13 uploaded media assets were copied into separate Cloudinary paths and verified byte-for-byte against their delivered source URLs. Only original-database references were updated, in a transaction with guards against concurrent edits. Both databases retained their counts and shared no deletable media URLs afterward; source assets were preserved. The original repository's Vercel connection and GitHub app access were removed while retaining access to the other existing repositories.
+
 - The rotated Atlas credential connects successfully; authentication with the exposed password is rejected. Vercel stores the database URI and fresh production session secret as Secret variables. Preview uses a separate session secret.
 - A private logical backup was restored to `tafteats_staging_20261004` and compared document-for-document. Migration preflight, transactional application, postflight, and index creation passed there.
 - A fresh private production backup preceded the same transactional migration during a maintenance window. Postflight preserved 29 users, 47 reviews, and 10 restaurants; required application indexes were created successfully. The project was resumed after maintenance.
@@ -41,6 +43,8 @@ The hero restores the original food photograph as a local 136 KB WebP, serif typ
 New regression tests reproduce review, vote, and reply requests that were authenticated before account deletion. A shared transactional account write now rejects those requests after deletion and compensates uploaded media. Cleanup preserves unrelated review versions.
 
 An existing Edge tab exposed stale cached CSS and JavaScript after deployment. Content-based versions now change stylesheet, script, and hero image URLs when their bytes change. A regression compares the rendered versions with the actual served assets. Validation passed: 65 unit/HTTP/runtime tests, 3 browser journeys, lint, formatting, zero working-tree secret findings, and zero dependency audit findings.
+
+Readiness and all dynamic responses explicitly disable caching, including errors before session middleware. Database-startup failures return an uncached generic 503 with `nosniff` and a short retry hint. The retry regression, 65 application tests, three browser journeys, and full dependency audit passed; production readiness returned 200 with `Cache-Control: no-store` after deployment.
 
 ## Remaining operational work
 
