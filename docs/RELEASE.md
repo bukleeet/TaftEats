@@ -24,7 +24,7 @@ TaftEats supports restaurant reviews, voting, owner conversations, and profiles 
 
 ## Production release: October 4, 2026
 
-Production runs at [tafteats.vercel.app](https://tafteats.vercel.app) from `refactor/tafteats`. The previous `taft-eats.vercel.app` domain redirects permanently to it. Production branch tracking is configured for this branch.
+The initial production release ran at [tafteats.vercel.app](https://tafteats.vercel.app) from `refactor/tafteats`, with `taft-eats.vercel.app` redirecting to it. The applications are now being separated into independent projects: the updated application uses the private `bukleeet/TaftEats` repository and production branch `main`; the original academic application remains in private `bukleeet/CCAPDEV_Resto-Review-App`. The domain transfer and original database restore require their own deployment verification before completion.
 
 - The rotated Atlas credential connects successfully; authentication with the exposed password is rejected. Vercel stores the database URI and fresh production session secret as Secret variables. Preview uses a separate session secret.
 - A private logical backup was restored to `tafteats_staging_20261004` and compared document-for-document. Migration preflight, transactional application, postflight, and index creation passed there.
@@ -42,7 +42,7 @@ An existing Edge tab exposed stale cached CSS and JavaScript after deployment. C
 
 ## Remaining operational work
 
-- The production database URI is scoped to Production and Development. A Preview-only staging URI is awaiting credential entry; rebuild previews after saving it before testing hosted mutations. Use the isolated local demo meanwhile.
+- The new Vercel project scopes application credentials to Production. Hosted previews require their own isolated database and session configuration before mutation testing. Use the isolated local demo meanwhile.
 - Atlas application permissions were narrowed from administrator access to `readWrite` on `myDatabase` and `tafteats_staging_20261004`. Fresh authentication and application index creation passed; listing an unrelated database was denied. Separate database users would further isolate production from staging.
 - Atlas's network allowlist currently permits all IP addresses. Tighten it using verified deployment egress addresses; removing access without a compatible egress setup would disconnect the app. Establish recurring backups and monitoring; the current Atlas free cluster has no managed backups.
 - Provider runtime logs contain Node's `DEP0169` URL-parsing deprecation warning on otherwise successful requests. No application database/startup errors were observed in the fresh release checks. Investigate the warning's dependency/provider origin before changing application behavior.
