@@ -66,6 +66,14 @@ function rating(value) {
 }
 
 function pagination(query) {
+  if (
+    query.page !== undefined &&
+    !(
+      typeof query.page === 'number' ||
+      (typeof query.page === 'string' && /^\d+$/.test(query.page))
+    )
+  )
+    throw new HttpError(400, 'Invalid page.');
   const page = query.page === undefined ? 1 : Number(query.page);
   if (!Number.isSafeInteger(page) || page < 1 || page > 10000)
     throw new HttpError(400, 'Invalid page.');

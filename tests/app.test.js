@@ -582,6 +582,9 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
       '/reviews/not-an-id',
       '/profile/not-an-id',
       '/establishments?page=-1',
+      '/establishments?page=0x10',
+      '/establishments?page=1e2',
+      '/establishments?page=2&page=2',
       '/establishments?q[$ne]=1',
       '/api/user/profile-activity?userId[$ne]=1',
     ]) {

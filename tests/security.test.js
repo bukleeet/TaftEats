@@ -94,8 +94,11 @@ test('ratings and pagination are bounded and scalar', () => {
   for (const bad of [NaN, Infinity, 0, 6, 1.1, [], {}, true, ''])
     assert.throws(() => v.rating(bad));
   assert.equal(v.rating('4.5'), 4.5);
-  for (const page of ['0', '-1', '1.5', 'abc', '10001', {}])
+  for (const page of ['0', '-1', '1.5', 'abc', '10001', '0x10', '1e2', ['2'], true, null, {}])
     assert.throws(() => v.pagination({ page }));
+  assert.deepEqual(v.pagination({}), { page: 1, limit: 12, skip: 0 });
+  assert.deepEqual(v.pagination({ page: '2' }), { page: 2, limit: 12, skip: 12 });
+  assert.deepEqual(v.pagination({ page: 10000 }), { page: 10000, limit: 12, skip: 119988 });
 });
 test('JSON output cannot terminate an HTML script element', () => {
   const input = { title: '</script><img onerror=evil()>&\u2028' };
