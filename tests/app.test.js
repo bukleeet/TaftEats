@@ -81,8 +81,8 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
   });
 
   test('health, readiness, security headers, and nonce-based CSP', async () => {
-    await request(app).get('/health').expect(200);
-    await request(app).get('/ready').expect(200);
+    await request(app).get('/health').expect('Cache-Control', 'no-store').expect(200);
+    await request(app).get('/ready').expect('Cache-Control', 'no-store').expect(200);
     const res = await request(app).get('/establishments').expect(200);
     assert.match(res.headers['content-security-policy'], /script-src 'self' 'nonce-/);
     assert.match(res.headers['content-security-policy'], /frame-ancestors 'none'/);

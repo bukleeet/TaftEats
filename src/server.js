@@ -33,6 +33,9 @@ function createRuntime(config) {
       console.error(JSON.stringify({ event: 'database_unavailable' }));
       res.statusCode = 503;
       res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Retry-After', '5');
       res.end(JSON.stringify({ success: false, message: 'Service temporarily unavailable.' }));
     }
   }

@@ -34,6 +34,9 @@ test('failed serverless initialization returns a generic 503 and allows retry', 
   for (let i = 0; i < 2; i++) {
     const res = await request(failed.handler).get('/login').expect(503);
     assert.doesNotMatch(res.text, /private connection|invalid.example/);
+    assert.equal(res.headers['cache-control'], 'no-store');
+    assert.equal(res.headers['x-content-type-options'], 'nosniff');
+    assert.equal(res.headers['retry-after'], '5');
   }
   assert.equal(attempt.mock.callCount(), 2);
   attempt.mock.restore();

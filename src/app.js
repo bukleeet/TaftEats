@@ -67,6 +67,10 @@ function createApp({
       dotfiles: 'deny',
     }),
   );
+  app.use((_req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
   app.get('/ready', (_req, res) =>
     res
@@ -93,10 +97,6 @@ function createApp({
       cookie: { httpOnly: true, secure: production, sameSite: 'lax', maxAge: 12 * 60 * 60 * 1000 },
     }),
   );
-  app.use((_req, res, next) => {
-    res.set('Cache-Control', 'no-store');
-    next();
-  });
   app.use(csrf);
   app.use(currentUser);
   app.use(require('./routes')({ persistentRateLimits }));
