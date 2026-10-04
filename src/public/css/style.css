@@ -4,7 +4,7 @@
   --paper: #ffffff;
   --ink: #1f2933;
   --muted: #66746b;
-  --green: #065f46;
+  --green: #0f5132;
   --green-soft: #d1fae5;
   --line: #dde1d6;
   --accent: #e9ba58;
@@ -136,8 +136,7 @@ small {
   font-weight: 750;
   white-space: nowrap;
 }
-.brand-mark {
-  background: #174d38;
+1#0f5132;
   color: #f9f6e9;
   border-radius: 50%;
   width: 37px;
@@ -296,7 +295,7 @@ small {
   margin-block: 1.5rem 3rem;
   padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem);
   border-radius: 18px;
-  background: #065f46;
+  background: var(--green);
   color: #fff;
   text-align: center;
 }
@@ -344,7 +343,7 @@ small {
 }
 .hero .button {
   background: #fff;
-  color: #065f46;
+  color: var(--green);
 }
 .hero-animation-toggle {
   color: #fff;
