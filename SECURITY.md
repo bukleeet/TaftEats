@@ -13,7 +13,7 @@ TaftEats uses the security boundaries described below. Public deployment require
 | Authorization        | Fresh database account per request; immutable review/user/restaurant IDs; author checks before edit uploads                                                                           |
 | User HTML            | sanitize-html with formatting-only tags and no attributes; legacy content sanitized at read time                                                                                      |
 | Browser              | Helmet, restrictive CSP, no inline event handlers or CDN scripts; allowed Cloudinary HTTPS media only; no credentials in localStorage                                                 |
-| Abuse                | MongoDB shared fixed-window limits: 300 requests, 20 auth attempts, 20 upload requests per IP per 15 minutes; two upload requests per process                                         |
+| Abuse                | MongoDB shared fixed-window limits: 300 requests, 20 auth attempts, 20 upload requests per IP per 15 minutes; two upload requests and two background upload batches per process       |
 | Uploads              | MIME allowlist plus detected signatures; bounded size/fields/count; image re-encoding; compensation on failed saves; deletion scoped to owned review URLs and configured cloud/folder |
 | Consistency          | Atomic vote pipelines; optimistic document versions; shared transactional account guard for deletion and new references; computed ratings                                             |
 | Diagnostics          | Request IDs; generic server errors; logs exclude passwords, request bodies, session IDs, and database URIs                                                                            |

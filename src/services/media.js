@@ -1,5 +1,6 @@
 const cloudinary = require('../config/cloudinary');
 const { HttpError } = require('../lib/errors');
+let activeUploads = 0;
 
 async function validateFiles(files = [], { avatar = false } = {}) {
   const { fileTypeFromBuffer } = await import('file-type');
@@ -28,11 +29,16 @@ async function validateFiles(files = [], { avatar = false } = {}) {
 }
 
 async function uploadFiles(files = [], options) {
-  await validateFiles(files, options);
-  if (files.length && !process.env.CLOUDINARY_API_KEY)
-    throw new HttpError(503, 'Uploads are unavailable. You can submit without an attachment.');
+  if (!files.length) return [];
+  // HTTP disconnects do not cancel provider work; keep its capacity until completion.
+  if (activeUploads >= 2)
+    throw new HttpError(503, 'Uploads are busy. Please try again in a moment.');
+  activeUploads += 1;
   const urls = [];
   try {
+    await validateFiles(files, options);
+    if (!process.env.CLOUDINARY_API_KEY)
+      throw new HttpError(503, 'Uploads are unavailable. You can submit without an attachment.');
     for (const file of files) {
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -55,6 +61,8 @@ async function uploadFiles(files = [], options) {
   } catch (error) {
     await deleteFiles(urls);
     throw error;
+  } finally {
+    activeUploads -= 1;
   }
 }
 
