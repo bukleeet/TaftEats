@@ -46,3 +46,20 @@ test('invalid CLI configuration exits with failure and a safe diagnostic', async
     return true;
   });
 });
+test('migration CLI omits private details from malformed connection errors', async () => {
+  const privateUri =
+    'mongodb://' + 'fixture-user:fixture-password' + '@127.0.0.1:not-a-port/database';
+  await assert.rejects(
+    run(process.execPath, ['database/migrate.js'], {
+      ...options,
+      env: { ...options.env, MONGO_URI: privateUri },
+    }),
+    (error) => {
+      assert.equal(error.code, 1);
+      assert.equal(error.stdout, '');
+      assert.match(error.stderr, /Migration failed/);
+      assert.doesNotMatch(error.stderr, /fixture-user|fixture-password|not-a-port|MongoParseError/);
+      return true;
+    },
+  );
+});

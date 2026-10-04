@@ -3,6 +3,7 @@ const User = require('../src/models/users');
 const Review = require('../src/models/reviews');
 const Establishment = require('../src/models/establishments');
 const v = require('../src/lib/validation');
+class MigrationConflict extends Error {}
 
 function authorizedMessageAuthor(user, message, review) {
   if (!user) return false;
@@ -27,15 +28,17 @@ async function migrate({ apply = false } = {}) {
     const username = v.username(user.username);
     const email = v.email(user.email);
     if (names.has(username) || emails.has(email))
-      throw new Error(
+      throw new MigrationConflict(
         'Normalized identities collide. Resolve duplicate usernames/emails before migration.',
       );
     if (user.description?.length > 500)
-      throw new Error('A bio exceeds 500 characters. Resolve before migration.');
+      throw new MigrationConflict('A bio exceeds 500 characters. Resolve before migration.');
     if (new User({ ...user, username, email }).validateSync())
-      throw new Error(`User ${user._id} has invalid legacy fields. Resolve before migration.`);
+      throw new MigrationConflict(
+        `User ${user._id} has invalid legacy fields. Resolve before migration.`,
+      );
     if (user.ownedEstablishment && !establishments.has(String(user.ownedEstablishment)))
-      throw new Error(
+      throw new MigrationConflict(
         `User ${user._id} references a missing restaurant. Resolve before migration.`,
       );
     names.set(username, user);
@@ -45,15 +48,15 @@ async function migrate({ apply = false } = {}) {
   const changes = [];
   for (const review of reviews) {
     if (!usersById.has(String(review.user)))
-      throw new Error('An orphan review requires manual resolution.');
+      throw new MigrationConflict('An orphan review requires manual resolution.');
     if (!establishments.has(String(review.establishment)))
-      throw new Error(
+      throw new MigrationConflict(
         `Review ${review._id} references a missing restaurant. Resolve before migration.`,
       );
     const responseThread = (review.responseThread || []).map((msg) => {
       let authorId = msg.authorId;
       if (authorId && !authorizedMessageAuthor(usersById.get(String(authorId)), msg, review))
-        throw new Error(
+        throw new MigrationConflict(
           `Review ${review._id} has an unproven message author. Resolve before migration.`,
         );
       if (!authorId) {
@@ -65,7 +68,9 @@ async function migrate({ apply = false } = {}) {
     const body = v.sanitize(review.body);
     const migratedReview = new Review({ ...review, body, responseThread });
     if (migratedReview.validateSync())
-      throw new Error(`Review ${review._id} has invalid legacy fields. Resolve before migration.`);
+      throw new MigrationConflict(
+        `Review ${review._id} has invalid legacy fields. Resolve before migration.`,
+      );
     // Persist generated message IDs as well as sanitized bodies so later edits have stable identity.
     changes.push({
       id: review._id,
@@ -104,7 +109,11 @@ if (require.main === module) {
     .then(() => migrate({ apply: process.argv.includes('--apply') }))
     .then((result) => console.log(JSON.stringify(result)))
     .catch((err) => {
-      console.error(err.message);
+      console.error(
+        err instanceof MigrationConflict
+          ? err.message
+          : 'Migration failed. Check connection, replica set, and legacy data; private details omitted.',
+      );
       process.exitCode = 1;
     })
     .finally(() => mongoose.disconnect());
