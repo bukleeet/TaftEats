@@ -24,7 +24,9 @@ TaftEats supports restaurant reviews, voting, owner conversations, and profiles 
 
 ## Production release: October 4, 2026
 
-The initial production release ran at [tafteats.vercel.app](https://tafteats.vercel.app) from `refactor/tafteats`, with `taft-eats.vercel.app` redirecting to it. The applications are now being separated into independent projects: the updated application uses the private `bukleeet/TaftEats` repository and production branch `main`; the original academic application remains in private `bukleeet/CCAPDEV_Resto-Review-App`. The domain transfer and original database restore require their own deployment verification before completion.
+The updated application runs at [tafteats.vercel.app](https://tafteats.vercel.app) in its own Vercel project, using private `bukleeet/TaftEats` and production branch `main`. The original academic application runs separately at [taft-eats.vercel.app](https://taft-eats.vercel.app), using the unchanged original source in private `bukleeet/CCAPDEV_Resto-Review-App`; the credential-history cleanup is preserved. Neither domain redirects to the other.
+
+The original application's pre-migration snapshot was restored document-for-document into `tafteats_original` on the existing Atlas cluster: 29 users, 47 reviews, and 10 restaurants. Session and rate-limit data were excluded. The updated application retains `myDatabase`, and the two deployments use separate session secrets. The original production rebuild used `494a30e`; both discovery pages and original sign-in returned 200, and updated readiness returned 200 after the domain transfer.
 
 - The rotated Atlas credential connects successfully; authentication with the exposed password is rejected. Vercel stores the database URI and fresh production session secret as Secret variables. Preview uses a separate session secret.
 - A private logical backup was restored to `tafteats_staging_20261004` and compared document-for-document. Migration preflight, transactional application, postflight, and index creation passed there.
