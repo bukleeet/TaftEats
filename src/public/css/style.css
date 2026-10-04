@@ -136,7 +136,8 @@ small {
   font-weight: 750;
   white-space: nowrap;
 }
-1#0f5132;
+.brand-mark {
+  background: #0f5132;
   color: #f9f6e9;
   border-radius: 50%;
   width: 37px;
