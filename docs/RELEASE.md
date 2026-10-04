@@ -30,6 +30,8 @@ The original application's pre-migration snapshot was restored document-for-docu
 
 The original application's 13 uploaded media assets were copied into separate Cloudinary paths and verified byte-for-byte against their delivered source URLs. Only original-database references were updated, in a transaction with guards against concurrent edits. Both databases retained their counts and shared no deletable media URLs afterward; source assets were preserved. The original repository's Vercel connection and GitHub app access were removed while retaining access to the other existing repositories.
 
+The original production deployment `dpl_6LcnYvBHuxR5TbwRiyx44QuAc2w7` uses a dedicated Atlas user with `readWrite` only on `tafteats_original`, restricted to Cluster0. The updated user no longer has that role. Fresh connections verified denial in both directions while each application retained 29 users, 47 reviews, and 10 restaurants. Original discovery and sign-in and updated readiness returned 200 after revocation. The original rebuild initially encountered Atlas server-selection timeouts, then recovered without another rebuild; their underlying cause was not established. Temporary Vercel repository access was removed again, Git remains disconnected, and no Vercel issue, commit, or review comments remained in the original repository.
+
 - The rotated Atlas credential connects successfully; authentication with the exposed password is rejected. Vercel stores the database URI and fresh production session secret as Secret variables. Preview uses a separate session secret.
 - A private logical backup was restored to `tafteats_staging_20261004` and compared document-for-document. Migration preflight, transactional application, postflight, and index creation passed there.
 - A fresh private production backup preceded the same transactional migration during a maintenance window. Postflight preserved 29 users, 47 reviews, and 10 restaurants; required application indexes were created successfully. The project was resumed after maintenance.
@@ -37,6 +39,8 @@ The original application's 13 uploaded media assets were copied into separate Cl
 - Application CI passed on Node 22 and 24: 61 unit/HTTP/runtime tests and 3 browser journeys, including responsive and automated accessibility checks. Real Cloudinary verification created and removed only its new disposable test asset.
 
 ## Follow-up validation: October 4, 2026
+
+Pagination validation in `7325551` rejects hexadecimal and exponent-style strings and coerced non-scalar values. Regression checks preserve the default page and supported bounds. All 71 application tests, three browser journeys, lint, formatting, secret checks, and dependency audit passed locally and in CI on Node 22 and 24. Production readiness and decimal pagination returned 200; hexadecimal and exponent-style pagination returned 400.
 
 The hero restores the original food photograph as a local 136 KB WebP, serif typography with italic accents, and consistent spacing through all seven animated phrases. Browser checks verify the image loads, the description stays fixed as languages change, and the heading fits a 320 px viewport. Light/dark theme, pause, reduced-motion, and rendered accessibility checks passed.
 
