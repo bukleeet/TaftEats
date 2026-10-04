@@ -1,3 +1,79 @@
 <%- include('head', { title: 'Join the table' }) %>
-<div class="auth-layout container"><section class="auth-story"><p class="eyebrow">A COMMUNITY WITH GOOD TASTE</p><h1>Every meal<br>has a <em>story.</em></h1><p>Bring yours to the table. Discover local favorites and help others find their next great bite.</p><img src="/images/table.svg" alt="" width="460" height="360"></section><section class="panel auth-panel"><p class="eyebrow">MAKE YOURSELF AT HOME</p><h2>Create your account</h2><p class="muted">A few details, then you're in.</p><form class="stack" data-api-form action="/register" method="post" enctype="multipart/form-data"><label for="username">Username</label><input id="username" name="username" autocomplete="username" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" aria-describedby="username-help" required><small id="username-help">3–30 letters, numbers, or underscores.</small><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" aria-describedby="password-help" required><small id="password-help">Use a unique passphrase of at least 15 characters.</small><label for="description">A little about you <span class="muted">(optional)</span></label><textarea id="description" name="description" rows="3" maxlength="500" placeholder="Your favorite order, your next craving…"></textarea><label for="avatar">Profile photo <span class="muted">(optional)</span></label><input id="avatar" name="profileImage" type="file" accept="image/jpeg,image/png,image/webp"><small>JPEG, PNG, or WebP. Up to 3 MB.</small><p class="form-message" role="alert" hidden></p><button class="button" type="submit">Join the table ↗</button></form><p class="auth-switch">Already part of the community? <a href="/login">Sign in</a></p></section></div>
+
+<div class="auth-layout container">
+  <section class="auth-story">
+    <p class="eyebrow">A COMMUNITY WITH GOOD TASTE</p>
+    <h1>Every meal<br>has a <em>story.</em></h1>
+    <p>Bring yours to the table. Discover local favorites and help others find their next great bite.</p>
+    <img src="/images/table.svg" alt="" width="460" height="360">
+  </section>
+
+  <section class="panel auth-panel">
+    <p class="eyebrow">MAKE YOURSELF AT HOME</p>
+    <h2>Create your account</h2>
+    <p class="muted">A few details, then you're in.</p>
+
+    <form class="stack" data-api-form action="/register" method="post" enctype="multipart/form-data">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        autocomplete="username"
+        pattern="[a-zA-Z0-9_]{3,30}"
+        minlength="3"
+        maxlength="30"
+        aria-describedby="username-help"
+        required
+      >
+      <small id="username-help">3–30 letters, numbers, or underscores.</small>
+
+      <label for="email">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        maxlength="254"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        minlength="15"
+        maxlength="128"
+        aria-describedby="password-help"
+        required
+      >
+      <small id="password-help">Use a unique passphrase of at least 15 characters.</small>
+
+      <label for="description">A little about you <span class="muted">(optional)</span></label>
+      <textarea
+        id="description"
+        name="description"
+        rows="3"
+        maxlength="500"
+        placeholder="Your favorite order, your next craving…"
+      ></textarea>
+
+      <label for="avatar">Profile photo <span class="muted">(optional)</span></label>
+      <input
+        id="avatar"
+        name="profileImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      >
+      <small>JPEG, PNG, or WebP. Up to 3 MB.</small>
+
+      <p class="form-message" role="alert" hidden></p>
+      <button class="button" type="submit">Join the table ↗</button>
+    </form>
+
+    <p class="auth-switch">Already part of the community? <a href="/login">Sign in</a></p>
+  </section>
+</div>
+
 <%- include('foot') %>

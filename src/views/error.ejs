@@ -1,3 +1,14 @@
-<%- include('head', { title: 'Something went wrong', csrfToken: typeof csrfToken === 'undefined' ? '' : csrfToken, sessionUser: typeof sessionUser === 'undefined' ? null : sessionUser }) %>
-<section class="container empty-state error-page"><p class="eyebrow"><%= status %></p><h1><%= status === 404 ? 'A little off the menu.' : 'Let’s try that again.' %></h1><p><%= message %></p><a class="button" href="/establishments">Back to the neighborhood ↗</a></section>
+<%- include('head', {
+  title: 'Something went wrong',
+  csrfToken: typeof csrfToken === 'undefined' ? '' : csrfToken,
+  sessionUser: typeof sessionUser === 'undefined' ? null : sessionUser
+}) %>
+
+<section class="container empty-state error-page">
+  <p class="eyebrow"><%= status %></p>
+  <h1><%= status === 404 ? 'A little off the menu.' : 'Let’s try that again.' %></h1>
+  <p><%= message %></p>
+  <a class="button" href="/establishments">Back to the neighborhood ↗</a>
+</section>
+
 <%- include('foot') %>

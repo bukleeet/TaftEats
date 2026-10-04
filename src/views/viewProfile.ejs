@@ -1,3 +1,34 @@
 <%- include('head', { title: '@' + user.username }) %>
-<section class="container profile-layout"><div class="panel profile-summary"><img class="avatar large" src="<%= mediaUrl(user.avatar, '/images/avatar.svg') %>" alt="<%= user.username %>'s profile photo"><p class="eyebrow"><%= user.role === 'owner' ? 'RESTAURANT OWNER' : 'AT THE COMMUNITY TABLE' %></p><h1>@<%= user.username %></h1><p><%= user.description || 'Here for good food and new favorites.' %></p><p class="muted">Joined <%= formatDate(user.createdAt) %></p><% if (sessionUser && String(sessionUser._id) === String(user._id)) { %><a class="button secondary" href="/profile/<%= user._id %>/edit">Edit profile</a><% } %></div><section class="profile-activity" data-profile="<%= user._id %>"><div class="section-heading"><div><p class="eyebrow">FROM THEIR JOURNAL</p><h2>Reviews & conversations</h2></div></div><p id="activity-status" role="status">Loading stories…</p><div id="activity-feed" class="review-feed"></div><button id="load-more" class="button secondary" type="button" hidden>Load more reviews</button><h3 class="replies-heading">Recent conversations</h3><div id="reply-feed" class="review-feed"></div></section></section>
+
+<section class="container profile-layout">
+  <div class="panel profile-summary">
+    <img
+      class="avatar large"
+      src="<%= mediaUrl(user.avatar, '/images/avatar.svg') %>"
+      alt="<%= user.username %>'s profile photo"
+    >
+    <p class="eyebrow"><%= user.role === 'owner' ? 'RESTAURANT OWNER' : 'AT THE COMMUNITY TABLE' %></p>
+    <h1>@<%= user.username %></h1>
+    <p><%= user.description || 'Here for good food and new favorites.' %></p>
+    <p class="muted">Joined <%= formatDate(user.createdAt) %></p>
+    <% if (sessionUser && String(sessionUser._id) === String(user._id)) { %>
+      <a class="button secondary" href="/profile/<%= user._id %>/edit">Edit profile</a>
+    <% } %>
+  </div>
+
+  <section class="profile-activity" data-profile="<%= user._id %>">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">FROM THEIR JOURNAL</p>
+        <h2>Reviews & conversations</h2>
+      </div>
+    </div>
+    <p id="activity-status" role="status">Loading stories…</p>
+    <div id="activity-feed" class="review-feed"></div>
+    <button id="load-more" class="button secondary" type="button" hidden>Load more reviews</button>
+    <h3 class="replies-heading">Recent conversations</h3>
+    <div id="reply-feed" class="review-feed"></div>
+  </section>
+</section>
+
 <%- include('foot') %>

@@ -1,3 +1,65 @@
 <%- include('head', { title: 'Edit your profile' }) %>
-<section class="container narrow page-header"><a class="text-link" href="/profile/<%= user._id %>">← Your profile</a><p class="eyebrow">MAKE IT YOURS</p><h1>Your place at the table.</h1><div class="panel"><form class="stack" data-api-form action="/profile/<%= user._id %>/edit" method="post" enctype="multipart/form-data"><label for="username">Username</label><input id="username" name="username" value="<%= user.username %>" pattern="[a-zA-Z0-9_]{3,30}" maxlength="30" required><label for="description">Bio</label><textarea id="description" name="description" maxlength="500" rows="4"><%= user.description %></textarea><label for="avatar">New profile photo</label><input id="avatar" name="profileImage" type="file" accept="image/jpeg,image/png,image/webp"><small>Optional. JPEG, PNG, or WebP, up to 3 MB.</small><p class="form-message" role="alert" hidden></p><button class="button" type="submit">Save profile ↗</button></form></div><details class="danger-zone"><summary>Delete your account</summary><p>This permanently removes your account, reviews, votes, and the content of your replies. This cannot be undone.</p><form class="stack" data-delete-account="<%= user._id %>"><label for="confirm-password">Confirm your current password</label><input id="confirm-password" name="password" type="password" autocomplete="current-password" maxlength="128" required><p class="form-message" role="alert" hidden></p><button class="button danger-button" type="submit">Permanently delete account</button></form></details></section>
+
+<section class="container narrow page-header">
+  <a class="text-link" href="/profile/<%= user._id %>">← Your profile</a>
+  <p class="eyebrow">MAKE IT YOURS</p>
+  <h1>Your place at the table.</h1>
+
+  <div class="panel">
+    <form
+      class="stack"
+      data-api-form
+      action="/profile/<%= user._id %>/edit"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        value="<%= user.username %>"
+        pattern="[a-zA-Z0-9_]{3,30}"
+        maxlength="30"
+        required
+      >
+
+      <label for="description">Bio</label>
+      <textarea id="description" name="description" maxlength="500" rows="4"><%= user.description %></textarea>
+
+      <label for="avatar">New profile photo</label>
+      <input
+        id="avatar"
+        name="profileImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      >
+      <small>Optional. JPEG, PNG, or WebP, up to 3 MB.</small>
+
+      <p class="form-message" role="alert" hidden></p>
+      <button class="button" type="submit">Save profile ↗</button>
+    </form>
+  </div>
+
+  <details class="danger-zone">
+    <summary>Delete your account</summary>
+    <p>
+      This permanently removes your account, reviews, votes, and the content of your replies.
+      This cannot be undone.
+    </p>
+    <form class="stack" data-delete-account="<%= user._id %>">
+      <label for="confirm-password">Confirm your current password</label>
+      <input
+        id="confirm-password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        maxlength="128"
+        required
+      >
+      <p class="form-message" role="alert" hidden></p>
+      <button class="button danger-button" type="submit">Permanently delete account</button>
+    </form>
+  </details>
+</section>
+
 <%- include('foot') %>

@@ -1,3 +1,57 @@
 <%- include('head', { title: 'Sign in' }) %>
-<div class="auth-layout container"><section class="auth-story"><p class="eyebrow">WELCOME BACK TO THE TABLE</p><h1>Your next<br><em>favorite awaits.</em></h1><p>Share the meals that made your day. Find the ones you haven't tried yet.</p><img src="/images/table.svg" alt="" width="460" height="360"></section><section class="panel auth-panel"><p class="eyebrow">GOOD TO SEE YOU</p><h2>Sign in</h2><p class="muted">Pick up where you left off.</p><% if (error) { %><div class="form-message error" role="alert" tabindex="-1" data-focus-error><%= error %></div><% } %><form method="post" action="/login" class="stack"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><label for="username">Username</label><input id="username" name="username" autocomplete="username" minlength="3" maxlength="30" required><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required><label class="checkbox"><input type="checkbox" name="rememberMe" value="1"> Remember me for 21 days</label><button class="button" type="submit">Sign in <span aria-hidden="true">↗</span></button></form><p class="auth-switch">New around here? <a href="/register">Join the table</a></p></section></div>
+
+<div class="auth-layout container">
+  <section class="auth-story">
+    <p class="eyebrow">WELCOME BACK TO THE TABLE</p>
+    <h1>Your next<br><em>favorite awaits.</em></h1>
+    <p>Share the meals that made your day. Find the ones you haven't tried yet.</p>
+    <img src="/images/table.svg" alt="" width="460" height="360">
+  </section>
+
+  <section class="panel auth-panel">
+    <p class="eyebrow">GOOD TO SEE YOU</p>
+    <h2>Sign in</h2>
+    <p class="muted">Pick up where you left off.</p>
+
+    <% if (error) { %>
+      <div class="form-message error" role="alert" tabindex="-1" data-focus-error>
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form method="post" action="/login" class="stack">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        autocomplete="username"
+        minlength="3"
+        maxlength="30"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        maxlength="128"
+        required
+      >
+
+      <label class="checkbox">
+        <input type="checkbox" name="rememberMe" value="1">
+        Remember me for 21 days
+      </label>
+
+      <button class="button" type="submit">Sign in <span aria-hidden="true">↗</span></button>
+    </form>
+
+    <p class="auth-switch">New around here? <a href="/register">Join the table</a></p>
+  </section>
+</div>
+
 <%- include('foot') %>

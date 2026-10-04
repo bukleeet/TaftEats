@@ -1,8 +1,72 @@
-<form data-api-form action="<%= action %>" data-method="<%= method %>" method="post" enctype="multipart/form-data" class="stack">
-  <% if (establishment) { %><input type="hidden" name="establishment" value="<%= establishment._id %>"><% } %>
-  <label for="review-title">Your headline</label><input id="review-title" name="title" maxlength="120" value="<%= review?.title || '' %>" placeholder="What made this meal memorable?" required>
-  <label for="review-rating">Your rating</label><select id="review-rating" name="rating" required><option value="">Choose a rating</option><% for (let i = 5; i >= 1; i -= 0.5) { %><option value="<%= i %>" <%= review?.rating === i ? 'selected' : '' %>><%= i %> / 5</option><% } %></select>
-  <label id="body-label">Your story</label><div class="editor-toolbar" role="group" aria-label="Text formatting"><button type="button" data-format="bold" aria-label="Bold">B</button><button type="button" data-format="italic" aria-label="Italic">I</button><button type="button" data-format="insertUnorderedList" aria-label="Bullet list">☷</button></div><div class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="body-label" data-rich-editor><%- review?.body || '' %></div><input type="hidden" name="body"><small>Tell us about the food, service, or atmosphere. Keep it kind.</small>
-  <% if (review?.media.length) { %><fieldset><legend>Current attachments</legend><% review.media.forEach(url => { %><label class="checkbox"><input type="checkbox" name="deleteMedia" value="<%= url %>"> Remove <a href="<%= url %>" target="_blank" rel="noopener noreferrer">attachment</a></label><% }) %></fieldset><% } %>
-  <label for="review-media">Add photos or video <span class="muted">(optional)</span></label><input id="review-media" name="media" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" multiple><small>Up to 10 files, 3 MB combined per request.</small><p class="form-message" role="alert" hidden></p><button class="button" type="submit"><%= review ? 'Save changes' : 'Publish review' %> ↗</button>
+<form
+  data-api-form
+  action="<%= action %>"
+  data-method="<%= method %>"
+  method="post"
+  enctype="multipart/form-data"
+  class="stack"
+>
+  <% if (establishment) { %>
+    <input type="hidden" name="establishment" value="<%= establishment._id %>">
+  <% } %>
+
+  <label for="review-title">Your headline</label>
+  <input
+    id="review-title"
+    name="title"
+    maxlength="120"
+    value="<%= review?.title || '' %>"
+    placeholder="What made this meal memorable?"
+    required
+  >
+
+  <label for="review-rating">Your rating</label>
+  <select id="review-rating" name="rating" required>
+    <option value="">Choose a rating</option>
+    <% for (let i = 5; i >= 1; i -= 0.5) { %>
+      <option value="<%= i %>" <%= review?.rating === i ? 'selected' : '' %>><%= i %> / 5</option>
+    <% } %>
+  </select>
+
+  <label id="body-label">Your story</label>
+  <div class="editor-toolbar" role="group" aria-label="Text formatting">
+    <button type="button" data-format="bold" aria-label="Bold">B</button>
+    <button type="button" data-format="italic" aria-label="Italic">I</button>
+    <button type="button" data-format="insertUnorderedList" aria-label="Bullet list">☷</button>
+  </div>
+  <div
+    class="rich-editor"
+    contenteditable="true"
+    role="textbox"
+    aria-multiline="true"
+    aria-labelledby="body-label"
+    data-rich-editor
+  ><%- review?.body || '' %></div>
+  <input type="hidden" name="body">
+  <small>Tell us about the food, service, or atmosphere. Keep it kind.</small>
+
+  <% if (review?.media.length) { %>
+    <fieldset>
+      <legend>Current attachments</legend>
+      <% review.media.forEach(url => { %>
+        <label class="checkbox">
+          <input type="checkbox" name="deleteMedia" value="<%= url %>">
+          Remove <a href="<%= url %>" target="_blank" rel="noopener noreferrer">attachment</a>
+        </label>
+      <% }) %>
+    </fieldset>
+  <% } %>
+
+  <label for="review-media">Add photos or video <span class="muted">(optional)</span></label>
+  <input
+    id="review-media"
+    name="media"
+    type="file"
+    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm"
+    multiple
+  >
+  <small>Up to 10 files, 3 MB combined per request.</small>
+
+  <p class="form-message" role="alert" hidden></p>
+  <button class="button" type="submit"><%= review ? 'Save changes' : 'Publish review' %> ↗</button>
 </form>

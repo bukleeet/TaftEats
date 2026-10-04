@@ -1,4 +1,67 @@
 <%- include('head', { title: establishment ? establishment.name : 'Community stories' }) %>
-<section class="page-header container"><a class="text-link" href="/establishments">← Explore the neighborhood</a><p class="eyebrow"><%= establishment ? establishment.category || 'NEIGHBORHOOD EATS' : 'THE COMMUNITY JOURNAL' %></p><h1><% if (establishment) { %><%= establishment.name %><% } else { %>Stories from <em>the table</em>.<% } %></h1><p class="lede"><%= establishment ? establishment.description : 'Honest takes, favorite orders, and places worth coming back to.' %></p><% if (establishment) { %><p class="rating"><%- include('stars', { rating: establishment.reviewCount ? establishment.rating : 0 }) %> <%= establishment.reviewCount ? establishment.rating.toFixed(1) + ' / 5' : 'No ratings yet' %> <span class="muted">· <%= count %> reviews</span></p><% } %></section>
-<div class="review-layout container"><section><div class="section-heading"><h2><%= establishment ? 'The word around Taft' : 'Latest reviews' %></h2><span class="muted"><%= count %> stories</span></div><div class="review-feed"><% reviews.forEach(review => { %><%- include('reviewCard', { review }) %><% }) %></div><% if (!reviews.length) { %><div class="empty-state"><h3>The first story could be yours.</h3><p>Share what you loved, what surprised you, and what you'd order again.</p></div><% } %><%- include('pagination', { page, pages, pageUrl: p => '?page=' + p }) %></section><aside class="panel review-composer"><p class="eyebrow">LEAVE A LITTLE FOOD FOR THOUGHT</p><h2>Share your experience</h2><% if (!sessionUser) { %><p>Sign in to write a review and join the conversation.</p><a class="button" href="/login">Sign in to review ↗</a><% } else if (!establishment) { %><p>Choose a restaurant to tell your story.</p><a class="button" href="/establishments">Find a place ↗</a><% } else if (String(sessionUser.ownedEstablishment) === String(establishment._id)) { %><p>This is your restaurant. You can respond to the community's reviews below.</p><% } else { %><%- include('reviewForm', { action: '/reviews', method: 'POST', review: null, establishment }) %><% } %></aside></div>
+
+<section class="page-header container">
+  <a class="text-link" href="/establishments">← Explore the neighborhood</a>
+  <p class="eyebrow">
+    <%= establishment ? establishment.category || 'NEIGHBORHOOD EATS' : 'THE COMMUNITY JOURNAL' %>
+  </p>
+  <h1>
+    <% if (establishment) { %>
+      <%= establishment.name %>
+    <% } else { %>
+      Stories from <em>the table</em>.
+    <% } %>
+  </h1>
+  <p class="lede">
+    <%= establishment ? establishment.description : 'Honest takes, favorite orders, and places worth coming back to.' %>
+  </p>
+  <% if (establishment) { %>
+    <p class="rating">
+      <%- include('stars', { rating: establishment.reviewCount ? establishment.rating : 0 }) %>
+      <%= establishment.reviewCount ? establishment.rating.toFixed(1) + ' / 5' : 'No ratings yet' %>
+      <span class="muted">· <%= count %> reviews</span>
+    </p>
+  <% } %>
+</section>
+
+<div class="review-layout container">
+  <section>
+    <div class="section-heading">
+      <h2><%= establishment ? 'The word around Taft' : 'Latest reviews' %></h2>
+      <span class="muted"><%= count %> stories</span>
+    </div>
+
+    <div class="review-feed">
+      <% reviews.forEach(review => { %>
+        <%- include('reviewCard', { review }) %>
+      <% }) %>
+    </div>
+
+    <% if (!reviews.length) { %>
+      <div class="empty-state">
+        <h3>The first story could be yours.</h3>
+        <p>Share what you loved, what surprised you, and what you'd order again.</p>
+      </div>
+    <% } %>
+
+    <%- include('pagination', { page, pages, pageUrl: p => '?page=' + p }) %>
+  </section>
+
+  <aside class="panel review-composer">
+    <p class="eyebrow">LEAVE A LITTLE FOOD FOR THOUGHT</p>
+    <h2>Share your experience</h2>
+    <% if (!sessionUser) { %>
+      <p>Sign in to write a review and join the conversation.</p>
+      <a class="button" href="/login">Sign in to review ↗</a>
+    <% } else if (!establishment) { %>
+      <p>Choose a restaurant to tell your story.</p>
+      <a class="button" href="/establishments">Find a place ↗</a>
+    <% } else if (String(sessionUser.ownedEstablishment) === String(establishment._id)) { %>
+      <p>This is your restaurant. You can respond to the community's reviews below.</p>
+    <% } else { %>
+      <%- include('reviewForm', { action: '/reviews', method: 'POST', review: null, establishment }) %>
+    <% } %>
+  </aside>
+</div>
+
 <%- include('foot') %>
