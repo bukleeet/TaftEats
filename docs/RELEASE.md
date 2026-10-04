@@ -48,6 +48,8 @@ Readiness and all dynamic responses explicitly disable caching, including errors
 
 ## Remaining operational work
 
+Encrypted recovery tooling was verified on October 4: a read-only production snapshot retained 29 users, 47 reviews, and 10 restaurants, and its encrypted file was restored into a temporary local replica set. Migration preflight and readiness, discovery, and sign-in rendering passed there. Recovery regressions cover BSON types, index fidelity, ciphertext tampering, occupied destinations, failed-insert rollback, and CLI argument safety. Scheduling and off-device retention remain operator tasks; see [Database recovery](RECOVERY.md).
+
 - The new Vercel project scopes application credentials to Production. Hosted previews require their own isolated database and session configuration before mutation testing. Use the isolated local demo meanwhile.
 - Atlas application permissions were narrowed from administrator access to `readWrite` on `myDatabase` and `tafteats_staging_20261004`. Fresh authentication and application index creation passed; listing an unrelated database was denied. Separate database users would further isolate production from staging.
 - Atlas's network allowlist currently permits all IP addresses. Tighten it using verified deployment egress addresses; removing access without a compatible egress setup would disconnect the app. Establish recurring backups and monitoring; the current Atlas free cluster has no managed backups.

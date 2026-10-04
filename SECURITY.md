@@ -34,6 +34,8 @@ An ignored local recovery bundle is stored at `.cache/history-cleanup/pre-rewrit
 
 ## Deployment and operational limits
 
+Encrypted logical backup and restore commands are documented in [Database recovery](docs/RECOVERY.md). Recovery tests exercise BSON and index fidelity, ciphertext authentication, occupied-database refusal, and transaction rollback. These commands do not replace off-device retention, recurring scheduling, or provider backups.
+
 Attachments have a **3 MiB total budget per request**, with up to 10 files. This leaves headroom under Vercel's [4.5 MB request-body limit](https://vercel.com/docs/functions/limitations). The local parser enforces the file count and aggregate budget; requests above the provider limit can be rejected before the application runs. Larger uploads would require a separately designed direct-upload flow.
 
 - Use HTTPS, `NODE_ENV=production`, a high-entropy session secret, and a least-privileged database user. Set `TRUST_PROXY=1` only behind a trusted one-hop proxy. Incorrect proxy configuration weakens IP limiting and Secure-cookie handling.

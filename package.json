@@ -14,6 +14,7 @@
     "check": "npm run lint && npm run format:check && npm test",
     "seed:demo": "node database/seed.js",
     "migrate": "node database/migrate.js",
+    "backup": "node database/backup.js",
     "preview:demo": "node scripts/demo-server.js",
     "test:browser": "playwright test",
     "secrets:check": "node scripts/check-secrets.js"
