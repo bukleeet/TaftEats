@@ -2,17 +2,17 @@
   <nav class="nav container" aria-label="Main navigation">
     <a class="brand" href="/establishments"><span class="brand-mark" aria-hidden="true">t.</span>TaftEats<span class="brand-dot">/</span></a>
     <div class="nav-links">
-      <a href="/establishments">Discover</a>
-      <a href="/reviews">Community</a>
-      <a href="/about">Our story</a>
+      <a href="/establishments"<% if (currentPath === '/' || currentPath.startsWith('/establishments')) { %> aria-current="page"<% } %>>Discover</a>
+      <a href="/reviews"<% if (currentPath === '/reviews' || currentPath.startsWith('/reviews/')) { %> aria-current="page"<% } %>>Community</a>
+      <a href="/about"<% if (currentPath === '/about') { %> aria-current="page"<% } %>>Our story</a>
     </div>
     <div class="nav-actions">
       <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false">◐</button>
       <% if (sessionUser) { %>
-        <a class="profile-link" href="/profile/<%= sessionUser._id %>"><img class="avatar small" src="<%= mediaUrl(sessionUser.avatar, '/images/avatar.svg') %>" alt=""><span><%= sessionUser.username %></span></a>
+        <a class="profile-link" href="/profile/<%= sessionUser._id %>"<% if (currentPath.startsWith('/profile/' + sessionUser._id)) { %> aria-current="page"<% } %>><img class="avatar small" src="<%= mediaUrl(sessionUser.avatar, '/images/avatar.svg') %>" alt=""><span><%= sessionUser.username %></span></a>
         <form action="/logout" method="post"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-button" type="submit">Sign out</button></form>
       <% } else { %>
-        <a class="text-button" href="/login">Sign in</a><a class="button compact" href="/register">Join the table <span aria-hidden="true">↗</span></a>
+        <a class="text-button" href="/login"<% if (currentPath === '/login') { %> aria-current="page"<% } %>>Sign in</a><a class="button compact" href="/register"<% if (currentPath === '/register') { %> aria-current="page"<% } %>>Join the table <span aria-hidden="true">↗</span></a>
       <% } %>
     </div>
   </nav>

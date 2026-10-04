@@ -36,6 +36,7 @@ function createApp({
     );
   app.use((req, res, next) => {
     req.id = randomUUID();
+    res.locals.currentPath = req.path;
     res.set('X-Request-ID', req.id);
     res.locals.nonce = randomBytes(16).toString('base64');
     next();

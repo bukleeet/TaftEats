@@ -209,3 +209,88 @@ test('profiles and about pages render without accessibility violations', async (
   await page.goto('/about');
   await audit(page);
 });
+
+test('card hit areas and current-page navigation work with pointer and keyboard input', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/establishments');
+  const navigation = page.getByRole('navigation', { name: 'Main navigation' });
+  await expect(navigation.getByRole('link', { name: 'Discover', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(navigation.locator('[aria-current="page"]')).toHaveCount(1);
+  const controls = await navigation
+    .locator('.brand, .nav-links a, .nav-actions > a, .nav-actions button')
+    .evaluateAll((elements) =>
+      elements.map((element) => {
+        const box = element.getBoundingClientRect();
+        return { height: box.height, center: box.y + box.height / 2 };
+      }),
+    );
+  for (const control of controls) {
+    expect(control.height).toBe(44);
+    expect(Math.abs(control.center - controls[0].center)).toBeLessThan(1);
+  }
+  const card = page.locator('.restaurant-card').first();
+  const destination = await card.getByRole('link').getAttribute('href');
+  await expect(card.getByRole('link')).toHaveCount(1);
+  await card.locator('.card-content > p').click();
+  await expect(page).toHaveURL(destination);
+  await expect(navigation.getByRole('link', { name: 'Discover', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await page.goto('/establishments');
+  await card.locator('.card-arrow').click();
+  await expect(page).toHaveURL(destination);
+  await page.goto('/establishments');
+  await card.getByRole('link').focus();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.restaurant-card').nth(1).getByRole('link')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/establishments\/.*\/reviews$/);
+  await navigation.getByRole('link', { name: 'Community', exact: true }).click();
+  await expect(navigation.getByRole('link', { name: 'Community', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await navigation.getByRole('link', { name: 'Our story', exact: true }).click();
+  await expect(navigation.getByRole('link', { name: 'Our story', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  const width = await page
+    .locator('.about-page')
+    .evaluate((element) => element.getBoundingClientRect().width);
+  expect(width).toBe(1200);
+  await expect(page.getByRole('link', { name: 'Visit the original CCAPDEV site' })).toHaveAttribute(
+    'href',
+    'https://taft-eats.vercel.app',
+  );
+  await expect(page.getByRole('link', { name: "Bullet's portfolio" })).toHaveAttribute(
+    'href',
+    'https://buklet.vercel.app',
+  );
+  await expect(page.locator('.about-origin')).toContainText('developed and maintained by Bullet');
+  await page.screenshot({ path: path.resolve('.cache/ui/about-desktop.png'), fullPage: true });
+  for (const viewportWidth of [320, 768, 1280]) {
+    await page.setViewportSize({ width: viewportWidth, height: 900 });
+    for (const link of await navigation.locator('.nav-links a').all()) {
+      expect(
+        await link.evaluate((element) => {
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          return range.getClientRects().length;
+        }),
+      ).toBe(1);
+    }
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    expect(
+      await page.locator('.site-footer').evaluate((element) => getComputedStyle(element).marginTop),
+    ).toBe('8px');
+  }
+});

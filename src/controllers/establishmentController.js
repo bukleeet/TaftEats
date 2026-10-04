@@ -22,7 +22,12 @@ exports.getAllEstablishments = async (req, res) => {
     q,
     category,
     sort,
-    categories,
+    categories: categories.filter(
+      (value) =>
+        typeof value === 'string' &&
+        value.trim() &&
+        value.trim().toLowerCase() !== 'neighborhood eats',
+    ),
   });
 };
 exports.getEstablishmentById = async (req, res) => {

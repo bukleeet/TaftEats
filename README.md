@@ -81,8 +81,10 @@ database/                 Isolated demo fixtures and explicit migration
 tests/                    Unit, real MongoDB HTTP, and browser regression tests
 ```
 
-## Team
+## Development
 
-**Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management).
+The current application is developed and maintained by **Bullet** ([portfolio](https://buklet.vercel.app)).
+
+The original CCAPDEV course project was created by **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management).
 
 This application is maintained in the private [TaftEats repository](https://github.com/bukleeet/TaftEats), with `main` as its production branch and [tafteats.vercel.app](https://tafteats.vercel.app) as its production address. The original academic project is preserved separately in [CCAPDEV_Resto-Review-App](https://github.com/bukleeet/CCAPDEV_Resto-Review-App). The October 4, 2026 release includes verified credential rotation, a backed-up staging and production migration, and a real Cloudinary upload/delete check. See the [release checklist](docs/RELEASE.md) for verification and remaining operational work.
