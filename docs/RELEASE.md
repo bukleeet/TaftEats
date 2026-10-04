@@ -48,6 +48,8 @@ Readiness and all dynamic responses explicitly disable caching, including errors
 
 ## Remaining operational work
 
+The authentication follow-up in `8e44d99` limits password derivation to two calculations per process and rejects excess work without queuing credentials. Unknown-user login performs one verification without an initialization hash. All 71 application tests and three browser journeys passed locally and in CI on Node 22 and 24; production deployment `dpl_6yjyxxRWD8DYANzQJtX2uzw9VXiL` reached Ready, and public readiness and sign-in returned 200. This process limit complements shared IP limits; it does not bound total activity across serverless instances.
+
 Encrypted recovery tooling was verified on October 4: a read-only production snapshot retained 29 users, 47 reviews, and 10 restaurants, and its encrypted file was restored into a temporary local replica set. Migration preflight and readiness, discovery, and sign-in rendering passed there. Recovery regressions cover BSON types, index fidelity, ciphertext tampering, occupied destinations, failed-insert rollback, and CLI argument safety. Scheduling and off-device retention remain operator tasks; see [Database recovery](RECOVERY.md).
 
 - The new Vercel project scopes application credentials to Production. Hosted previews require their own isolated database and session configuration before mutation testing. Use the isolated local demo meanwhile.
