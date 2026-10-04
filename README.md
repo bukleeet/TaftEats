@@ -65,6 +65,28 @@ See [architecture](docs/ARCHITECTURE.md), [security](SECURITY.md), the [migratio
 ## Project structure
 
 ```text
+├───database
+├───docs
+├───scripts
+├───src
+│   ├───config
+│   ├───controllers
+│   ├───lib
+│   ├───middleware
+│   ├───models
+│   ├───public
+│   │   ├───css
+│   │   ├───images
+│   │   └───js
+│   ├───routes
+│   ├───services
+│   └───views
+├───test-results
+└───tests
+    └───browser
+```
+
+```text
 app.js                    Local/serverless entry point
 src/app.js                Express app factory; middleware and rendering
 src/server.js             Lazy connection, persistent sessions, runtime lifecycle
@@ -83,8 +105,8 @@ tests/                    Unit, real MongoDB HTTP, and browser regression tests
 
 ## Development
 
-The current application is developed and maintained by **Bullet** ([portfolio](https://buklet.vercel.app)).
+The current application was made and is maintained by me, **Bullet Fernandez** ([my web portfolio](https://buklet.vercel.app)).
 
-The original CCAPDEV course project was created by **Clyde** (frontend), **Jasper** (backend), **Bullet** (full stack), and **Ella** (project management).
+The original CCAPDEV course project was created by [**Clyde**](https://github.com/Cydle617) (frontend), [**Jasper**](https://github.com/HexadecsTrtl) (backend), **Bullet** (full stack), and [**Ella**](https://github.com/dzuhnee) (project management).
 
 This application is maintained in the private [TaftEats repository](https://github.com/bukleeet/TaftEats), with `main` as its production branch and [tafteats.vercel.app](https://tafteats.vercel.app) as its production address. The original academic project is preserved separately in [CCAPDEV_Resto-Review-App](https://github.com/bukleeet/CCAPDEV_Resto-Review-App). The October 4, 2026 release includes verified credential rotation, a backed-up staging and production migration, and a real Cloudinary upload/delete check. See the [release checklist](docs/RELEASE.md) for verification and remaining operational work.

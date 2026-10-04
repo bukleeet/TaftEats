@@ -265,15 +265,16 @@ test('card hit areas and current-page navigation work with pointer and keyboard 
     .locator('.about-page')
     .evaluate((element) => element.getBoundingClientRect().width);
   expect(width).toBe(1200);
-  await expect(page.getByRole('link', { name: 'Visit the original CCAPDEV site' })).toHaveAttribute(
-    'href',
-    'https://taft-eats.vercel.app',
+  const ccapdevLink = page.getByRole('link', { name: 'Visit the original CCAPDEV site' });
+  await expect(ccapdevLink).toHaveAttribute('href', 'https://taft-eats.vercel.app');
+  await expect(ccapdevLink).toHaveAttribute('target', '_blank');
+
+  const portfolioLink = page.getByRole('link', { name: 'My web portfolio' });
+  await expect(portfolioLink).toHaveAttribute('href', 'https://buklet.vercel.app');
+  await expect(portfolioLink).toHaveAttribute('target', '_blank');
+  await expect(page.locator('.about-origin')).toContainText(
+    'made and is maintained by me, Bullet Fernandez',
   );
-  await expect(page.getByRole('link', { name: "Bullet's portfolio" })).toHaveAttribute(
-    'href',
-    'https://buklet.vercel.app',
-  );
-  await expect(page.locator('.about-origin')).toContainText('developed and maintained by Bullet');
   await page.screenshot({ path: path.resolve('.cache/ui/about-desktop.png'), fullPage: true });
   for (const viewportWidth of [320, 768, 1280]) {
     await page.setViewportSize({ width: viewportWidth, height: 900 });

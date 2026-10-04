@@ -1,21 +1,51 @@
 <%- include('head', { title: 'Our story' }) %>
-<div class="container about-page">
-  <section class="about-intro" aria-labelledby="about-title">
-    <div class="page-header">
-      <p class="eyebrow">ROOTED IN THE NEIGHBORHOOD</p>
-      <h1 id="about-title">A good meal<br>brings us <em>together.</em></h1>
-      <p class="lede">TaftEats is a food journal for the community around DLSU Taft. A place for honest recommendations, thoughtful conversations, and the little discoveries that make a neighborhood feel like home.</p>
-    </div>
-    <img class="about-art" src="/images/table.svg" alt="A shared table with a warm meal and coffee">
-  </section>
-  <div class="panel about-details">
-    <section><h2>Everyone has something to bring.</h2><p>Find a restaurant, share a review, or hear the story from the people behind the counter. Restaurant owners can respond to their own community and reviewers can continue the conversation.</p></section>
-    <section><h2>Honest stories, thoughtful conversations.</h2><p>Write from your own experience. Be specific, be respectful, and help the next person make a better choice. Reviews reflect individual experiences, not verified restaurant claims.</p></section>
-    <section class="about-origin" aria-labelledby="about-origin-title">
-      <h2 id="about-origin-title">From the CCAPDEV project.</h2>
-      <p>TaftEats began as a CCAPDEV restaurant review project. The original course version is preserved separately. This current version is developed and maintained by Bullet.</p>
-      <div class="about-links"><a class="button secondary" href="https://taft-eats.vercel.app">Visit the original CCAPDEV site <span aria-hidden="true">↗</span></a><a class="button" href="https://buklet.vercel.app">Bullet's portfolio <span aria-hidden="true">↗</span></a></div>
+
+  <div class="container about-page">
+    <section class="about-intro" aria-labelledby="about-title">
+      <div class="page-header">
+        <p class="eyebrow">ROOTED IN THE NEIGHBORHOOD</p>
+        <h1 id="about-title">A good meal<br>brings us <em>together.</em></h1>
+        <p class="lede">
+          TaftEats is a food journal for the community around DLSU Taft. A place for honest recommendations,
+          thoughtful conversations, and the little discoveries that make a neighborhood feel like home.
+        </p>
+      </div>
+      <img class="about-art" src="/images/table.svg" alt="A shared table with a warm meal and coffee">
     </section>
+
+    <div class="panel about-details">
+      <section>
+        <h2>Everyone has something to bring.</h2>
+        <p>
+          Find a restaurant, share a review, or hear the story from the people behind the counter.
+          Restaurant owners can respond to their own community and reviewers can continue the conversation.
+        </p>
+      </section>
+
+      <section>
+        <h2>Honest stories, thoughtful conversations.</h2>
+        <p>
+          Write from your own experience. Be specific, be respectful, and help the next person make a better choice.
+          Reviews reflect individual experiences, not verified restaurant claims.
+        </p>
+      </section>
+
+      <section class="about-origin" aria-labelledby="about-origin-title">
+        <h2 id="about-origin-title">From the CCAPDEV project.</h2>
+        <p>
+          TaftEats began as a CCAPDEV restaurant review project. The original course version is preserved separately.
+          This version was made and is maintained by me, Bullet Fernandez.
+        </p>
+        <div class="about-links">
+          <a class="button secondary" href="https://taft-eats.vercel.app" target="_blank" rel="noopener noreferrer">
+            Visit the original CCAPDEV site <span aria-hidden="true">↗</span>
+          </a>
+          <a class="button" href="https://buklet.vercel.app" target="_blank" rel="noopener noreferrer">
+            My web portfolio <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+    </div>
   </div>
-</div>
-<%- include('foot') %>
+
+  <%- include('foot') %>
