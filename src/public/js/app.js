@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  document.querySelector('[data-focus-error]')?.focus();
   const heroText = document.getElementById('hero-text');
   const heroToggle = document.querySelector('.hero-animation-toggle');
   if (heroText && heroToggle) {

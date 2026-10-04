@@ -23,7 +23,13 @@ function errorHandler(err, req, res, _next) {
     console.error(JSON.stringify({ event: 'request_failed', requestId: req.id, name: err.name }));
     message = 'Something went wrong. Please try again later.';
   }
-  if (req.accepts(['html', 'json']) === 'html' && req.method === 'GET') {
+  const wantsHtml = req.accepts(['html', 'json']) === 'html';
+  if (wantsHtml && req.method === 'POST' && req.path === '/login' && res.locals.csrfToken) {
+    return res
+      .status(status)
+      .render('login', { error: message, sessionUser: res.locals.sessionUser || null });
+  }
+  if (wantsHtml && req.method === 'GET') {
     return res.status(status).render('error', { status, message });
   }
   return res.status(status).json({ success: false, message, requestId: req.id });

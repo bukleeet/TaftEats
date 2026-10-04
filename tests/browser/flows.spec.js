@@ -121,6 +121,14 @@ test('registration, sign-in, profile edit, review CRUD, voting, and owner replie
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   const username = `browser_${Date.now()}`;
+  await page.goto('/login');
+  await page.getByLabel('Username', { exact: true }).fill('invalid username');
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Username must be');
+  await expect(page.getByRole('alert')).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+  await audit(page);
   await page.goto('/register');
   await audit(page);
   await page.getByLabel('Username', { exact: true }).fill('jane_d');

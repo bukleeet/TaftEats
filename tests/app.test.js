@@ -368,6 +368,38 @@ describe('HTTP application against an isolated MongoDB replica set', () => {
       /^scrypt\$/,
     );
   });
+  test('browser sign-in validation stays on the form while JSON clients retain structured errors', async () => {
+    const agent = request.agent(app);
+    const page = await agent.get('/login').expect(200);
+    const form = await agent
+      .post('/login')
+      .set('Accept', 'text/html')
+      .type('form')
+      .send({ _csrf: token(page), username: 'invalid username', password })
+      .expect(400);
+    assert.match(form.headers['content-type'], /text\/html/);
+    assert.match(form.text, /role="alert"/);
+    assert.match(form.text, /Username must be/);
+    assert.ok(token(form));
+    const json = await agent
+      .post('/login')
+      .set('Accept', 'application/json')
+      .type('form')
+      .send({ _csrf: token(page), username: 'invalid username', password })
+      .expect(400);
+    assert.equal(json.body.success, false);
+    assert.match(json.body.message, /Username must be/);
+    const expired = await agent
+      .post('/login')
+      .set('Accept', 'text/html')
+      .type('form')
+      .send({ username: 'alice', password })
+      .expect(403);
+    assert.match(expired.text, /role="alert"/);
+    assert.match(expired.text, /Your form has expired/);
+    assert.ok(token(expired));
+    assert.doesNotMatch(expired.text, /ReferenceError|sessionUser is not defined/);
+  });
   test('invalid login has a generic message and no authenticated session', async () => {
     const agent = request.agent(app);
     const page = await agent.get('/login');
