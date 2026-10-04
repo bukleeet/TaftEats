@@ -2,9 +2,10 @@ const { randomBytes } = require('node:crypto');
 const { promisify } = require('node:util');
 const User = require('../models/users');
 const v = require('../lib/validation');
-const { verifyPassword, hashPassword } = require('../lib/passwords');
+const { verifyPassword } = require('../lib/passwords');
 
-let dummyHash;
+// A syntactically valid random hash makes unknown users pay one verification cost.
+const dummyHash = `scrypt$${randomBytes(16).toString('hex')}$${randomBytes(64).toString('hex')}`;
 exports.getLoginPage = (req, res) =>
   req.user ? res.redirect('/establishments') : res.render('login', { error: null });
 exports.postLogin = async (req, res) => {
@@ -12,8 +13,7 @@ exports.postLogin = async (req, res) => {
   const password = v.password(req.body.password, { login: true });
   const user = await User.findOne({ username }).select('+password');
   // Unknown usernames still pay the scrypt cost, reducing account enumeration by timing.
-  dummyHash ||= hashPassword(randomBytes(32).toString('hex'));
-  const valid = await verifyPassword(password, user?.password || (await dummyHash));
+  const valid = await verifyPassword(password, user?.password || dummyHash);
   if (!user || !valid)
     return res.status(401).render('login', { error: 'Invalid username or password.' });
   if (!user.password.startsWith('scrypt$')) {

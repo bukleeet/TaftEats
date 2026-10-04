@@ -40,6 +40,18 @@ test('legacy passwords verify safely and corrupt hashes fail closed', async () =
   for (const stored of ['', 'salt:hash', 'scrypt$malformed', null])
     assert.equal(await passwords.verifyPassword('anything', stored), false);
 });
+test('password capacity rejects excess hashing and verification and recovers after failure', async () => {
+  const plain = 'A bounded authentication passphrase';
+  const stored = await passwords.hashPassword(plain);
+  const first = passwords.hashPassword(plain);
+  const second = passwords.verifyPassword(plain, stored);
+  await assert.rejects(passwords.hashPassword(plain), { status: 503 });
+  await assert.rejects(passwords.verifyPassword(plain, stored), { status: 503 });
+  await Promise.all([first, second]);
+  await assert.rejects(passwords.hashPassword(Symbol('invalid password')), TypeError);
+  const recovered = await passwords.hashPassword(plain);
+  assert.equal(await passwords.verifyPassword(plain, recovered), true);
+});
 const payloads = [
   '<img src=x onerror=alert(1)>',
   '&lt;img src=x onerror=alert(1)&gt;',

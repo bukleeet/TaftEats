@@ -7,7 +7,7 @@ TaftEats uses the security boundaries described below. Public deployment require
 | Boundary             | Control                                                                                                                                                                               |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Account identity     | Normalized unique usernames/emails; server-side type and size checks; no client-supplied roles                                                                                        |
-| Passwords            | Async scrypt with 128 MiB working memory per calculation; salt; timing-safe comparison; legacy upgrade                                                                                |
+| Passwords            | Async scrypt with 128 MiB working memory per calculation; salt; timing-safe comparison; legacy upgrade; at most two calculations per process with no waiting queue                    |
 | Sessions             | MongoDB persistence; login regeneration; HTTP-only SameSite=Lax cookies; Secure in production; 12-hour normal / 21-day remembered duration                                            |
 | Cross-site mutations | Synchronizer token on every unsafe method, including login/logout/registration; cross-site Fetch Metadata rejection                                                                   |
 | Authorization        | Fresh database account per request; immutable review/user/restaurant IDs; author checks before edit uploads                                                                           |

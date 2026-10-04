@@ -52,7 +52,7 @@ Browser tests use installed Chrome by default. Alternatively, run `npx playwrigh
 
 ## Security and engineering
 
-- Passwords use asynchronous scrypt (`N=131072`, `r=8`, `p=1`) with a random salt. Valid legacy HMAC logins upgrade automatically.
+- Passwords use asynchronous scrypt (`N=131072`, `r=8`, `p=1`) with a random salt. At most two password calculations run per process; excess requests receive 503 without queuing credentials. Valid legacy HMAC logins upgrade automatically.
 - Sessions rotate at login, use HTTP-only SameSite cookies and HTTPS-only production cookies, and live in MongoDB. Every mutation requires a session-bound CSRF token.
 - Database-backed authorization uses immutable IDs and reloads account roles on every request. Owners cannot review their own restaurant, and authors cannot vote on their own reviews.
 - Rich text uses a parser-based allowlist on writes and reads, including legacy records. Browser activity cards use DOM text nodes. CSP blocks inline handlers, external scripts, framing, and arbitrary media origins.
