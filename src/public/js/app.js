@@ -96,7 +96,12 @@
     el.textContent = message;
     el.classList.add('error');
     el.hidden = false;
-    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    el.tabIndex = -1;
+    el.focus({ preventScroll: true });
+    el.scrollIntoView({
+      block: 'nearest',
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
   }
   const toggle = document.getElementById('theme-toggle');
   function setTheme(theme) {
